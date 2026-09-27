@@ -49,19 +49,19 @@
 //!
 //! ```toml
 //! [dependencies]
-//! arborium = { version = "0.1", features = ["lang-rust", "lang-python"] }
+//! arborium = { version = "2", features = ["lang-rust", "lang-python"] }
 //! ```
 //!
 //! Or enable all languages:
 //!
 //! ```toml
 //! [dependencies]
-//! arborium = { version = "0.1", features = ["all-languages"] }
+//! arborium = { version = "2", features = ["all-languages"] }
 //! ```
 //!
 //! ## Supported Languages
 //!
-//! ### Permissively Licensed (<%= permissive_grammars.len() %> languages, included by default)
+//! ### Permissively Licensed (<%= permissive_grammars.len() %> languages, enable `all-permissive-languages`)
 //!
 //! | Language | Feature Flag | License |
 //! |----------|--------------|---------|
@@ -69,13 +69,13 @@
 //! | <%= grammar.name %> | `<%= grammar.feature %>` | <%= grammar.license %> |
 <% } %>
 //!
-//! ### GPL Licensed (<%= gpl_grammars.len() %> languages, opt-in)
+//! ### Copyleft Licensed (<%= copyleft_grammars.len() %> languages, opt-in)
 //!
 //! These require explicit opt-in via feature flags due to their copyleft license.
 //!
 //! | Language | Feature Flag | License |
 //! |----------|--------------|---------|
-<% for grammar in gpl_grammars { %>
+<% for grammar in copyleft_grammars { %>
 //! | <%= grammar.name %> | `<%= grammar.feature %>` | <%= grammar.license %> |
 <% } %>
 //!
@@ -229,4 +229,27 @@ pub fn get_language(name: &str) -> Option<tree_sitter::Language> {
 <% } %>
         _ => None,
     }
+}
+
+// Compile every bundled query, including rarely used grammars. A malformed
+// query otherwise only surfaces at runtime (as a WASM trap in plugins).
+#[cfg(test)]
+mod grammar_smoke_tests {
+    use arborium_highlight::tree_sitter::{CompiledGrammar, GrammarConfig, ParseContext};
+
+<% for (crate_name, grammar_id) in grammars { %>
+    #[test]
+    #[cfg(feature = "lang-<%= grammar_id %>")]
+    fn <%= grammar_id.replace('-', "_") %>() {
+        use <%= crate_name.replace('-', "_") %> as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+<% } %>
 }

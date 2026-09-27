@@ -51,6 +51,15 @@ pub fn generate_rustdoc_theme_css() -> String {
         css.push_str(&theme_css);
     }
 
+    // Static rustdoc pages have no data-theme until JavaScript runs (or ever,
+    // with scripts disabled). Match rustdoc's noscript system-theme behavior.
+    css.push_str("@media (prefers-color-scheme: dark) {\n");
+    css.push_str(&generate_theme_css_for_rustdoc(
+        &builtin::rustdoc_dark(),
+        ":root:not([data-theme])",
+    ));
+    css.push_str("}\n");
+
     css
 }
 
@@ -74,12 +83,18 @@ fn generate_theme_css_for_rustdoc(theme: &arborium_theme::Theme, selector_prefix
 
     // Open the selector block
     // Target: pre elements with language-* class (but not .rust)
-    writeln!(
-        css,
-        "{} pre[class^=\"language-\"] code, {} pre[class*=\" language-\"] code {{",
-        selector_prefix, selector_prefix
-    )
-    .unwrap();
+    let selectors = selector_prefix
+        .split(',')
+        .flat_map(|prefix| {
+            let prefix = prefix.trim();
+            [
+                format!("{prefix} pre[class^=\"language-\"] code"),
+                format!("{prefix} pre[class*=\" language-\"] code"),
+            ]
+        })
+        .collect::<Vec<_>>()
+        .join(", ");
+    writeln!(css, "{selectors} {{").unwrap();
 
     // Generate rules for each highlight category
     for (i, def) in HIGHLIGHTS.iter().enumerate() {
@@ -156,5 +171,18 @@ mod tests {
         assert!(css.contains("a-k"));
         assert!(css.contains("a-s"));
         assert!(css.contains("a-c"));
+    }
+
+    #[test]
+    fn system_dark_theme_and_scoped_selectors() {
+        let css = generate_rustdoc_theme_css();
+        let fallback = css
+            .split("@media (prefers-color-scheme: dark)")
+            .nth(1)
+            .unwrap();
+        assert!(fallback.contains(":root:not([data-theme]) pre[class^=\"language-\"] code"));
+        assert!(!fallback.contains("data-theme=\"light\""));
+        // A bare :root selector would incorrectly style unrelated page elements.
+        assert!(!css.contains(":root:not([data-theme]),"));
     }
 }

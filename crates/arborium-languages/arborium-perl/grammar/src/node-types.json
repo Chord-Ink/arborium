@@ -84,11 +84,6 @@
     ]
   },
   {
-    "type": ">",
-    "named": false,
-    "fields": {}
-  },
-  {
     "type": "ambiguous_function_call_expression",
     "named": true,
     "fields": {
@@ -96,14 +91,6 @@
         "multiple": true,
         "required": false,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -134,6 +121,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -181,11 +172,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -221,11 +220,11 @@
             "named": true
           },
           {
-            "type": "loopex_expression",
+            "type": "logical_not_expression",
             "named": true
           },
           {
-            "type": "lowprec_logical_expression",
+            "type": "loopex_expression",
             "named": true
           },
           {
@@ -238,6 +237,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -330,6 +333,10 @@
           },
           {
             "type": "variable_declaration",
+            "named": true
+          },
+          {
+            "type": "version",
             "named": true
           }
         ]
@@ -397,6 +404,10 @@
           "named": true
         },
         {
+          "type": "async_block_expression",
+          "named": true
+        },
+        {
           "type": "autoquoted_bareword",
           "named": true
         },
@@ -441,11 +452,19 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -473,19 +492,15 @@
           "named": true
         },
         {
-          "type": "list_expression",
-          "named": true
-        },
-        {
           "type": "localization_expression",
           "named": true
         },
         {
-          "type": "loopex_expression",
+          "type": "logical_not_expression",
           "named": true
         },
         {
-          "type": "lowprec_logical_expression",
+          "type": "loopex_expression",
           "named": true
         },
         {
@@ -498,6 +513,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -590,6 +609,10 @@
         },
         {
           "type": "variable_declaration",
+          "named": true
+        },
+        {
+          "type": "version",
           "named": true
         }
       ]
@@ -636,6 +659,10 @@
           "named": true
         },
         {
+          "type": "async_block_expression",
+          "named": true
+        },
+        {
           "type": "autoquoted_bareword",
           "named": true
         },
@@ -680,11 +707,19 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -720,6 +755,10 @@
           "named": true
         },
         {
+          "type": "logical_not_expression",
+          "named": true
+        },
+        {
           "type": "loopex_expression",
           "named": true
         },
@@ -737,6 +776,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -829,6 +872,10 @@
         },
         {
           "type": "variable_declaration",
+          "named": true
+        },
+        {
+          "type": "version",
           "named": true
         }
       ]
@@ -875,6 +922,10 @@
           "named": true
         },
         {
+          "type": "async_block_expression",
+          "named": true
+        },
+        {
           "type": "autoquoted_bareword",
           "named": true
         },
@@ -919,11 +970,19 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -959,6 +1018,10 @@
           "named": true
         },
         {
+          "type": "logical_not_expression",
+          "named": true
+        },
+        {
           "type": "loopex_expression",
           "named": true
         },
@@ -976,6 +1039,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -1068,6 +1135,10 @@
         },
         {
           "type": "variable_declaration",
+          "named": true
+        },
+        {
+          "type": "version",
           "named": true
         }
       ]
@@ -1118,17 +1189,9 @@
     "named": true,
     "fields": {
       "list": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -1159,6 +1222,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -1206,11 +1273,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -1246,6 +1321,10 @@
             "named": true
           },
           {
+            "type": "logical_not_expression",
+            "named": true
+          },
+          {
             "type": "loopex_expression",
             "named": true
           },
@@ -1263,6 +1342,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -1356,6 +1439,10 @@
           {
             "type": "variable_declaration",
             "named": true
+          },
+          {
+            "type": "version",
+            "named": true
           }
         ]
       }
@@ -1394,6 +1481,10 @@
         },
         {
           "type": "assignment_expression",
+          "named": true
+        },
+        {
+          "type": "async_block_expression",
           "named": true
         },
         {
@@ -1441,11 +1532,19 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -1481,6 +1580,10 @@
           "named": true
         },
         {
+          "type": "logical_not_expression",
+          "named": true
+        },
+        {
           "type": "loopex_expression",
           "named": true
         },
@@ -1498,6 +1601,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -1590,6 +1697,10 @@
         },
         {
           "type": "variable_declaration",
+          "named": true
+        },
+        {
+          "type": "version",
           "named": true
         }
       ]
@@ -1706,6 +1817,10 @@
           "named": true
         },
         {
+          "type": "async_block_expression",
+          "named": true
+        },
+        {
           "type": "autoquoted_bareword",
           "named": true
         },
@@ -1750,11 +1865,19 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -1782,19 +1905,15 @@
           "named": true
         },
         {
-          "type": "list_expression",
-          "named": true
-        },
-        {
           "type": "localization_expression",
           "named": true
         },
         {
-          "type": "loopex_expression",
+          "type": "logical_not_expression",
           "named": true
         },
         {
-          "type": "lowprec_logical_expression",
+          "type": "loopex_expression",
           "named": true
         },
         {
@@ -1807,6 +1926,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -1900,6 +2023,10 @@
         {
           "type": "variable_declaration",
           "named": true
+        },
+        {
+          "type": "version",
+          "named": true
         }
       ]
     }
@@ -1919,17 +2046,9 @@
         ]
       },
       "index": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -1960,6 +2079,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -2007,11 +2130,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -2047,6 +2178,10 @@
             "named": true
           },
           {
+            "type": "logical_not_expression",
+            "named": true
+          },
+          {
             "type": "loopex_expression",
             "named": true
           },
@@ -2064,6 +2199,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -2157,6 +2296,10 @@
           {
             "type": "variable_declaration",
             "named": true
+          },
+          {
+            "type": "version",
+            "named": true
           }
         ]
       }
@@ -2195,6 +2338,10 @@
         },
         {
           "type": "assignment_expression",
+          "named": true
+        },
+        {
+          "type": "async_block_expression",
           "named": true
         },
         {
@@ -2242,11 +2389,19 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -2274,19 +2429,15 @@
           "named": true
         },
         {
-          "type": "list_expression",
-          "named": true
-        },
-        {
           "type": "localization_expression",
           "named": true
         },
         {
-          "type": "loopex_expression",
+          "type": "logical_not_expression",
           "named": true
         },
         {
-          "type": "lowprec_logical_expression",
+          "type": "loopex_expression",
           "named": true
         },
         {
@@ -2299,6 +2450,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -2391,6 +2546,10 @@
         },
         {
           "type": "variable_declaration",
+          "named": true
+        },
+        {
+          "type": "version",
           "named": true
         }
       ]
@@ -2452,6 +2611,10 @@
           "named": true
         },
         {
+          "type": "async_block_expression",
+          "named": true
+        },
+        {
           "type": "autoquoted_bareword",
           "named": true
         },
@@ -2496,11 +2659,19 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -2528,19 +2699,15 @@
           "named": true
         },
         {
-          "type": "list_expression",
-          "named": true
-        },
-        {
           "type": "localization_expression",
           "named": true
         },
         {
-          "type": "loopex_expression",
+          "type": "logical_not_expression",
           "named": true
         },
         {
-          "type": "lowprec_logical_expression",
+          "type": "loopex_expression",
           "named": true
         },
         {
@@ -2553,6 +2720,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -2646,6 +2817,10 @@
         {
           "type": "variable_declaration",
           "named": true
+        },
+        {
+          "type": "version",
+          "named": true
         }
       ]
     }
@@ -2655,17 +2830,9 @@
     "named": true,
     "fields": {
       "left": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -2696,6 +2863,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -2743,11 +2914,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -2775,19 +2954,15 @@
             "named": true
           },
           {
-            "type": "list_expression",
-            "named": true
-          },
-          {
             "type": "localization_expression",
             "named": true
           },
           {
-            "type": "loopex_expression",
+            "type": "logical_not_expression",
             "named": true
           },
           {
-            "type": "lowprec_logical_expression",
+            "type": "loopex_expression",
             "named": true
           },
           {
@@ -2800,6 +2975,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -2892,6 +3071,10 @@
           },
           {
             "type": "variable_declaration",
+            "named": true
+          },
+          {
+            "type": "version",
             "named": true
           }
         ]
@@ -2971,17 +3154,9 @@
         ]
       },
       "right": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -3012,6 +3187,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -3059,11 +3238,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -3091,19 +3278,15 @@
             "named": true
           },
           {
-            "type": "list_expression",
-            "named": true
-          },
-          {
             "type": "localization_expression",
             "named": true
           },
           {
-            "type": "loopex_expression",
+            "type": "logical_not_expression",
             "named": true
           },
           {
-            "type": "lowprec_logical_expression",
+            "type": "loopex_expression",
             "named": true
           },
           {
@@ -3116,6 +3299,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -3209,9 +3396,28 @@
           {
             "type": "variable_declaration",
             "named": true
+          },
+          {
+            "type": "version",
+            "named": true
           }
         ]
       }
+    }
+  },
+  {
+    "type": "async_block_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "block",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -3306,6 +3512,10 @@
           "named": true
         },
         {
+          "type": "async_block_expression",
+          "named": true
+        },
+        {
           "type": "autoquoted_bareword",
           "named": true
         },
@@ -3350,11 +3560,19 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -3382,19 +3600,15 @@
           "named": true
         },
         {
-          "type": "list_expression",
-          "named": true
-        },
-        {
           "type": "localization_expression",
           "named": true
         },
         {
-          "type": "loopex_expression",
+          "type": "logical_not_expression",
           "named": true
         },
         {
-          "type": "lowprec_logical_expression",
+          "type": "loopex_expression",
           "named": true
         },
         {
@@ -3407,6 +3621,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -3500,6 +3718,10 @@
         {
           "type": "variable_declaration",
           "named": true
+        },
+        {
+          "type": "version",
+          "named": true
         }
       ]
     }
@@ -3514,17 +3736,9 @@
     "named": true,
     "fields": {
       "left": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -3555,6 +3769,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -3602,11 +3820,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -3634,19 +3860,15 @@
             "named": true
           },
           {
-            "type": "list_expression",
-            "named": true
-          },
-          {
             "type": "localization_expression",
             "named": true
           },
           {
-            "type": "loopex_expression",
+            "type": "logical_not_expression",
             "named": true
           },
           {
-            "type": "lowprec_logical_expression",
+            "type": "loopex_expression",
             "named": true
           },
           {
@@ -3659,6 +3881,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -3751,6 +3977,10 @@
           },
           {
             "type": "variable_declaration",
+            "named": true
+          },
+          {
+            "type": "version",
             "named": true
           }
         ]
@@ -3846,17 +4076,9 @@
         ]
       },
       "right": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -3887,6 +4109,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -3934,11 +4160,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -3966,19 +4200,15 @@
             "named": true
           },
           {
-            "type": "list_expression",
-            "named": true
-          },
-          {
             "type": "localization_expression",
             "named": true
           },
           {
-            "type": "loopex_expression",
+            "type": "logical_not_expression",
             "named": true
           },
           {
-            "type": "lowprec_logical_expression",
+            "type": "loopex_expression",
             "named": true
           },
           {
@@ -3991,6 +4221,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -4084,6 +4318,10 @@
           {
             "type": "variable_declaration",
             "named": true
+          },
+          {
+            "type": "version",
+            "named": true
           }
         ]
       }
@@ -4135,6 +4373,10 @@
         },
         {
           "type": "for_statement",
+          "named": true
+        },
+        {
+          "type": "format_statement",
           "named": true
         },
         {
@@ -4226,6 +4468,10 @@
         },
         {
           "type": "for_statement",
+          "named": true
+        },
+        {
+          "type": "format_statement",
           "named": true
         },
         {
@@ -4371,21 +4617,28 @@
     }
   },
   {
+    "type": "code_deref_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "block",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "coderef_call_expression",
     "named": true,
     "fields": {
       "arguments": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -4416,6 +4669,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -4463,11 +4720,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -4503,6 +4768,10 @@
             "named": true
           },
           {
+            "type": "logical_not_expression",
+            "named": true
+          },
+          {
             "type": "loopex_expression",
             "named": true
           },
@@ -4520,6 +4789,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -4613,6 +4886,10 @@
           {
             "type": "variable_declaration",
             "named": true
+          },
+          {
+            "type": "version",
+            "named": true
           }
         ]
       }
@@ -4651,6 +4928,10 @@
         },
         {
           "type": "assignment_expression",
+          "named": true
+        },
+        {
+          "type": "async_block_expression",
           "named": true
         },
         {
@@ -4698,11 +4979,19 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -4730,19 +5019,15 @@
           "named": true
         },
         {
-          "type": "list_expression",
-          "named": true
-        },
-        {
           "type": "localization_expression",
           "named": true
         },
         {
-          "type": "loopex_expression",
+          "type": "logical_not_expression",
           "named": true
         },
         {
-          "type": "lowprec_logical_expression",
+          "type": "loopex_expression",
           "named": true
         },
         {
@@ -4755,6 +5040,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -4848,6 +5137,10 @@
         {
           "type": "variable_declaration",
           "named": true
+        },
+        {
+          "type": "version",
+          "named": true
         }
       ]
     }
@@ -4878,17 +5171,9 @@
     "named": true,
     "fields": {
       "alternative": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -4919,6 +5204,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -4966,11 +5255,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -4998,19 +5295,15 @@
             "named": true
           },
           {
-            "type": "list_expression",
-            "named": true
-          },
-          {
             "type": "localization_expression",
             "named": true
           },
           {
-            "type": "loopex_expression",
+            "type": "logical_not_expression",
             "named": true
           },
           {
-            "type": "lowprec_logical_expression",
+            "type": "loopex_expression",
             "named": true
           },
           {
@@ -5023,6 +5316,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -5115,22 +5412,18 @@
           },
           {
             "type": "variable_declaration",
+            "named": true
+          },
+          {
+            "type": "version",
             "named": true
           }
         ]
       },
       "condition": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -5161,6 +5454,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -5208,11 +5505,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -5240,19 +5545,15 @@
             "named": true
           },
           {
-            "type": "list_expression",
-            "named": true
-          },
-          {
             "type": "localization_expression",
             "named": true
           },
           {
-            "type": "loopex_expression",
+            "type": "logical_not_expression",
             "named": true
           },
           {
-            "type": "lowprec_logical_expression",
+            "type": "loopex_expression",
             "named": true
           },
           {
@@ -5265,6 +5566,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -5357,22 +5662,18 @@
           },
           {
             "type": "variable_declaration",
+            "named": true
+          },
+          {
+            "type": "version",
             "named": true
           }
         ]
       },
       "consequent": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -5403,6 +5704,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -5450,11 +5755,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -5482,19 +5795,15 @@
             "named": true
           },
           {
-            "type": "list_expression",
-            "named": true
-          },
-          {
             "type": "localization_expression",
             "named": true
           },
           {
-            "type": "loopex_expression",
+            "type": "logical_not_expression",
             "named": true
           },
           {
-            "type": "lowprec_logical_expression",
+            "type": "loopex_expression",
             "named": true
           },
           {
@@ -5507,6 +5816,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -5599,6 +5912,10 @@
           },
           {
             "type": "variable_declaration",
+            "named": true
+          },
+          {
+            "type": "version",
             "named": true
           }
         ]
@@ -5620,17 +5937,9 @@
         ]
       },
       "condition": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -5661,6 +5970,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -5708,11 +6021,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -5748,6 +6069,10 @@
             "named": true
           },
           {
+            "type": "logical_not_expression",
+            "named": true
+          },
+          {
             "type": "loopex_expression",
             "named": true
           },
@@ -5765,6 +6090,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -5857,6 +6186,10 @@
           },
           {
             "type": "variable_declaration",
+            "named": true
+          },
+          {
+            "type": "version",
             "named": true
           }
         ]
@@ -5952,6 +6285,10 @@
           },
           {
             "type": "for_statement",
+            "named": true
+          },
+          {
+            "type": "format_statement",
             "named": true
           },
           {
@@ -6051,6 +6388,10 @@
             "named": true
           },
           {
+            "type": "format_statement",
+            "named": true
+          },
+          {
             "type": "loop_statement",
             "named": true
           },
@@ -6089,17 +6430,9 @@
         ]
       },
       "iterator": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -6130,6 +6463,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -6177,11 +6514,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -6217,6 +6562,10 @@
             "named": true
           },
           {
+            "type": "logical_not_expression",
+            "named": true
+          },
+          {
             "type": "loopex_expression",
             "named": true
           },
@@ -6234,6 +6583,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -6326,6 +6679,10 @@
           },
           {
             "type": "variable_declaration",
+            "named": true
+          },
+          {
+            "type": "version",
             "named": true
           }
         ]
@@ -6394,17 +6751,9 @@
         ]
       },
       "condition": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -6435,6 +6784,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -6482,11 +6835,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -6522,6 +6883,10 @@
             "named": true
           },
           {
+            "type": "logical_not_expression",
+            "named": true
+          },
+          {
             "type": "loopex_expression",
             "named": true
           },
@@ -6539,6 +6904,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -6631,6 +7000,10 @@
           },
           {
             "type": "variable_declaration",
+            "named": true
+          },
+          {
+            "type": "version",
             "named": true
           }
         ]
@@ -6656,17 +7029,9 @@
     "named": true,
     "fields": {
       "left": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -6697,6 +7062,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -6744,11 +7113,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -6776,19 +7153,15 @@
             "named": true
           },
           {
-            "type": "list_expression",
-            "named": true
-          },
-          {
             "type": "localization_expression",
             "named": true
           },
           {
-            "type": "loopex_expression",
+            "type": "logical_not_expression",
             "named": true
           },
           {
-            "type": "lowprec_logical_expression",
+            "type": "loopex_expression",
             "named": true
           },
           {
@@ -6801,6 +7174,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -6893,6 +7270,10 @@
           },
           {
             "type": "variable_declaration",
+            "named": true
+          },
+          {
+            "type": "version",
             "named": true
           }
         ]
@@ -6944,17 +7325,9 @@
         ]
       },
       "right": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -6985,6 +7358,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -7032,11 +7409,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -7064,19 +7449,15 @@
             "named": true
           },
           {
-            "type": "list_expression",
-            "named": true
-          },
-          {
             "type": "localization_expression",
             "named": true
           },
           {
-            "type": "loopex_expression",
+            "type": "logical_not_expression",
             "named": true
           },
           {
-            "type": "lowprec_logical_expression",
+            "type": "loopex_expression",
             "named": true
           },
           {
@@ -7089,6 +7470,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -7182,6 +7567,10 @@
           {
             "type": "variable_declaration",
             "named": true
+          },
+          {
+            "type": "version",
+            "named": true
           }
         ]
       }
@@ -7193,7 +7582,7 @@
     "fields": {},
     "children": {
       "multiple": false,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "ambiguous_function_call_expression",
@@ -7225,6 +7614,10 @@
         },
         {
           "type": "assignment_expression",
+          "named": true
+        },
+        {
+          "type": "async_block_expression",
           "named": true
         },
         {
@@ -7276,6 +7669,10 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "filename",
           "named": true
         },
@@ -7285,6 +7682,10 @@
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -7312,19 +7713,15 @@
           "named": true
         },
         {
-          "type": "list_expression",
-          "named": true
-        },
-        {
           "type": "localization_expression",
           "named": true
         },
         {
-          "type": "loopex_expression",
+          "type": "logical_not_expression",
           "named": true
         },
         {
-          "type": "lowprec_logical_expression",
+          "type": "loopex_expression",
           "named": true
         },
         {
@@ -7337,6 +7734,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -7430,6 +7831,10 @@
         {
           "type": "variable_declaration",
           "named": true
+        },
+        {
+          "type": "version",
+          "named": true
         }
       ]
     }
@@ -7472,6 +7877,10 @@
         },
         {
           "type": "assignment_expression",
+          "named": true
+        },
+        {
+          "type": "async_block_expression",
           "named": true
         },
         {
@@ -7519,11 +7928,19 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -7559,6 +7976,10 @@
           "named": true
         },
         {
+          "type": "logical_not_expression",
+          "named": true
+        },
+        {
           "type": "loopex_expression",
           "named": true
         },
@@ -7576,6 +7997,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -7683,6 +8108,10 @@
           "named": true
         },
         {
+          "type": "version",
+          "named": true
+        },
+        {
           "type": "yadayada",
           "named": true
         }
@@ -7775,6 +8204,10 @@
           "named": true
         },
         {
+          "type": "async_block_expression",
+          "named": true
+        },
+        {
           "type": "autoquoted_bareword",
           "named": true
         },
@@ -7819,11 +8252,19 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -7851,19 +8292,15 @@
           "named": true
         },
         {
-          "type": "list_expression",
-          "named": true
-        },
-        {
           "type": "localization_expression",
           "named": true
         },
         {
-          "type": "loopex_expression",
+          "type": "logical_not_expression",
           "named": true
         },
         {
-          "type": "lowprec_logical_expression",
+          "type": "loopex_expression",
           "named": true
         },
         {
@@ -7876,6 +8313,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -7969,6 +8410,10 @@
         {
           "type": "variable_declaration",
           "named": true
+        },
+        {
+          "type": "version",
+          "named": true
         }
       ]
     }
@@ -7998,17 +8443,9 @@
         ]
       },
       "list": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -8039,6 +8476,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -8086,11 +8527,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -8126,6 +8575,10 @@
             "named": true
           },
           {
+            "type": "logical_not_expression",
+            "named": true
+          },
+          {
             "type": "loopex_expression",
             "named": true
           },
@@ -8143,6 +8596,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -8236,6 +8693,10 @@
           {
             "type": "variable_declaration",
             "named": true
+          },
+          {
+            "type": "version",
+            "named": true
           }
         ]
       },
@@ -8243,6 +8704,10 @@
         "multiple": false,
         "required": false,
         "types": [
+          {
+            "type": "refalias_variable",
+            "named": true
+          },
           {
             "type": "scalar",
             "named": true
@@ -8254,23 +8719,37 @@
         "required": false,
         "types": [
           {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
-          {
-            "type": ",",
-            "named": false
-          },
-          {
             "type": "scalar",
             "named": true
           }
         ]
       }
+    }
+  },
+  {
+    "type": "format_statement",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "bareword",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "format_content",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -8681,6 +9160,10 @@
           "named": true
         },
         {
+          "type": "async_block_expression",
+          "named": true
+        },
+        {
           "type": "autoquoted_bareword",
           "named": true
         },
@@ -8725,11 +9208,19 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -8765,6 +9256,10 @@
           "named": true
         },
         {
+          "type": "logical_not_expression",
+          "named": true
+        },
+        {
           "type": "loopex_expression",
           "named": true
         },
@@ -8782,6 +9277,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -8875,6 +9374,10 @@
         {
           "type": "variable_declaration",
           "named": true
+        },
+        {
+          "type": "version",
+          "named": true
         }
       ]
     }
@@ -8888,6 +9391,10 @@
       "required": false,
       "types": [
         {
+          "type": "code_deref_expression",
+          "named": true
+        },
+        {
           "type": "varname",
           "named": true
         }
@@ -8899,17 +9406,9 @@
     "named": true,
     "fields": {
       "arguments": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -8940,6 +9439,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -8987,11 +9490,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -9027,6 +9538,10 @@
             "named": true
           },
           {
+            "type": "logical_not_expression",
+            "named": true
+          },
+          {
             "type": "loopex_expression",
             "named": true
           },
@@ -9044,6 +9559,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -9137,6 +9656,10 @@
           {
             "type": "variable_declaration",
             "named": true
+          },
+          {
+            "type": "version",
+            "named": true
           }
         ]
       },
@@ -9170,6 +9693,10 @@
       "multiple": false,
       "required": true,
       "types": [
+        {
+          "type": "glob_deref_expression",
+          "named": true
+        },
         {
           "type": "varname",
           "named": true
@@ -9218,6 +9745,10 @@
           "named": true
         },
         {
+          "type": "async_block_expression",
+          "named": true
+        },
+        {
           "type": "autoquoted_bareword",
           "named": true
         },
@@ -9231,6 +9762,10 @@
         },
         {
           "type": "binary_expression",
+          "named": true
+        },
+        {
+          "type": "block",
           "named": true
         },
         {
@@ -9262,11 +9797,19 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -9294,19 +9837,15 @@
           "named": true
         },
         {
-          "type": "list_expression",
-          "named": true
-        },
-        {
           "type": "localization_expression",
           "named": true
         },
         {
-          "type": "loopex_expression",
+          "type": "logical_not_expression",
           "named": true
         },
         {
-          "type": "lowprec_logical_expression",
+          "type": "loopex_expression",
           "named": true
         },
         {
@@ -9319,6 +9858,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -9411,6 +9954,10 @@
         },
         {
           "type": "variable_declaration",
+          "named": true
+        },
+        {
+          "type": "version",
           "named": true
         }
       ]
@@ -9457,6 +10004,10 @@
           "named": true
         },
         {
+          "type": "async_block_expression",
+          "named": true
+        },
+        {
           "type": "autoquoted_bareword",
           "named": true
         },
@@ -9501,11 +10052,19 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -9541,6 +10100,10 @@
           "named": true
         },
         {
+          "type": "logical_not_expression",
+          "named": true
+        },
+        {
           "type": "loopex_expression",
           "named": true
         },
@@ -9558,6 +10121,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -9650,6 +10217,10 @@
         },
         {
           "type": "variable_declaration",
+          "named": true
+        },
+        {
+          "type": "version",
           "named": true
         }
       ]
@@ -9696,6 +10267,10 @@
           "named": true
         },
         {
+          "type": "async_block_expression",
+          "named": true
+        },
+        {
           "type": "autoquoted_bareword",
           "named": true
         },
@@ -9740,11 +10315,19 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -9776,19 +10359,15 @@
           "named": true
         },
         {
-          "type": "list_expression",
-          "named": true
-        },
-        {
           "type": "localization_expression",
           "named": true
         },
         {
-          "type": "loopex_expression",
+          "type": "logical_not_expression",
           "named": true
         },
         {
-          "type": "lowprec_logical_expression",
+          "type": "loopex_expression",
           "named": true
         },
         {
@@ -9801,6 +10380,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -9893,6 +10476,10 @@
         },
         {
           "type": "variable_declaration",
+          "named": true
+        },
+        {
+          "type": "version",
           "named": true
         }
       ]
@@ -9954,6 +10541,10 @@
           "named": true
         },
         {
+          "type": "async_block_expression",
+          "named": true
+        },
+        {
           "type": "autoquoted_bareword",
           "named": true
         },
@@ -9998,11 +10589,19 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -10030,19 +10629,15 @@
           "named": true
         },
         {
-          "type": "list_expression",
-          "named": true
-        },
-        {
           "type": "localization_expression",
           "named": true
         },
         {
-          "type": "loopex_expression",
+          "type": "logical_not_expression",
           "named": true
         },
         {
-          "type": "lowprec_logical_expression",
+          "type": "loopex_expression",
           "named": true
         },
         {
@@ -10055,6 +10650,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -10148,6 +10747,10 @@
         {
           "type": "variable_declaration",
           "named": true
+        },
+        {
+          "type": "version",
+          "named": true
         }
       ]
     }
@@ -10167,17 +10770,9 @@
         ]
       },
       "key": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -10208,6 +10803,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -10255,11 +10854,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -10295,6 +10902,10 @@
             "named": true
           },
           {
+            "type": "logical_not_expression",
+            "named": true
+          },
+          {
             "type": "loopex_expression",
             "named": true
           },
@@ -10312,6 +10923,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -10405,6 +11020,10 @@
           {
             "type": "variable_declaration",
             "named": true
+          },
+          {
+            "type": "version",
+            "named": true
           }
         ]
       }
@@ -10443,6 +11062,10 @@
         },
         {
           "type": "assignment_expression",
+          "named": true
+        },
+        {
+          "type": "async_block_expression",
           "named": true
         },
         {
@@ -10490,11 +11113,19 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -10522,19 +11153,15 @@
           "named": true
         },
         {
-          "type": "list_expression",
-          "named": true
-        },
-        {
           "type": "localization_expression",
           "named": true
         },
         {
-          "type": "loopex_expression",
+          "type": "logical_not_expression",
           "named": true
         },
         {
-          "type": "lowprec_logical_expression",
+          "type": "loopex_expression",
           "named": true
         },
         {
@@ -10547,6 +11174,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -10640,6 +11271,10 @@
         {
           "type": "variable_declaration",
           "named": true
+        },
+        {
+          "type": "version",
+          "named": true
         }
       ]
     }
@@ -10663,6 +11298,10 @@
         },
         {
           "type": "array_element_expression",
+          "named": true
+        },
+        {
+          "type": "arraylen",
           "named": true
         },
         {
@@ -10751,7 +11390,15 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "for_statement",
+          "named": true
+        },
+        {
+          "type": "format_statement",
           "named": true
         },
         {
@@ -10847,17 +11494,9 @@
         ]
       },
       "arrayref": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -10888,6 +11527,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -10935,11 +11578,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -10967,19 +11618,15 @@
             "named": true
           },
           {
-            "type": "list_expression",
-            "named": true
-          },
-          {
             "type": "localization_expression",
             "named": true
           },
           {
-            "type": "loopex_expression",
+            "type": "logical_not_expression",
             "named": true
           },
           {
-            "type": "lowprec_logical_expression",
+            "type": "loopex_expression",
             "named": true
           },
           {
@@ -10992,6 +11639,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -11084,6 +11735,10 @@
           },
           {
             "type": "variable_declaration",
+            "named": true
+          },
+          {
+            "type": "version",
             "named": true
           }
         ]
@@ -11099,17 +11754,9 @@
         ]
       },
       "hashref": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -11140,6 +11787,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -11187,11 +11838,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -11219,19 +11878,15 @@
             "named": true
           },
           {
-            "type": "list_expression",
-            "named": true
-          },
-          {
             "type": "localization_expression",
             "named": true
           },
           {
-            "type": "loopex_expression",
+            "type": "logical_not_expression",
             "named": true
           },
           {
-            "type": "lowprec_logical_expression",
+            "type": "loopex_expression",
             "named": true
           },
           {
@@ -11244,6 +11899,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -11336,6 +11995,10 @@
           },
           {
             "type": "variable_declaration",
+            "named": true
+          },
+          {
+            "type": "version",
             "named": true
           }
         ]
@@ -11375,6 +12038,10 @@
         },
         {
           "type": "assignment_expression",
+          "named": true
+        },
+        {
+          "type": "async_block_expression",
           "named": true
         },
         {
@@ -11422,11 +12089,19 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -11462,6 +12137,10 @@
           "named": true
         },
         {
+          "type": "logical_not_expression",
+          "named": true
+        },
+        {
           "type": "loopex_expression",
           "named": true
         },
@@ -11479,6 +12158,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -11571,6 +12254,10 @@
         },
         {
           "type": "variable_declaration",
+          "named": true
+        },
+        {
+          "type": "version",
           "named": true
         }
       ]
@@ -11622,6 +12309,10 @@
           "named": true
         },
         {
+          "type": "async_block_expression",
+          "named": true
+        },
+        {
           "type": "autoquoted_bareword",
           "named": true
         },
@@ -11666,11 +12357,19 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -11698,19 +12397,15 @@
           "named": true
         },
         {
-          "type": "list_expression",
-          "named": true
-        },
-        {
           "type": "localization_expression",
           "named": true
         },
         {
-          "type": "loopex_expression",
+          "type": "logical_not_expression",
           "named": true
         },
         {
-          "type": "lowprec_logical_expression",
+          "type": "loopex_expression",
           "named": true
         },
         {
@@ -11723,6 +12418,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -11815,6 +12514,10 @@
         },
         {
           "type": "variable_declaration",
+          "named": true
+        },
+        {
+          "type": "version",
           "named": true
         }
       ]
@@ -11861,6 +12564,10 @@
           "named": true
         },
         {
+          "type": "async_block_expression",
+          "named": true
+        },
+        {
           "type": "autoquoted_bareword",
           "named": true
         },
@@ -11905,11 +12612,19 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -11937,19 +12652,15 @@
           "named": true
         },
         {
-          "type": "list_expression",
-          "named": true
-        },
-        {
           "type": "localization_expression",
           "named": true
         },
         {
-          "type": "loopex_expression",
+          "type": "logical_not_expression",
           "named": true
         },
         {
-          "type": "lowprec_logical_expression",
+          "type": "loopex_expression",
           "named": true
         },
         {
@@ -11962,6 +12673,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -12055,36 +12770,22 @@
         {
           "type": "variable_declaration",
           "named": true
+        },
+        {
+          "type": "version",
+          "named": true
         }
       ]
     }
   },
   {
-    "type": "loop_statement",
+    "type": "logical_not_expression",
     "named": true,
     "fields": {
-      "block": {
+      "operand": {
         "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "block",
-            "named": true
-          }
-        ]
-      },
-      "condition": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -12115,6 +12816,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -12162,11 +12867,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -12202,11 +12915,11 @@
             "named": true
           },
           {
-            "type": "loopex_expression",
+            "type": "logical_not_expression",
             "named": true
           },
           {
-            "type": "lowprec_logical_expression",
+            "type": "loopex_expression",
             "named": true
           },
           {
@@ -12219,6 +12932,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -12311,6 +13028,294 @@
           },
           {
             "type": "variable_declaration",
+            "named": true
+          },
+          {
+            "type": "version",
+            "named": true
+          }
+        ]
+      },
+      "operator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "not",
+            "named": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "loop_statement",
+    "named": true,
+    "fields": {
+      "block": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "block",
+            "named": true
+          }
+        ]
+      },
+      "condition": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "ambiguous_function_call_expression",
+            "named": true
+          },
+          {
+            "type": "anonymous_array_expression",
+            "named": true
+          },
+          {
+            "type": "anonymous_hash_expression",
+            "named": true
+          },
+          {
+            "type": "anonymous_method_expression",
+            "named": true
+          },
+          {
+            "type": "anonymous_subroutine_expression",
+            "named": true
+          },
+          {
+            "type": "array",
+            "named": true
+          },
+          {
+            "type": "arraylen",
+            "named": true
+          },
+          {
+            "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
+            "named": true
+          },
+          {
+            "type": "autoquoted_bareword",
+            "named": true
+          },
+          {
+            "type": "await_expression",
+            "named": true
+          },
+          {
+            "type": "bareword",
+            "named": true
+          },
+          {
+            "type": "binary_expression",
+            "named": true
+          },
+          {
+            "type": "command_heredoc_token",
+            "named": true
+          },
+          {
+            "type": "command_string",
+            "named": true
+          },
+          {
+            "type": "conditional_expression",
+            "named": true
+          },
+          {
+            "type": "do_expression",
+            "named": true
+          },
+          {
+            "type": "equality_expression",
+            "named": true
+          },
+          {
+            "type": "eval_expression",
+            "named": true
+          },
+          {
+            "type": "fileglob_expression",
+            "named": true
+          },
+          {
+            "type": "filehandle",
+            "named": true
+          },
+          {
+            "type": "func0op_call_expression",
+            "named": true
+          },
+          {
+            "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
+            "named": true
+          },
+          {
+            "type": "function_call_expression",
+            "named": true
+          },
+          {
+            "type": "glob",
+            "named": true
+          },
+          {
+            "type": "goto_expression",
+            "named": true
+          },
+          {
+            "type": "hash",
+            "named": true
+          },
+          {
+            "type": "heredoc_token",
+            "named": true
+          },
+          {
+            "type": "interpolated_string_literal",
+            "named": true
+          },
+          {
+            "type": "list_expression",
+            "named": true
+          },
+          {
+            "type": "localization_expression",
+            "named": true
+          },
+          {
+            "type": "logical_not_expression",
+            "named": true
+          },
+          {
+            "type": "loopex_expression",
+            "named": true
+          },
+          {
+            "type": "lowprec_logical_expression",
+            "named": true
+          },
+          {
+            "type": "map_grep_expression",
+            "named": true
+          },
+          {
+            "type": "match_regexp",
+            "named": true
+          },
+          {
+            "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "postfix_deref",
+            "named": true
+          },
+          {
+            "type": "postinc_expression",
+            "named": true
+          },
+          {
+            "type": "preinc_expression",
+            "named": true
+          },
+          {
+            "type": "primitive",
+            "named": true
+          },
+          {
+            "type": "quoted_regexp",
+            "named": true
+          },
+          {
+            "type": "quoted_word_list",
+            "named": true
+          },
+          {
+            "type": "readline_expression",
+            "named": true
+          },
+          {
+            "type": "refgen_expression",
+            "named": true
+          },
+          {
+            "type": "relational_expression",
+            "named": true
+          },
+          {
+            "type": "require_expression",
+            "named": true
+          },
+          {
+            "type": "require_version_expression",
+            "named": true
+          },
+          {
+            "type": "return_expression",
+            "named": true
+          },
+          {
+            "type": "scalar",
+            "named": true
+          },
+          {
+            "type": "slices",
+            "named": true
+          },
+          {
+            "type": "sort_expression",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          },
+          {
+            "type": "stub_expression",
+            "named": true
+          },
+          {
+            "type": "subscripted",
+            "named": true
+          },
+          {
+            "type": "substitution_regexp",
+            "named": true
+          },
+          {
+            "type": "transliteration_expression",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          },
+          {
+            "type": "undef_expression",
+            "named": true
+          },
+          {
+            "type": "variable_declaration",
+            "named": true
+          },
+          {
+            "type": "version",
             "named": true
           }
         ]
@@ -12387,6 +13392,10 @@
           "named": true
         },
         {
+          "type": "async_block_expression",
+          "named": true
+        },
+        {
           "type": "autoquoted_bareword",
           "named": true
         },
@@ -12431,11 +13440,19 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -12467,19 +13484,15 @@
           "named": true
         },
         {
-          "type": "list_expression",
-          "named": true
-        },
-        {
           "type": "localization_expression",
           "named": true
         },
         {
-          "type": "loopex_expression",
+          "type": "logical_not_expression",
           "named": true
         },
         {
-          "type": "lowprec_logical_expression",
+          "type": "loopex_expression",
           "named": true
         },
         {
@@ -12492,6 +13505,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -12585,6 +13602,10 @@
         {
           "type": "variable_declaration",
           "named": true
+        },
+        {
+          "type": "version",
+          "named": true
         }
       ]
     }
@@ -12594,17 +13615,9 @@
     "named": true,
     "fields": {
       "left": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -12635,6 +13648,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -12682,11 +13699,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -12722,6 +13747,10 @@
             "named": true
           },
           {
+            "type": "logical_not_expression",
+            "named": true
+          },
+          {
             "type": "loopex_expression",
             "named": true
           },
@@ -12739,6 +13768,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -12831,6 +13864,10 @@
           },
           {
             "type": "variable_declaration",
+            "named": true
+          },
+          {
+            "type": "version",
             "named": true
           }
         ]
@@ -12854,17 +13891,9 @@
         ]
       },
       "right": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -12895,6 +13924,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -12942,11 +13975,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -12982,6 +14023,10 @@
             "named": true
           },
           {
+            "type": "logical_not_expression",
+            "named": true
+          },
+          {
             "type": "loopex_expression",
             "named": true
           },
@@ -12999,6 +14044,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -13091,6 +14140,10 @@
           },
           {
             "type": "variable_declaration",
+            "named": true
+          },
+          {
+            "type": "version",
             "named": true
           }
         ]
@@ -13117,17 +14170,9 @@
     "named": true,
     "fields": {
       "callback": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -13158,6 +14203,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -13209,11 +14258,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -13241,19 +14298,15 @@
             "named": true
           },
           {
-            "type": "list_expression",
-            "named": true
-          },
-          {
             "type": "localization_expression",
             "named": true
           },
           {
-            "type": "loopex_expression",
+            "type": "logical_not_expression",
             "named": true
           },
           {
-            "type": "lowprec_logical_expression",
+            "type": "loopex_expression",
             "named": true
           },
           {
@@ -13266,6 +14319,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -13359,21 +14416,17 @@
           {
             "type": "variable_declaration",
             "named": true
+          },
+          {
+            "type": "version",
+            "named": true
           }
         ]
       },
       "list": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -13404,6 +14457,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -13451,11 +14508,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -13491,11 +14556,11 @@
             "named": true
           },
           {
-            "type": "loopex_expression",
+            "type": "logical_not_expression",
             "named": true
           },
           {
-            "type": "lowprec_logical_expression",
+            "type": "loopex_expression",
             "named": true
           },
           {
@@ -13508,6 +14573,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -13600,6 +14669,10 @@
           },
           {
             "type": "variable_declaration",
+            "named": true
+          },
+          {
+            "type": "version",
             "named": true
           }
         ]
@@ -13662,17 +14735,9 @@
     "named": true,
     "fields": {
       "arguments": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -13703,6 +14768,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -13750,11 +14819,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -13790,6 +14867,10 @@
             "named": true
           },
           {
+            "type": "logical_not_expression",
+            "named": true
+          },
+          {
             "type": "loopex_expression",
             "named": true
           },
@@ -13807,6 +14888,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -13899,22 +14984,18 @@
           },
           {
             "type": "variable_declaration",
+            "named": true
+          },
+          {
+            "type": "version",
             "named": true
           }
         ]
       },
       "invocant": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -13945,6 +15026,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -13992,11 +15077,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -14024,19 +15117,15 @@
             "named": true
           },
           {
-            "type": "list_expression",
-            "named": true
-          },
-          {
             "type": "localization_expression",
             "named": true
           },
           {
-            "type": "loopex_expression",
+            "type": "logical_not_expression",
             "named": true
           },
           {
-            "type": "lowprec_logical_expression",
+            "type": "loopex_expression",
             "named": true
           },
           {
@@ -14049,6 +15138,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -14141,6 +15234,10 @@
           },
           {
             "type": "variable_declaration",
+            "named": true
+          },
+          {
+            "type": "version",
             "named": true
           }
         ]
@@ -14173,7 +15270,7 @@
       },
       "body": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "block",
@@ -14187,6 +15284,10 @@
         "types": [
           {
             "type": "my",
+            "named": false
+          },
+          {
+            "type": "state",
             "named": false
           }
         ]
@@ -14222,17 +15323,9 @@
     "named": true,
     "fields": {
       "default": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -14263,6 +15356,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -14310,11 +15407,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -14342,19 +15447,15 @@
             "named": true
           },
           {
-            "type": "list_expression",
-            "named": true
-          },
-          {
             "type": "localization_expression",
             "named": true
           },
           {
-            "type": "loopex_expression",
+            "type": "logical_not_expression",
             "named": true
           },
           {
-            "type": "lowprec_logical_expression",
+            "type": "loopex_expression",
             "named": true
           },
           {
@@ -14367,6 +15468,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -14459,6 +15564,10 @@
           },
           {
             "type": "variable_declaration",
+            "named": true
+          },
+          {
+            "type": "version",
             "named": true
           }
         ]
@@ -14480,17 +15589,9 @@
     "named": true,
     "fields": {
       "default": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -14521,6 +15622,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -14568,11 +15673,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -14600,19 +15713,15 @@
             "named": true
           },
           {
-            "type": "list_expression",
-            "named": true
-          },
-          {
             "type": "localization_expression",
             "named": true
           },
           {
-            "type": "loopex_expression",
+            "type": "logical_not_expression",
             "named": true
           },
           {
-            "type": "lowprec_logical_expression",
+            "type": "loopex_expression",
             "named": true
           },
           {
@@ -14625,6 +15734,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -14717,6 +15830,10 @@
           },
           {
             "type": "variable_declaration",
+            "named": true
+          },
+          {
+            "type": "version",
             "named": true
           }
         ]
@@ -14779,6 +15896,269 @@
     }
   },
   {
+    "type": "parenthesized_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "ambiguous_function_call_expression",
+          "named": true
+        },
+        {
+          "type": "anonymous_array_expression",
+          "named": true
+        },
+        {
+          "type": "anonymous_hash_expression",
+          "named": true
+        },
+        {
+          "type": "anonymous_method_expression",
+          "named": true
+        },
+        {
+          "type": "anonymous_subroutine_expression",
+          "named": true
+        },
+        {
+          "type": "array",
+          "named": true
+        },
+        {
+          "type": "arraylen",
+          "named": true
+        },
+        {
+          "type": "assignment_expression",
+          "named": true
+        },
+        {
+          "type": "async_block_expression",
+          "named": true
+        },
+        {
+          "type": "autoquoted_bareword",
+          "named": true
+        },
+        {
+          "type": "await_expression",
+          "named": true
+        },
+        {
+          "type": "bareword",
+          "named": true
+        },
+        {
+          "type": "binary_expression",
+          "named": true
+        },
+        {
+          "type": "command_heredoc_token",
+          "named": true
+        },
+        {
+          "type": "command_string",
+          "named": true
+        },
+        {
+          "type": "conditional_expression",
+          "named": true
+        },
+        {
+          "type": "do_expression",
+          "named": true
+        },
+        {
+          "type": "equality_expression",
+          "named": true
+        },
+        {
+          "type": "eval_expression",
+          "named": true
+        },
+        {
+          "type": "fileglob_expression",
+          "named": true
+        },
+        {
+          "type": "filehandle",
+          "named": true
+        },
+        {
+          "type": "func0op_call_expression",
+          "named": true
+        },
+        {
+          "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
+          "named": true
+        },
+        {
+          "type": "function_call_expression",
+          "named": true
+        },
+        {
+          "type": "glob",
+          "named": true
+        },
+        {
+          "type": "goto_expression",
+          "named": true
+        },
+        {
+          "type": "hash",
+          "named": true
+        },
+        {
+          "type": "heredoc_token",
+          "named": true
+        },
+        {
+          "type": "interpolated_string_literal",
+          "named": true
+        },
+        {
+          "type": "list_expression",
+          "named": true
+        },
+        {
+          "type": "localization_expression",
+          "named": true
+        },
+        {
+          "type": "logical_not_expression",
+          "named": true
+        },
+        {
+          "type": "loopex_expression",
+          "named": true
+        },
+        {
+          "type": "lowprec_logical_expression",
+          "named": true
+        },
+        {
+          "type": "map_grep_expression",
+          "named": true
+        },
+        {
+          "type": "match_regexp",
+          "named": true
+        },
+        {
+          "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
+          "named": true
+        },
+        {
+          "type": "postfix_deref",
+          "named": true
+        },
+        {
+          "type": "postinc_expression",
+          "named": true
+        },
+        {
+          "type": "preinc_expression",
+          "named": true
+        },
+        {
+          "type": "primitive",
+          "named": true
+        },
+        {
+          "type": "quoted_regexp",
+          "named": true
+        },
+        {
+          "type": "quoted_word_list",
+          "named": true
+        },
+        {
+          "type": "readline_expression",
+          "named": true
+        },
+        {
+          "type": "refgen_expression",
+          "named": true
+        },
+        {
+          "type": "relational_expression",
+          "named": true
+        },
+        {
+          "type": "require_expression",
+          "named": true
+        },
+        {
+          "type": "require_version_expression",
+          "named": true
+        },
+        {
+          "type": "return_expression",
+          "named": true
+        },
+        {
+          "type": "scalar",
+          "named": true
+        },
+        {
+          "type": "slices",
+          "named": true
+        },
+        {
+          "type": "sort_expression",
+          "named": true
+        },
+        {
+          "type": "string_literal",
+          "named": true
+        },
+        {
+          "type": "stub_expression",
+          "named": true
+        },
+        {
+          "type": "subscripted",
+          "named": true
+        },
+        {
+          "type": "substitution_regexp",
+          "named": true
+        },
+        {
+          "type": "transliteration_expression",
+          "named": true
+        },
+        {
+          "type": "unary_expression",
+          "named": true
+        },
+        {
+          "type": "undef_expression",
+          "named": true
+        },
+        {
+          "type": "variable_declaration",
+          "named": true
+        },
+        {
+          "type": "version",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "phaser_statement",
     "named": true,
     "fields": {
@@ -14825,17 +16205,9 @@
     "named": true,
     "fields": {
       "condition": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -14866,6 +16238,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -14913,11 +16289,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -14953,6 +16337,10 @@
             "named": true
           },
           {
+            "type": "logical_not_expression",
+            "named": true
+          },
+          {
             "type": "loopex_expression",
             "named": true
           },
@@ -14970,6 +16358,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -15063,6 +16455,10 @@
           {
             "type": "variable_declaration",
             "named": true
+          },
+          {
+            "type": "version",
+            "named": true
           }
         ]
       }
@@ -15101,6 +16497,10 @@
         },
         {
           "type": "assignment_expression",
+          "named": true
+        },
+        {
+          "type": "async_block_expression",
           "named": true
         },
         {
@@ -15148,11 +16548,19 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -15188,6 +16596,10 @@
           "named": true
         },
         {
+          "type": "logical_not_expression",
+          "named": true
+        },
+        {
           "type": "loopex_expression",
           "named": true
         },
@@ -15205,6 +16617,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -15297,6 +16713,10 @@
         },
         {
           "type": "variable_declaration",
+          "named": true
+        },
+        {
+          "type": "version",
           "named": true
         }
       ]
@@ -15307,17 +16727,9 @@
     "named": true,
     "fields": {
       "list": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -15348,6 +16760,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -15395,11 +16811,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -15435,6 +16859,10 @@
             "named": true
           },
           {
+            "type": "logical_not_expression",
+            "named": true
+          },
+          {
             "type": "loopex_expression",
             "named": true
           },
@@ -15452,6 +16880,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -15545,6 +16977,10 @@
           {
             "type": "variable_declaration",
             "named": true
+          },
+          {
+            "type": "version",
+            "named": true
           }
         ]
       }
@@ -15583,6 +17019,10 @@
         },
         {
           "type": "assignment_expression",
+          "named": true
+        },
+        {
+          "type": "async_block_expression",
           "named": true
         },
         {
@@ -15630,11 +17070,19 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -15670,6 +17118,10 @@
           "named": true
         },
         {
+          "type": "logical_not_expression",
+          "named": true
+        },
+        {
           "type": "loopex_expression",
           "named": true
         },
@@ -15687,6 +17139,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -15779,6 +17235,10 @@
         },
         {
           "type": "variable_declaration",
+          "named": true
+        },
+        {
+          "type": "version",
           "named": true
         }
       ]
@@ -15789,17 +17249,9 @@
     "named": true,
     "fields": {
       "condition": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -15830,6 +17282,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -15877,11 +17333,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -15917,6 +17381,10 @@
             "named": true
           },
           {
+            "type": "logical_not_expression",
+            "named": true
+          },
+          {
             "type": "loopex_expression",
             "named": true
           },
@@ -15934,6 +17402,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -16027,6 +17499,10 @@
           {
             "type": "variable_declaration",
             "named": true
+          },
+          {
+            "type": "version",
+            "named": true
           }
         ]
       }
@@ -16065,6 +17541,10 @@
         },
         {
           "type": "assignment_expression",
+          "named": true
+        },
+        {
+          "type": "async_block_expression",
           "named": true
         },
         {
@@ -16112,11 +17592,19 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -16152,6 +17640,10 @@
           "named": true
         },
         {
+          "type": "logical_not_expression",
+          "named": true
+        },
+        {
           "type": "loopex_expression",
           "named": true
         },
@@ -16169,6 +17661,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -16262,6 +17758,10 @@
         {
           "type": "variable_declaration",
           "named": true
+        },
+        {
+          "type": "version",
+          "named": true
         }
       ]
     }
@@ -16271,17 +17771,9 @@
     "named": true,
     "fields": {
       "operand": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -16312,6 +17804,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -16359,11 +17855,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -16391,19 +17895,15 @@
             "named": true
           },
           {
-            "type": "list_expression",
-            "named": true
-          },
-          {
             "type": "localization_expression",
             "named": true
           },
           {
-            "type": "loopex_expression",
+            "type": "logical_not_expression",
             "named": true
           },
           {
-            "type": "lowprec_logical_expression",
+            "type": "loopex_expression",
             "named": true
           },
           {
@@ -16416,6 +17916,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -16508,6 +18012,10 @@
           },
           {
             "type": "variable_declaration",
+            "named": true
+          },
+          {
+            "type": "version",
             "named": true
           }
         ]
@@ -16533,17 +18041,9 @@
     "named": true,
     "fields": {
       "operand": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -16574,6 +18074,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -16621,11 +18125,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -16653,19 +18165,15 @@
             "named": true
           },
           {
-            "type": "list_expression",
-            "named": true
-          },
-          {
             "type": "localization_expression",
             "named": true
           },
           {
-            "type": "loopex_expression",
+            "type": "logical_not_expression",
             "named": true
           },
           {
-            "type": "lowprec_logical_expression",
+            "type": "loopex_expression",
             "named": true
           },
           {
@@ -16678,6 +18186,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -16770,6 +18282,10 @@
           },
           {
             "type": "variable_declaration",
+            "named": true
+          },
+          {
+            "type": "version",
             "named": true
           }
         ]
@@ -16871,6 +18387,29 @@
     }
   },
   {
+    "type": "refalias_variable",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "array",
+          "named": true
+        },
+        {
+          "type": "hash",
+          "named": true
+        },
+        {
+          "type": "scalar",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "refgen_expression",
     "named": true,
     "fields": {},
@@ -16908,6 +18447,10 @@
         },
         {
           "type": "assignment_expression",
+          "named": true
+        },
+        {
+          "type": "async_block_expression",
           "named": true
         },
         {
@@ -16955,6 +18498,10 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
@@ -16991,19 +18538,15 @@
           "named": true
         },
         {
-          "type": "list_expression",
-          "named": true
-        },
-        {
           "type": "localization_expression",
           "named": true
         },
         {
-          "type": "loopex_expression",
+          "type": "logical_not_expression",
           "named": true
         },
         {
-          "type": "lowprec_logical_expression",
+          "type": "loopex_expression",
           "named": true
         },
         {
@@ -17016,6 +18559,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -17109,6 +18656,10 @@
         {
           "type": "variable_declaration",
           "named": true
+        },
+        {
+          "type": "version",
+          "named": true
         }
       ]
     }
@@ -17131,6 +18682,10 @@
         },
         {
           "type": "array_element_expression",
+          "named": true
+        },
+        {
+          "type": "arraylen",
           "named": true
         },
         {
@@ -17165,17 +18720,9 @@
     "named": true,
     "fields": {
       "left": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -17206,6 +18753,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -17253,11 +18804,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -17285,19 +18844,15 @@
             "named": true
           },
           {
-            "type": "list_expression",
-            "named": true
-          },
-          {
             "type": "localization_expression",
             "named": true
           },
           {
-            "type": "loopex_expression",
+            "type": "logical_not_expression",
             "named": true
           },
           {
-            "type": "lowprec_logical_expression",
+            "type": "loopex_expression",
             "named": true
           },
           {
@@ -17310,6 +18865,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -17402,6 +18961,10 @@
           },
           {
             "type": "variable_declaration",
+            "named": true
+          },
+          {
+            "type": "version",
             "named": true
           }
         ]
@@ -17449,17 +19012,9 @@
         ]
       },
       "right": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -17490,6 +19045,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -17537,11 +19096,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -17569,19 +19136,15 @@
             "named": true
           },
           {
-            "type": "list_expression",
-            "named": true
-          },
-          {
             "type": "localization_expression",
             "named": true
           },
           {
-            "type": "loopex_expression",
+            "type": "logical_not_expression",
             "named": true
           },
           {
-            "type": "lowprec_logical_expression",
+            "type": "loopex_expression",
             "named": true
           },
           {
@@ -17594,6 +19157,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -17687,6 +19254,10 @@
           {
             "type": "variable_declaration",
             "named": true
+          },
+          {
+            "type": "version",
+            "named": true
           }
         ]
       }
@@ -17710,6 +19281,10 @@
         },
         {
           "type": "array_element_expression",
+          "named": true
+        },
+        {
+          "type": "arraylen",
           "named": true
         },
         {
@@ -17780,6 +19355,10 @@
           "named": true
         },
         {
+          "type": "async_block_expression",
+          "named": true
+        },
+        {
           "type": "autoquoted_bareword",
           "named": true
         },
@@ -17824,11 +19403,19 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -17856,19 +19443,15 @@
           "named": true
         },
         {
-          "type": "list_expression",
-          "named": true
-        },
-        {
           "type": "localization_expression",
           "named": true
         },
         {
-          "type": "loopex_expression",
+          "type": "logical_not_expression",
           "named": true
         },
         {
-          "type": "lowprec_logical_expression",
+          "type": "loopex_expression",
           "named": true
         },
         {
@@ -17881,6 +19464,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -17973,6 +19560,10 @@
         },
         {
           "type": "variable_declaration",
+          "named": true
+        },
+        {
+          "type": "version",
           "named": true
         }
       ]
@@ -18039,6 +19630,10 @@
           "named": true
         },
         {
+          "type": "async_block_expression",
+          "named": true
+        },
+        {
           "type": "autoquoted_bareword",
           "named": true
         },
@@ -18083,11 +19678,19 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -18123,11 +19726,11 @@
           "named": true
         },
         {
-          "type": "loopex_expression",
+          "type": "logical_not_expression",
           "named": true
         },
         {
-          "type": "lowprec_logical_expression",
+          "type": "loopex_expression",
           "named": true
         },
         {
@@ -18140,6 +19743,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -18232,6 +19839,10 @@
         },
         {
           "type": "variable_declaration",
+          "named": true
+        },
+        {
+          "type": "version",
           "named": true
         }
       ]
@@ -18347,6 +19958,10 @@
           "named": true
         },
         {
+          "type": "async_block_expression",
+          "named": true
+        },
+        {
           "type": "autoquoted_bareword",
           "named": true
         },
@@ -18391,11 +20006,19 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -18423,19 +20046,15 @@
           "named": true
         },
         {
-          "type": "list_expression",
-          "named": true
-        },
-        {
           "type": "localization_expression",
           "named": true
         },
         {
-          "type": "loopex_expression",
+          "type": "logical_not_expression",
           "named": true
         },
         {
-          "type": "lowprec_logical_expression",
+          "type": "loopex_expression",
           "named": true
         },
         {
@@ -18448,6 +20067,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -18540,6 +20163,10 @@
         },
         {
           "type": "variable_declaration",
+          "named": true
+        },
+        {
+          "type": "version",
           "named": true
         }
       ]
@@ -18602,17 +20229,9 @@
         ]
       },
       "arrayref": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -18643,6 +20262,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -18690,11 +20313,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -18722,19 +20353,15 @@
             "named": true
           },
           {
-            "type": "list_expression",
-            "named": true
-          },
-          {
             "type": "localization_expression",
             "named": true
           },
           {
-            "type": "loopex_expression",
+            "type": "logical_not_expression",
             "named": true
           },
           {
-            "type": "lowprec_logical_expression",
+            "type": "loopex_expression",
             "named": true
           },
           {
@@ -18747,6 +20374,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -18839,6 +20470,10 @@
           },
           {
             "type": "variable_declaration",
+            "named": true
+          },
+          {
+            "type": "version",
             "named": true
           }
         ]
@@ -18854,17 +20489,9 @@
         ]
       },
       "hashref": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -18895,6 +20522,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -18942,11 +20573,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -18974,19 +20613,15 @@
             "named": true
           },
           {
-            "type": "list_expression",
-            "named": true
-          },
-          {
             "type": "localization_expression",
             "named": true
           },
           {
-            "type": "loopex_expression",
+            "type": "logical_not_expression",
             "named": true
           },
           {
-            "type": "lowprec_logical_expression",
+            "type": "loopex_expression",
             "named": true
           },
           {
@@ -18999,6 +20634,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -19091,6 +20730,10 @@
           },
           {
             "type": "variable_declaration",
+            "named": true
+          },
+          {
+            "type": "version",
             "named": true
           }
         ]
@@ -19130,6 +20773,10 @@
         },
         {
           "type": "assignment_expression",
+          "named": true
+        },
+        {
+          "type": "async_block_expression",
           "named": true
         },
         {
@@ -19177,11 +20824,19 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -19217,6 +20872,10 @@
           "named": true
         },
         {
+          "type": "logical_not_expression",
+          "named": true
+        },
+        {
           "type": "loopex_expression",
           "named": true
         },
@@ -19234,6 +20893,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -19327,6 +20990,10 @@
         {
           "type": "variable_declaration",
           "named": true
+        },
+        {
+          "type": "version",
+          "named": true
         }
       ]
     }
@@ -19373,17 +21040,9 @@
         ]
       },
       "list": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -19414,6 +21073,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -19461,11 +21124,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -19501,11 +21172,11 @@
             "named": true
           },
           {
-            "type": "loopex_expression",
+            "type": "logical_not_expression",
             "named": true
           },
           {
-            "type": "lowprec_logical_expression",
+            "type": "loopex_expression",
             "named": true
           },
           {
@@ -19518,6 +21189,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -19611,6 +21286,10 @@
           {
             "type": "variable_declaration",
             "named": true
+          },
+          {
+            "type": "version",
+            "named": true
           }
         ]
       }
@@ -19663,6 +21342,10 @@
         },
         {
           "type": "for_statement",
+          "named": true
+        },
+        {
+          "type": "format_statement",
           "named": true
         },
         {
@@ -19771,6 +21454,10 @@
             "named": true
           },
           {
+            "type": "format_statement",
+            "named": true
+          },
+          {
             "type": "loop_statement",
             "named": true
           },
@@ -19832,6 +21519,10 @@
         },
         {
           "type": "array_element_expression",
+          "named": true
+        },
+        {
+          "type": "arraylen",
           "named": true
         },
         {
@@ -19898,7 +21589,7 @@
       },
       "body": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "block",
@@ -19912,6 +21603,10 @@
         "types": [
           {
             "type": "my",
+            "named": false
+          },
+          {
+            "type": "state",
             "named": false
           }
         ]
@@ -20072,17 +21767,9 @@
         ]
       },
       "catch_expr": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -20113,6 +21800,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -20160,11 +21851,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -20200,6 +21899,10 @@
             "named": true
           },
           {
+            "type": "logical_not_expression",
+            "named": true
+          },
+          {
             "type": "loopex_expression",
             "named": true
           },
@@ -20217,6 +21920,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -20309,6 +22016,10 @@
           },
           {
             "type": "variable_declaration",
+            "named": true
+          },
+          {
+            "type": "version",
             "named": true
           }
         ]
@@ -20340,17 +22051,9 @@
     "named": true,
     "fields": {
       "operand": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "ambiguous_function_call_expression",
             "named": true
@@ -20381,6 +22084,10 @@
           },
           {
             "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "async_block_expression",
             "named": true
           },
           {
@@ -20428,11 +22135,19 @@
             "named": true
           },
           {
+            "type": "filehandle",
+            "named": true
+          },
+          {
             "type": "func0op_call_expression",
             "named": true
           },
           {
             "type": "func1op_call_expression",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -20460,19 +22175,15 @@
             "named": true
           },
           {
-            "type": "list_expression",
-            "named": true
-          },
-          {
             "type": "localization_expression",
             "named": true
           },
           {
-            "type": "loopex_expression",
+            "type": "logical_not_expression",
             "named": true
           },
           {
-            "type": "lowprec_logical_expression",
+            "type": "loopex_expression",
             "named": true
           },
           {
@@ -20485,6 +22196,10 @@
           },
           {
             "type": "method_call_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -20577,6 +22292,10 @@
           },
           {
             "type": "variable_declaration",
+            "named": true
+          },
+          {
+            "type": "version",
             "named": true
           }
         ]
@@ -20646,6 +22365,10 @@
           "named": true
         },
         {
+          "type": "async_block_expression",
+          "named": true
+        },
+        {
           "type": "autoquoted_bareword",
           "named": true
         },
@@ -20690,11 +22413,19 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -20722,19 +22453,15 @@
           "named": true
         },
         {
-          "type": "list_expression",
-          "named": true
-        },
-        {
           "type": "localization_expression",
           "named": true
         },
         {
-          "type": "loopex_expression",
+          "type": "logical_not_expression",
           "named": true
         },
         {
-          "type": "lowprec_logical_expression",
+          "type": "loopex_expression",
           "named": true
         },
         {
@@ -20747,6 +22474,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -20839,6 +22570,10 @@
         },
         {
           "type": "variable_declaration",
+          "named": true
+        },
+        {
+          "type": "version",
           "named": true
         }
       ]
@@ -20910,6 +22645,10 @@
           "named": true
         },
         {
+          "type": "async_block_expression",
+          "named": true
+        },
+        {
           "type": "autoquoted_bareword",
           "named": true
         },
@@ -20954,11 +22693,19 @@
           "named": true
         },
         {
+          "type": "filehandle",
+          "named": true
+        },
+        {
           "type": "func0op_call_expression",
           "named": true
         },
         {
           "type": "func1op_call_expression",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -20994,11 +22741,11 @@
           "named": true
         },
         {
-          "type": "loopex_expression",
+          "type": "logical_not_expression",
           "named": true
         },
         {
-          "type": "lowprec_logical_expression",
+          "type": "loopex_expression",
           "named": true
         },
         {
@@ -21011,6 +22758,10 @@
         },
         {
           "type": "method_call_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -21104,6 +22855,10 @@
         {
           "type": "variable_declaration",
           "named": true
+        },
+        {
+          "type": "version",
+          "named": true
         }
       ]
     }
@@ -21142,6 +22897,16 @@
           }
         ]
       },
+      "type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "package",
+            "named": true
+          }
+        ]
+      },
       "variable": {
         "multiple": false,
         "required": false,
@@ -21155,6 +22920,10 @@
             "named": true
           },
           {
+            "type": "refalias_variable",
+            "named": true
+          },
+          {
             "type": "scalar",
             "named": true
           }
@@ -21165,17 +22934,41 @@
         "required": false,
         "types": [
           {
-            "type": "(",
-            "named": false
+            "type": "array",
+            "named": true
           },
           {
-            "type": ")",
-            "named": false
+            "type": "hash",
+            "named": true
           },
           {
-            "type": ",",
-            "named": false
+            "type": "refalias_variable",
+            "named": true
           },
+          {
+            "type": "scalar",
+            "named": true
+          },
+          {
+            "type": "undef_expression",
+            "named": true
+          },
+          {
+            "type": "variable_group",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "variable_group",
+    "named": true,
+    "fields": {
+      "variables": {
+        "multiple": true,
+        "required": false,
+        "types": [
           {
             "type": "array",
             "named": true
@@ -21185,11 +22978,19 @@
             "named": true
           },
           {
+            "type": "refalias_variable",
+            "named": true
+          },
+          {
             "type": "scalar",
             "named": true
           },
           {
             "type": "undef_expression",
+            "named": true
+          },
+          {
+            "type": "variable_group",
             "named": true
           }
         ]
@@ -21413,6 +23214,10 @@
     "named": false
   },
   {
+    "type": ">",
+    "named": false
+  },
+  {
     "type": ">=",
     "named": false
   },
@@ -21458,6 +23263,18 @@
   },
   {
     "type": "INIT",
+    "named": false
+  },
+  {
+    "type": "STDERR",
+    "named": false
+  },
+  {
+    "type": "STDIN",
+    "named": false
+  },
+  {
+    "type": "STDOUT",
     "named": false
   },
   {
@@ -21509,6 +23326,10 @@
     "named": false
   },
   {
+    "type": "accept",
+    "named": false
+  },
+  {
     "type": "alarm",
     "named": false
   },
@@ -21521,11 +23342,27 @@
     "named": false
   },
   {
+    "type": "atan2",
+    "named": false
+  },
+  {
     "type": "attribute_value",
     "named": true
   },
   {
     "type": "await",
+    "named": false
+  },
+  {
+    "type": "bind",
+    "named": false
+  },
+  {
+    "type": "binmode",
+    "named": false
+  },
+  {
+    "type": "bless",
     "named": false
   },
   {
@@ -21545,11 +23382,19 @@
     "named": false
   },
   {
+    "type": "chmod",
+    "named": false
+  },
+  {
     "type": "chomp",
     "named": false
   },
   {
     "type": "chop",
+    "named": false
+  },
+  {
+    "type": "chown",
     "named": false
   },
   {
@@ -21582,6 +23427,10 @@
     "extra": true
   },
   {
+    "type": "connect",
+    "named": false
+  },
+  {
     "type": "continue",
     "named": false
   },
@@ -21590,11 +23439,19 @@
     "named": false
   },
   {
+    "type": "crypt",
+    "named": false
+  },
+  {
     "type": "data_section",
     "named": true
   },
   {
     "type": "dbmclose",
+    "named": false
+  },
+  {
+    "type": "dbmopen",
     "named": false
   },
   {
@@ -21607,6 +23464,10 @@
   },
   {
     "type": "delete",
+    "named": false
+  },
+  {
+    "type": "die",
     "named": false
   },
   {
@@ -21662,6 +23523,10 @@
     "named": false
   },
   {
+    "type": "exec",
+    "named": false
+  },
+  {
     "type": "exists",
     "named": false
   },
@@ -21686,6 +23551,10 @@
     "named": false
   },
   {
+    "type": "fcntl",
+    "named": false
+  },
+  {
     "type": "field",
     "named": false
   },
@@ -21698,6 +23567,10 @@
     "named": false
   },
   {
+    "type": "flock",
+    "named": false
+  },
+  {
     "type": "for",
     "named": false
   },
@@ -21707,6 +23580,18 @@
   },
   {
     "type": "fork",
+    "named": false
+  },
+  {
+    "type": "format",
+    "named": false
+  },
+  {
+    "type": "format_content",
+    "named": true
+  },
+  {
+    "type": "formline",
     "named": false
   },
   {
@@ -21726,6 +23611,14 @@
     "named": false
   },
   {
+    "type": "gethostbyaddr",
+    "named": false
+  },
+  {
+    "type": "getnetbyaddr",
+    "named": false
+  },
+  {
     "type": "getnetbyname",
     "named": false
   },
@@ -21742,7 +23635,15 @@
     "named": false
   },
   {
+    "type": "getpriority",
+    "named": false
+  },
+  {
     "type": "getprotobyname",
+    "named": false
+  },
+  {
+    "type": "getprotobynumber",
     "named": false
   },
   {
@@ -21754,7 +23655,23 @@
     "named": false
   },
   {
+    "type": "getservbyname",
+    "named": false
+  },
+  {
+    "type": "getservbyport",
+    "named": false
+  },
+  {
     "type": "getsockname",
+    "named": false
+  },
+  {
+    "type": "getsockopt",
+    "named": false
+  },
+  {
+    "type": "glob",
     "named": false
   },
   {
@@ -21786,7 +23703,15 @@
     "named": false
   },
   {
+    "type": "index",
+    "named": false
+  },
+  {
     "type": "int",
+    "named": false
+  },
+  {
+    "type": "ioctl",
     "named": false
   },
   {
@@ -21794,7 +23719,15 @@
     "named": false
   },
   {
+    "type": "join",
+    "named": false
+  },
+  {
     "type": "keys",
+    "named": false
+  },
+  {
+    "type": "kill",
     "named": false
   },
   {
@@ -21815,6 +23748,14 @@
   },
   {
     "type": "length",
+    "named": false
+  },
+  {
+    "type": "link",
+    "named": false
+  },
+  {
+    "type": "listen",
     "named": false
   },
   {
@@ -21858,6 +23799,26 @@
     "named": false
   },
   {
+    "type": "mkdir",
+    "named": false
+  },
+  {
+    "type": "msgctl",
+    "named": false
+  },
+  {
+    "type": "msgget",
+    "named": false
+  },
+  {
+    "type": "msgrcv",
+    "named": false
+  },
+  {
+    "type": "msgsend",
+    "named": false
+  },
+  {
     "type": "my",
     "named": false
   },
@@ -21874,6 +23835,10 @@
     "named": false
   },
   {
+    "type": "not",
+    "named": false
+  },
+  {
     "type": "not-interpolated",
     "named": false
   },
@@ -21883,6 +23848,14 @@
   },
   {
     "type": "oct",
+    "named": false
+  },
+  {
+    "type": "open",
+    "named": false
+  },
+  {
+    "type": "opendir",
     "named": false
   },
   {
@@ -21898,7 +23871,15 @@
     "named": false
   },
   {
+    "type": "pack",
+    "named": false
+  },
+  {
     "type": "package",
+    "named": false
+  },
+  {
+    "type": "pipe",
     "named": false
   },
   {
@@ -21915,12 +23896,24 @@
     "named": false
   },
   {
+    "type": "print",
+    "named": false
+  },
+  {
+    "type": "printf",
+    "named": false
+  },
+  {
     "type": "prototype",
     "named": false
   },
   {
     "type": "prototype",
     "named": true
+  },
+  {
+    "type": "push",
+    "named": false
   },
   {
     "type": "q",
@@ -21955,6 +23948,10 @@
     "named": false
   },
   {
+    "type": "read",
+    "named": false
+  },
+  {
     "type": "readdir",
     "named": false
   },
@@ -21971,11 +23968,19 @@
     "named": false
   },
   {
+    "type": "recv",
+    "named": false
+  },
+  {
     "type": "redo",
     "named": false
   },
   {
     "type": "ref",
+    "named": false
+  },
+  {
+    "type": "rename",
     "named": false
   },
   {
@@ -21991,7 +23996,15 @@
     "named": false
   },
   {
+    "type": "reverse",
+    "named": false
+  },
+  {
     "type": "rewinddir",
+    "named": false
+  },
+  {
+    "type": "rindex",
     "named": false
   },
   {
@@ -22007,11 +24020,71 @@
     "named": false
   },
   {
+    "type": "say",
+    "named": false
+  },
+  {
     "type": "scalar",
     "named": false
   },
   {
+    "type": "seek",
+    "named": false
+  },
+  {
+    "type": "seekdir",
+    "named": false
+  },
+  {
+    "type": "select",
+    "named": false
+  },
+  {
+    "type": "semctl",
+    "named": false
+  },
+  {
+    "type": "semget",
+    "named": false
+  },
+  {
+    "type": "semop",
+    "named": false
+  },
+  {
+    "type": "send",
+    "named": false
+  },
+  {
+    "type": "setpgrp",
+    "named": false
+  },
+  {
+    "type": "setpriority",
+    "named": false
+  },
+  {
+    "type": "setsockopt",
+    "named": false
+  },
+  {
     "type": "shift",
+    "named": false
+  },
+  {
+    "type": "shmctl",
+    "named": false
+  },
+  {
+    "type": "shmread",
+    "named": false
+  },
+  {
+    "type": "shmwrite",
+    "named": false
+  },
+  {
+    "type": "shutdown",
     "named": false
   },
   {
@@ -22023,7 +24096,27 @@
     "named": false
   },
   {
+    "type": "socket",
+    "named": false
+  },
+  {
+    "type": "socketpair",
+    "named": false
+  },
+  {
     "type": "sort",
+    "named": false
+  },
+  {
+    "type": "splice",
+    "named": false
+  },
+  {
+    "type": "split",
+    "named": false
+  },
+  {
+    "type": "sprintf",
     "named": false
   },
   {
@@ -22055,11 +24148,47 @@
     "named": true
   },
   {
+    "type": "substr",
+    "named": false
+  },
+  {
+    "type": "symlink",
+    "named": false
+  },
+  {
+    "type": "syscall",
+    "named": false
+  },
+  {
+    "type": "sysopen",
+    "named": false
+  },
+  {
+    "type": "sysread",
+    "named": false
+  },
+  {
+    "type": "sysseek",
+    "named": false
+  },
+  {
+    "type": "system",
+    "named": false
+  },
+  {
+    "type": "syswrite",
+    "named": false
+  },
+  {
     "type": "tell",
     "named": false
   },
   {
     "type": "telldir",
+    "named": false
+  },
+  {
+    "type": "tie",
     "named": false
   },
   {
@@ -22087,6 +24216,10 @@
     "named": false
   },
   {
+    "type": "truncate",
+    "named": false
+  },
+  {
     "type": "try",
     "named": false
   },
@@ -22111,6 +24244,18 @@
     "named": false
   },
   {
+    "type": "unlink",
+    "named": false
+  },
+  {
+    "type": "unpack",
+    "named": false
+  },
+  {
+    "type": "unshift",
+    "named": false
+  },
+  {
     "type": "untie",
     "named": false
   },
@@ -22123,7 +24268,15 @@
     "named": false
   },
   {
+    "type": "utime",
+    "named": false
+  },
+  {
     "type": "values",
+    "named": false
+  },
+  {
+    "type": "vec",
     "named": false
   },
   {
@@ -22135,7 +24288,15 @@
     "named": false
   },
   {
+    "type": "waitpid",
+    "named": false
+  },
+  {
     "type": "wantarray",
+    "named": false
+  },
+  {
+    "type": "warn",
     "named": false
   },
   {

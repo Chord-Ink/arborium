@@ -509,6 +509,21 @@ echo "Version: $VERSION (release: $IS_RELEASE)""#,
     // STAGE 2: CI Jobs (always run)
     // =========================================================================
 
+    // Parser corpora run independently of Rust/plugin builds, after generation.
+    jobs.insert(
+        "test-grammar-corpora".into(),
+        Job::new(runners::UBUNTU_GITHUB)
+            .name("Test upstream grammar corpora")
+            .container(CONTAINER)
+            .needs(["generate"])
+            .steps(
+                [checkout()]
+                    .into_iter()
+                    .chain(download_generate_output())
+                    .chain([Step::run("Run corpora", "python3 scripts/check_corpus.py")]),
+            ),
+    );
+
     // Test Linux
     // Note: no root workspace, so we target crates/arborium directly
     jobs.insert(
@@ -523,7 +538,7 @@ echo "Version: $VERSION (release: $IS_RELEASE)""#,
                     .chain([
                         rust_cache(),
                         Step::run("Build", "cargo build --manifest-path crates/arborium/Cargo.toml --verbose"),
-                        Step::run("Run tests", "cargo nextest run --manifest-path crates/arborium/Cargo.toml --verbose --no-tests=pass"),
+                        Step::run("Run tests", "cargo nextest run --manifest-path crates/arborium/Cargo.toml --all-features --verbose --no-tests=pass"),
                         Step::run(
                             "Build with all features",
                             "cargo build --manifest-path crates/arborium/Cargo.toml --all-features --verbose",
@@ -532,6 +547,9 @@ echo "Version: $VERSION (release: $IS_RELEASE)""#,
                         Step::run("Test arborium-highlight", "cargo nextest run --manifest-path crates/arborium-highlight/Cargo.toml --all-features --verbose"),
                         Step::run("Build arborium-rustdoc", "cargo build --manifest-path crates/arborium-rustdoc/Cargo.toml --verbose"),
                         Step::run("Test arborium-rustdoc", "cargo test --manifest-path crates/arborium-rustdoc/Cargo.toml --verbose"),
+                        Step::run("Test all-language WASM consumer", "python3 scripts/check_wasm.py"),
+                        Step::run("Test Ratatui adapter", "cargo test --manifest-path crates/arborium-ratatui/Cargo.toml"),
+                        Step::run("Generate JavaScript manifest", "./xtask/target/release/xtask gen-manifest"),
                         // TypeScript tests for the npm package
                         Step::run("Enable pnpm via corepack", "corepack enable pnpm"),
                         Step::run("Install npm dependencies", "cd packages/arborium && pnpm install --frozen-lockfile"),
@@ -555,7 +573,7 @@ echo "Version: $VERSION (release: $IS_RELEASE)""#,
                         rust_cache(),
                         install_nextest(),
                         Step::run("Build", "cargo build --manifest-path crates/arborium/Cargo.toml --verbose"),
-                        Step::run("Run tests", "cargo nextest run --manifest-path crates/arborium/Cargo.toml --verbose --no-tests=pass"),
+                        Step::run("Run tests", "cargo nextest run --manifest-path crates/arborium/Cargo.toml --all-features --verbose --no-tests=pass"),
                         Step::run("Build arborium-highlight", "cargo build --manifest-path crates/arborium-highlight/Cargo.toml --all-features --verbose"),
                         Step::run("Test arborium-highlight", "cargo nextest run --manifest-path crates/arborium-highlight/Cargo.toml --all-features --verbose"),
                         Step::run("Build arborium-rustdoc", "cargo build --manifest-path crates/arborium-rustdoc/Cargo.toml --verbose"),

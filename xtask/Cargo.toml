@@ -6,6 +6,7 @@ publish = false
 
 [dependencies]
 camino = "1"
+cc = "1"
 chrono = "0.4"
 fs-err = "3"
 which = "7"

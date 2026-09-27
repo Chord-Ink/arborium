@@ -49,22 +49,24 @@
 //!
 //! ```toml
 //! [dependencies]
-//! arborium = { version = "0.1", features = ["lang-rust", "lang-python"] }
+//! arborium = { version = "2", features = ["lang-rust", "lang-python"] }
 //! ```
 //!
 //! Or enable all languages:
 //!
 //! ```toml
 //! [dependencies]
-//! arborium = { version = "0.1", features = ["all-languages"] }
+//! arborium = { version = "2", features = ["all-languages"] }
 //! ```
 //!
 //! ## Supported Languages
 //!
-//! ### Permissively Licensed (111 languages, included by default)
+//! ### Permissively Licensed (116 languages, enable `all-permissive-languages`)
 //!
 //! | Language | Feature Flag | License |
 //! |----------|--------------|---------|
+
+//! | ActionScript | `lang-actionscript` | MIT |
 
 //! | Ada | `lang-ada` | MIT |
 
@@ -101,6 +103,8 @@
 //! | Common Lisp | `lang-commonlisp` | MIT |
 
 //! | C++ | `lang-cpp` | MIT |
+
+//! | Crystal | `lang-crystal` | MIT |
 
 //! | CSS | `lang-css` | MIT |
 
@@ -174,6 +178,8 @@
 
 //! | Kotlin | `lang-kotlin` | MIT |
 
+//! | Koto | `lang-koto` | MIT |
+
 //! | Lean | `lang-lean` | MIT |
 
 //! | Lua | `lang-lua` | MIT |
@@ -208,6 +214,8 @@
 
 //! | Protocol Buffers | `lang-proto` | MIT |
 
+//! | Pug | `lang-pug` | MIT |
+
 //! | Python | `lang-python` | MIT |
 
 //! | Tree-sitter Query | `lang-query` | Apache-2.0 |
@@ -231,6 +239,8 @@
 //! | Scheme | `lang-scheme` | MIT |
 
 //! | SCSS | `lang-scss` | MIT |
+
+//! | Slang | `lang-slang` | MIT |
 
 //! | Solidity | `lang-solidity` | MIT |
 
@@ -262,8 +272,6 @@
 
 //! | Typst | `lang-typst` | MIT |
 
-//! | Uiua | `lang-uiua` | MPL-2.0 |
-
 //! | Visual Basic | `lang-vb` | MIT |
 
 //! | Verilog | `lang-verilog` | MIT |
@@ -273,6 +281,8 @@
 //! | Vimscript | `lang-vim` | MIT |
 
 //! | Vue | `lang-vue` | MIT |
+
+//! | WebAssembly Text | `lang-wat` | MIT |
 
 //! | WIT | `lang-wit` | Apache-2.0 WITH LLVM-exception |
 
@@ -289,7 +299,7 @@
 //! | Zsh | `lang-zsh` | MIT |
 
 //!
-//! ### GPL Licensed (1 languages, opt-in)
+//! ### Copyleft Licensed (2 languages, opt-in)
 //!
 //! These require explicit opt-in via feature flags due to their copyleft license.
 //!
@@ -297,6 +307,8 @@
 //! |----------|--------------|---------|
 
 //! | nginx | `lang-nginx` | GPL-3.0 |
+
+//! | Uiua | `lang-uiua` | MPL-2.0 |
 
 //!
 //! # Advanced Usage
@@ -402,11 +414,17 @@ pub fn detect_language(path: &str) -> Option<&'static str> {
     // Map extension to canonical language ID
     Some(match ext.to_lowercase().as_str() {
 
+        "actionscript" => "actionscript",
+
         "ada" => "ada",
 
         "adoc" => "asciidoc",
 
         "agda" => "agda",
+
+        "as" => "actionscript",
+
+        "as3" => "actionscript",
 
         "asciidoc" => "asciidoc",
 
@@ -467,6 +485,10 @@ pub fn detect_language(path: &str) -> Option<&'static str> {
         "cpp" => "cpp",
 
         "cpy" => "cobol",
+
+        "cr" => "crystal",
+
+        "crystal" => "crystal",
 
         "cs" => "c-sharp",
 
@@ -568,6 +590,8 @@ pub fn detect_language(path: &str) -> Option<&'static str> {
 
         "j2" => "jinja2",
 
+        "jade" => "pug",
+
         "java" => "java",
 
         "javascript" => "javascript",
@@ -599,6 +623,8 @@ pub fn detect_language(path: &str) -> Option<&'static str> {
         "kdl" => "kdl",
 
         "kotlin" => "kotlin",
+
+        "koto" => "koto",
 
         "kt" => "kotlin",
 
@@ -684,6 +710,8 @@ pub fn detect_language(path: &str) -> Option<&'static str> {
 
         "ps1" => "powershell",
 
+        "pug" => "pug",
+
         "pwsh" => "powershell",
 
         "py" => "python",
@@ -735,6 +763,8 @@ pub fn detect_language(path: &str) -> Option<&'static str> {
         "sh" => "bash",
 
         "shell" => "bash",
+
+        "slang" => "slang",
 
         "sol" => "solidity",
 
@@ -820,6 +850,10 @@ pub fn detect_language(path: &str) -> Option<&'static str> {
 
         "wasm-interface" => "wit",
 
+        "wast" => "wat",
+
+        "wat" => "wat",
+
         "wit" => "wit",
 
         "x86" => "x86asm",
@@ -854,6 +888,10 @@ pub fn detect_language(path: &str) -> Option<&'static str> {
 // - `INJECTIONS_QUERY` - The injection query string
 // - `LOCALS_QUERY` - The locals query string
 // =============================================================================
+
+
+#[cfg(feature = "lang-actionscript")]
+pub use arborium_actionscript as lang_actionscript;
 
 
 #[cfg(feature = "lang-ada")]
@@ -926,6 +964,10 @@ pub use arborium_commonlisp as lang_commonlisp;
 
 #[cfg(feature = "lang-cpp")]
 pub use arborium_cpp as lang_cpp;
+
+
+#[cfg(feature = "lang-crystal")]
+pub use arborium_crystal as lang_crystal;
 
 
 #[cfg(feature = "lang-css")]
@@ -1072,6 +1114,10 @@ pub use arborium_kdl as lang_kdl;
 pub use arborium_kotlin as lang_kotlin;
 
 
+#[cfg(feature = "lang-koto")]
+pub use arborium_koto as lang_koto;
+
+
 #[cfg(feature = "lang-lean")]
 pub use arborium_lean as lang_lean;
 
@@ -1086,6 +1132,10 @@ pub use arborium_make as lang_make;
 
 #[cfg(feature = "lang-markdown")]
 pub use arborium_markdown as lang_markdown;
+
+
+#[cfg(feature = "lang-markdown_inline")]
+pub use arborium_markdown_inline as lang_markdown_inline;
 
 
 #[cfg(feature = "lang-matlab")]
@@ -1144,6 +1194,10 @@ pub use arborium_prolog as lang_prolog;
 pub use arborium_proto as lang_proto;
 
 
+#[cfg(feature = "lang-pug")]
+pub use arborium_pug as lang_pug;
+
+
 #[cfg(feature = "lang-python")]
 pub use arborium_python as lang_python;
 
@@ -1190,6 +1244,10 @@ pub use arborium_scheme as lang_scheme;
 
 #[cfg(feature = "lang-scss")]
 pub use arborium_scss as lang_scss;
+
+
+#[cfg(feature = "lang-slang")]
+pub use arborium_slang as lang_slang;
 
 
 #[cfg(feature = "lang-solidity")]
@@ -1276,6 +1334,10 @@ pub use arborium_vim as lang_vim;
 pub use arborium_vue as lang_vue;
 
 
+#[cfg(feature = "lang-wat")]
+pub use arborium_wat as lang_wat;
+
+
 #[cfg(feature = "lang-wit")]
 pub use arborium_wit as lang_wit;
 
@@ -1325,6 +1387,9 @@ pub use arborium_zsh as lang_zsh;
 /// ```
 pub fn get_language(name: &str) -> Option<tree_sitter::Language> {
     match name {
+
+        #[cfg(feature = "lang-actionscript")]
+        "actionscript" => Some(arborium_actionscript::language().into()),
 
         #[cfg(feature = "lang-ada")]
         "ada" => Some(arborium_ada::language().into()),
@@ -1379,6 +1444,9 @@ pub fn get_language(name: &str) -> Option<tree_sitter::Language> {
 
         #[cfg(feature = "lang-cpp")]
         "cpp" => Some(arborium_cpp::language().into()),
+
+        #[cfg(feature = "lang-crystal")]
+        "crystal" => Some(arborium_crystal::language().into()),
 
         #[cfg(feature = "lang-css")]
         "css" => Some(arborium_css::language().into()),
@@ -1488,6 +1556,9 @@ pub fn get_language(name: &str) -> Option<tree_sitter::Language> {
         #[cfg(feature = "lang-kotlin")]
         "kotlin" => Some(arborium_kotlin::language().into()),
 
+        #[cfg(feature = "lang-koto")]
+        "koto" => Some(arborium_koto::language().into()),
+
         #[cfg(feature = "lang-lean")]
         "lean" => Some(arborium_lean::language().into()),
 
@@ -1499,6 +1570,9 @@ pub fn get_language(name: &str) -> Option<tree_sitter::Language> {
 
         #[cfg(feature = "lang-markdown")]
         "markdown" => Some(arborium_markdown::language().into()),
+
+        #[cfg(feature = "lang-markdown_inline")]
+        "markdown_inline" => Some(arborium_markdown_inline::language().into()),
 
         #[cfg(feature = "lang-matlab")]
         "matlab" => Some(arborium_matlab::language().into()),
@@ -1542,6 +1616,9 @@ pub fn get_language(name: &str) -> Option<tree_sitter::Language> {
         #[cfg(feature = "lang-proto")]
         "proto" => Some(arborium_proto::language().into()),
 
+        #[cfg(feature = "lang-pug")]
+        "pug" => Some(arborium_pug::language().into()),
+
         #[cfg(feature = "lang-python")]
         "python" => Some(arborium_python::language().into()),
 
@@ -1577,6 +1654,9 @@ pub fn get_language(name: &str) -> Option<tree_sitter::Language> {
 
         #[cfg(feature = "lang-scss")]
         "scss" => Some(arborium_scss::language().into()),
+
+        #[cfg(feature = "lang-slang")]
+        "slang" => Some(arborium_slang::language().into()),
 
         #[cfg(feature = "lang-solidity")]
         "solidity" => Some(arborium_solidity::language().into()),
@@ -1641,6 +1721,9 @@ pub fn get_language(name: &str) -> Option<tree_sitter::Language> {
         #[cfg(feature = "lang-vue")]
         "vue" => Some(arborium_vue::language().into()),
 
+        #[cfg(feature = "lang-wat")]
+        "wat" => Some(arborium_wat::language().into()),
+
         #[cfg(feature = "lang-wit")]
         "wit" => Some(arborium_wit::language().into()),
 
@@ -1664,4 +1747,1679 @@ pub fn get_language(name: &str) -> Option<tree_sitter::Language> {
 
         _ => None,
     }
+}
+
+// Compile every bundled query, including rarely used grammars. A malformed
+// query otherwise only surfaces at runtime (as a WASM trap in plugins).
+#[cfg(test)]
+mod grammar_smoke_tests {
+    use arborium_highlight::tree_sitter::{CompiledGrammar, GrammarConfig, ParseContext};
+
+
+    #[test]
+    #[cfg(feature = "lang-actionscript")]
+    fn actionscript() {
+        use arborium_actionscript as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-ada")]
+    fn ada() {
+        use arborium_ada as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-agda")]
+    fn agda() {
+        use arborium_agda as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-asciidoc")]
+    fn asciidoc() {
+        use arborium_asciidoc as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-asm")]
+    fn asm() {
+        use arborium_asm as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-awk")]
+    fn awk() {
+        use arborium_awk as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-bash")]
+    fn bash() {
+        use arborium_bash as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-batch")]
+    fn batch() {
+        use arborium_batch as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-c")]
+    fn c() {
+        use arborium_c as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-c-sharp")]
+    fn c_sharp() {
+        use arborium_c_sharp as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-caddy")]
+    fn caddy() {
+        use arborium_caddy as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-capnp")]
+    fn capnp() {
+        use arborium_capnp as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-cedar")]
+    fn cedar() {
+        use arborium_cedar as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-cedarschema")]
+    fn cedarschema() {
+        use arborium_cedarschema as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-clojure")]
+    fn clojure() {
+        use arborium_clojure as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-cmake")]
+    fn cmake() {
+        use arborium_cmake as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-cobol")]
+    fn cobol() {
+        use arborium_cobol as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-commonlisp")]
+    fn commonlisp() {
+        use arborium_commonlisp as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-cpp")]
+    fn cpp() {
+        use arborium_cpp as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-crystal")]
+    fn crystal() {
+        use arborium_crystal as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-css")]
+    fn css() {
+        use arborium_css as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-d")]
+    fn d() {
+        use arborium_d as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-dart")]
+    fn dart() {
+        use arborium_dart as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-devicetree")]
+    fn devicetree() {
+        use arborium_devicetree as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-diff")]
+    fn diff() {
+        use arborium_diff as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-dockerfile")]
+    fn dockerfile() {
+        use arborium_dockerfile as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-dot")]
+    fn dot() {
+        use arborium_dot as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-elisp")]
+    fn elisp() {
+        use arborium_elisp as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-elixir")]
+    fn elixir() {
+        use arborium_elixir as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-elm")]
+    fn elm() {
+        use arborium_elm as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-erlang")]
+    fn erlang() {
+        use arborium_erlang as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-fish")]
+    fn fish() {
+        use arborium_fish as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-fsharp")]
+    fn fsharp() {
+        use arborium_fsharp as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-gitattributes")]
+    fn gitattributes() {
+        use arborium_gitattributes as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-gleam")]
+    fn gleam() {
+        use arborium_gleam as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-glsl")]
+    fn glsl() {
+        use arborium_glsl as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-go")]
+    fn go() {
+        use arborium_go as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-graphql")]
+    fn graphql() {
+        use arborium_graphql as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-groovy")]
+    fn groovy() {
+        use arborium_groovy as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-haskell")]
+    fn haskell() {
+        use arborium_haskell as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-hcl")]
+    fn hcl() {
+        use arborium_hcl as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-hlsl")]
+    fn hlsl() {
+        use arborium_hlsl as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-html")]
+    fn html() {
+        use arborium_html as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-idris")]
+    fn idris() {
+        use arborium_idris as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-ini")]
+    fn ini() {
+        use arborium_ini as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-java")]
+    fn java() {
+        use arborium_java as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-javascript")]
+    fn javascript() {
+        use arborium_javascript as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-jinja2")]
+    fn jinja2() {
+        use arborium_jinja2 as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-jq")]
+    fn jq() {
+        use arborium_jq as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-jsdoc")]
+    fn jsdoc() {
+        use arborium_jsdoc as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-json")]
+    fn json() {
+        use arborium_json as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-julia")]
+    fn julia() {
+        use arborium_julia as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-just")]
+    fn just() {
+        use arborium_just as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-kconfig")]
+    fn kconfig() {
+        use arborium_kconfig as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-kdl")]
+    fn kdl() {
+        use arborium_kdl as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-kotlin")]
+    fn kotlin() {
+        use arborium_kotlin as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-koto")]
+    fn koto() {
+        use arborium_koto as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-lean")]
+    fn lean() {
+        use arborium_lean as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-lua")]
+    fn lua() {
+        use arborium_lua as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-make")]
+    fn make() {
+        use arborium_make as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-markdown")]
+    fn markdown() {
+        use arborium_markdown as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-markdown_inline")]
+    fn markdown_inline() {
+        use arborium_markdown_inline as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-matlab")]
+    fn matlab() {
+        use arborium_matlab as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-meson")]
+    fn meson() {
+        use arborium_meson as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-nginx")]
+    fn nginx() {
+        use arborium_nginx as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-ninja")]
+    fn ninja() {
+        use arborium_ninja as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-nix")]
+    fn nix() {
+        use arborium_nix as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-objc")]
+    fn objc() {
+        use arborium_objc as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-ocaml")]
+    fn ocaml() {
+        use arborium_ocaml as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-odin")]
+    fn odin() {
+        use arborium_odin as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-perl")]
+    fn perl() {
+        use arborium_perl as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-php")]
+    fn php() {
+        use arborium_php as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-postscript")]
+    fn postscript() {
+        use arborium_postscript as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-powershell")]
+    fn powershell() {
+        use arborium_powershell as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-prolog")]
+    fn prolog() {
+        use arborium_prolog as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-proto")]
+    fn proto() {
+        use arborium_proto as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-pug")]
+    fn pug() {
+        use arborium_pug as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-python")]
+    fn python() {
+        use arborium_python as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-query")]
+    fn query() {
+        use arborium_query as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-r")]
+    fn r() {
+        use arborium_r as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-regex")]
+    fn regex() {
+        use arborium_regex as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-rego")]
+    fn rego() {
+        use arborium_rego as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-rescript")]
+    fn rescript() {
+        use arborium_rescript as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-ron")]
+    fn ron() {
+        use arborium_ron as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-ruby")]
+    fn ruby() {
+        use arborium_ruby as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-rust")]
+    fn rust() {
+        use arborium_rust as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-scala")]
+    fn scala() {
+        use arborium_scala as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-scheme")]
+    fn scheme() {
+        use arborium_scheme as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-scss")]
+    fn scss() {
+        use arborium_scss as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-slang")]
+    fn slang() {
+        use arborium_slang as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-solidity")]
+    fn solidity() {
+        use arborium_solidity as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-sparql")]
+    fn sparql() {
+        use arborium_sparql as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-sql")]
+    fn sql() {
+        use arborium_sql as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-ssh-config")]
+    fn ssh_config() {
+        use arborium_ssh_config as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-starlark")]
+    fn starlark() {
+        use arborium_starlark as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-styx")]
+    fn styx() {
+        use arborium_styx as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-svelte")]
+    fn svelte() {
+        use arborium_svelte as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-swift")]
+    fn swift() {
+        use arborium_swift as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-textproto")]
+    fn textproto() {
+        use arborium_textproto as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-thrift")]
+    fn thrift() {
+        use arborium_thrift as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-tlaplus")]
+    fn tlaplus() {
+        use arborium_tlaplus as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-toml")]
+    fn toml() {
+        use arborium_toml as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-tsx")]
+    fn tsx() {
+        use arborium_tsx as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-typescript")]
+    fn typescript() {
+        use arborium_typescript as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-typst")]
+    fn typst() {
+        use arborium_typst as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-uiua")]
+    fn uiua() {
+        use arborium_uiua as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-vb")]
+    fn vb() {
+        use arborium_vb as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-verilog")]
+    fn verilog() {
+        use arborium_verilog as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-vhdl")]
+    fn vhdl() {
+        use arborium_vhdl as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-vim")]
+    fn vim() {
+        use arborium_vim as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-vue")]
+    fn vue() {
+        use arborium_vue as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-wat")]
+    fn wat() {
+        use arborium_wat as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-wit")]
+    fn wit() {
+        use arborium_wit as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-x86asm")]
+    fn x86asm() {
+        use arborium_x86asm as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-xml")]
+    fn xml() {
+        use arborium_xml as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-yaml")]
+    fn yaml() {
+        use arborium_yaml as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-yuri")]
+    fn yuri() {
+        use arborium_yuri as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-zig")]
+    fn zig() {
+        use arborium_zig as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
+    #[test]
+    #[cfg(feature = "lang-zsh")]
+    fn zsh() {
+        use arborium_zsh as grammar;
+        let compiled = CompiledGrammar::new(GrammarConfig {
+            language: grammar::language().into(),
+            highlights_query: &grammar::HIGHLIGHTS_QUERY,
+            injections_query: grammar::INJECTIONS_QUERY,
+            locals_query: grammar::LOCALS_QUERY,
+        }).expect("bundled queries must match their grammar");
+        let mut context = ParseContext::for_grammar(&compiled).unwrap();
+        compiled.parse(&mut context, "");
+    }
+
 }

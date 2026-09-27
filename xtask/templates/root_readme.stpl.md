@@ -9,7 +9,7 @@ Batteries-included [tree-sitter](https://tree-sitter.github.io/tree-sitter/) gra
 ## Features
 
 - **69 language grammars** included out of the box
-- **67 permissively licensed** (MIT/Apache-2.0/CC0/Unlicense) grammars enabled by default
+- **67 permissively licensed** (MIT/Apache-2.0/CC0/Unlicense) grammars available via `all-permissive-languages`
 - **WASM support** with custom allocator fix
 - **Feature flags** for fine-grained control over included languages
 
@@ -38,7 +38,7 @@ C compiler. For `wasm32-unknown-unknown`, use a clang with WebAssembly support
 arborium = "<%= version %>"
 ```
 
-By default, all permissively-licensed grammars are included. To select specific languages:
+No languages are enabled by default. Select the languages you need, or use `all-permissive-languages` for the permissive bundle:
 
 ```toml
 [dependencies]
@@ -160,13 +160,15 @@ Or let the IIFE bundle auto-inject it via the `data-theme` attribute.
 
 | Feature | Description |
 |---------|-------------|
-| `mit-grammars` | All permissively licensed grammars (MIT, Apache-2.0, CC0) - **default** |
-| `gpl-grammars` | GPL-licensed grammars (copyleft - may affect your project's license) |
-| `all-grammars` | All grammars including GPL |
+| `all-permissive-languages` | All permissively licensed grammars (MIT, Apache-2.0, CC0, Unlicense) |
+| `mit-languages`, `mit-grammars` | Compatibility aliases for `all-permissive-languages` |
+| `lang-nginx` | GPL-licensed Nginx grammar |
+| `lang-uiua` | MPL-licensed Uiua grammar |
+| `all-languages` | All grammars including GPL and MPL |
 
 ### Permissive Grammars (<%= permissive_grammars.len() %>)
 
-These grammars use permissive licenses (MIT, Apache-2.0, CC0, Unlicense) and are included by default.
+These grammars use permissive licenses (MIT, Apache-2.0, CC0, Unlicense) and are enabled by `all-permissive-languages`.
 
 | Feature | Language | License | Source |
 |---------|----------|---------|--------|
@@ -174,14 +176,14 @@ These grammars use permissive licenses (MIT, Apache-2.0, CC0, Unlicense) and are
 | `<%= grammar.feature %>` | <%= grammar.name %> | <%= grammar.license %> | <% if grammar.repo_url == "local" { %>local<% } else { %>[tree-sitter-<%= grammar.feature.strip_prefix("lang-").unwrap_or(&grammar.feature) %>](<%= grammar.repo_url %>)<% } %> |
 <% } %>
 
-### GPL-Licensed Grammars (<%= gpl_grammars.len() %>)
+### Copyleft-Licensed Grammars (<%= copyleft_grammars.len() %>)
 
-These grammars are **not included by default** due to their copyleft license.
+These grammars are **not included by default** and are excluded from `all-permissive-languages`.
 Enabling them may have implications for your project's licensing.
 
 | Feature | Language | License | Source |
 |---------|----------|---------|--------|
-<% for grammar in gpl_grammars { %>
+<% for grammar in copyleft_grammars { %>
 | `<%= grammar.feature %>` | <%= grammar.name %> | <%= grammar.license %> | <% if grammar.repo_url == "local" { %>local<% } else { %>[tree-sitter-<%= grammar.feature.strip_prefix("lang-").unwrap_or(&grammar.feature) %>](<%= grammar.repo_url %>)<% } %> |
 <% } %>
 

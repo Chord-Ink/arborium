@@ -1,0 +1,18 @@
+repo: https://github.com/g-plane/tree-sitter-wat
+commit: e3769473b2d90643d8af500b5cfc2f25a674888a
+license: MIT
+
+grammars:
+  - id: wat
+    name: WebAssembly Text
+    tag: code
+    tier: 3
+    has_scanner: true
+    generate_plugin: true
+    description: WebAssembly Text syntax highlighting.
+    link: https://github.com/g-plane/tree-sitter-wat
+    aliases: ["wast"]
+    samples:
+      - path: samples/example.wast
+        description: Basic WebAssembly Text example.
+        license: MIT OR Apache-2.0

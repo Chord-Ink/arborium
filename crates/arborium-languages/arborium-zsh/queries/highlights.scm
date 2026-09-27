@@ -1,19 +1,59 @@
-; Comments
+[
+  (string)
+  (raw_string)
+  (heredoc_body)
+  (heredoc_start)
+] @string
+
+[
+    (command_name)
+    (declaration_command)
+]@function
+
+
+(variable_name) @property
+
+[
+  "case"
+  "do"
+  "done"
+  "elif"
+  "else"
+  "esac"
+  "export"
+  "fi"
+  "for"
+  "function"
+  "if"
+  "in"
+  "select"
+  "then"
+  "unset"
+  "until"
+  "while"
+] @keyword
+
 (comment) @comment
 
-; Strings
-(string) @string
-(raw_string) @string
-(escape_sequence) @string.escape
+(function_definition name: (word) @function)
 
-; Variables
-(expansion) @variable
+(file_descriptor) @number
 
-; Command substitution
-(command_substitution) @embedded
+[
+  (command_substitution)
+  (process_substitution)
+  (expansion)
+]@embedded
 
-; Numbers
-(number) @number
+[
+  "&&"
+  ">"
+  ">>"
+  "<"
+  "|"
+] @operator
 
-; Words (commands, arguments, etc) - low priority
-(word) @string.special
+(
+  (command (_) @constant)
+  (#match? @constant "^-")
+)

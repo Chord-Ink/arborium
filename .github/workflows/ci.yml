@@ -103,6 +103,30 @@ jobs:
           name: generate-output
           path: generate-output.tar
           retention-days: "1"
+  test-grammar-corpora:
+    name: Test upstream grammar corpora
+    runs-on: ubuntu-latest
+    container: "ghcr.io/bearcove/arborium-plugin-builder:latest"
+    needs:
+      - generate
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Download generate output
+        uses: actions/download-artifact@v5
+        with:
+          name: generate-output
+          path: .
+      - name: Extract generate output
+        run: |-
+          set -e
+          tar -xf generate-output.tar && rm generate-output.tar
+        shell: bash
+      - name: Run corpora
+        run: |-
+          set -e
+          python3 scripts/check_corpus.py
+        shell: bash
   test-linux:
     name: Test (Linux)
     runs-on: blacksmith-32vcpu-ubuntu-2404
@@ -134,7 +158,7 @@ jobs:
       - name: Run tests
         run: |-
           set -e
-          cargo nextest run --manifest-path crates/arborium/Cargo.toml --verbose --no-tests=pass
+          cargo nextest run --manifest-path crates/arborium/Cargo.toml --all-features --verbose --no-tests=pass
         shell: bash
       - name: Build with all features
         run: |-
@@ -160,6 +184,21 @@ jobs:
         run: |-
           set -e
           cargo test --manifest-path crates/arborium-rustdoc/Cargo.toml --verbose
+        shell: bash
+      - name: Test all-language WASM consumer
+        run: |-
+          set -e
+          python3 scripts/check_wasm.py
+        shell: bash
+      - name: Test Ratatui adapter
+        run: |-
+          set -e
+          cargo test --manifest-path crates/arborium-ratatui/Cargo.toml
+        shell: bash
+      - name: Generate JavaScript manifest
+        run: |-
+          set -e
+          ./xtask/target/release/xtask gen-manifest
         shell: bash
       - name: Enable pnpm via corepack
         run: |-
@@ -212,7 +251,7 @@ jobs:
       - name: Run tests
         run: |-
           set -e
-          cargo nextest run --manifest-path crates/arborium/Cargo.toml --verbose --no-tests=pass
+          cargo nextest run --manifest-path crates/arborium/Cargo.toml --all-features --verbose --no-tests=pass
         shell: bash
       - name: Build arborium-highlight
         run: |-
@@ -290,7 +329,7 @@ jobs:
         env:
           RUSTDOCFLAGS: "-D warnings"
   build-plugins-acorn:
-    name: "Plugins (acorn): css, html, javascript, jsdoc, json, scss, tsx, typescript, xml"
+    name: "Plugins (acorn): actionscript, css, html, javascript, jsdoc, json, scss, tsx, typescript, xml"
     runs-on: blacksmith-32vcpu-ubuntu-2404
     container: "ghcr.io/bearcove/arborium-plugin-builder:latest"
     needs:
@@ -308,10 +347,10 @@ jobs:
           set -e
           tar -xf generate-output.tar && rm generate-output.tar
         shell: bash
-      - name: Build css, html, javascript, jsdoc, json, scss, tsx, typescript, xml
+      - name: Build actionscript, css, html, javascript, jsdoc, json, scss, tsx, typescript, xml
         run: |-
           set -e
-          ./xtask/target/release/xtask build css html javascript jsdoc json scss tsx typescript xml -o dist/plugins
+          ./xtask/target/release/xtask build actionscript css html javascript jsdoc json scss tsx typescript xml -o dist/plugins
         shell: bash
       - name: Upload plugins artifact
         uses: actions/upload-artifact@v5
@@ -350,7 +389,7 @@ jobs:
           path: dist/plugins
           retention-days: "7"
   build-plugins-birch:
-    name: "Plugins (birch): asm, c, cpp, d, go, objc, odin, rust, x86asm, zig"
+    name: "Plugins (birch): asm, c, cpp, d, go, objc, odin, rust, slang, wat, x86asm, zig"
     runs-on: blacksmith-32vcpu-ubuntu-2404
     container: "ghcr.io/bearcove/arborium-plugin-builder:latest"
     needs:
@@ -368,10 +407,10 @@ jobs:
           set -e
           tar -xf generate-output.tar && rm generate-output.tar
         shell: bash
-      - name: Build asm, c, cpp, d, go, objc, odin, rust, x86asm, zig
+      - name: Build asm, c, cpp, d, go, objc, odin, rust, slang, wat, x86asm, zig
         run: |-
           set -e
-          ./xtask/target/release/xtask build asm c cpp d go objc odin rust x86asm zig -o dist/plugins
+          ./xtask/target/release/xtask build asm c cpp d go objc odin rust slang wat x86asm zig -o dist/plugins
         shell: bash
       - name: Upload plugins artifact
         uses: actions/upload-artifact@v5
@@ -440,7 +479,7 @@ jobs:
           path: dist/plugins
           retention-days: "7"
   build-plugins-hazel:
-    name: "Plugins (hazel): awk, bash, batch, fish, lua, perl, php, powershell, python, ruby, zsh"
+    name: "Plugins (hazel): awk, bash, batch, crystal, fish, koto, lua, perl, php, powershell, python, ruby, zsh"
     runs-on: blacksmith-32vcpu-ubuntu-2404
     container: "ghcr.io/bearcove/arborium-plugin-builder:latest"
     needs:
@@ -458,10 +497,10 @@ jobs:
           set -e
           tar -xf generate-output.tar && rm generate-output.tar
         shell: bash
-      - name: Build awk, bash, batch, fish, lua, perl, php, powershell, python, ruby, zsh
+      - name: Build awk, bash, batch, crystal, fish, koto, lua, perl, php, powershell, python, ruby, zsh
         run: |-
           set -e
-          ./xtask/target/release/xtask build awk bash batch fish lua perl php powershell python ruby zsh -o dist/plugins
+          ./xtask/target/release/xtask build awk bash batch crystal fish koto lua perl php powershell python ruby zsh -o dist/plugins
         shell: bash
       - name: Upload plugins artifact
         uses: actions/upload-artifact@v5
@@ -620,7 +659,7 @@ jobs:
           path: dist/plugins
           retention-days: "7"
   build-plugins-willow:
-    name: "Plugins (willow): asciidoc, diff, jinja2, markdown, svelte, typst, vue"
+    name: "Plugins (willow): asciidoc, diff, jinja2, markdown, markdown_inline, pug, svelte, typst, vue"
     runs-on: blacksmith-32vcpu-ubuntu-2404
     container: "ghcr.io/bearcove/arborium-plugin-builder:latest"
     needs:
@@ -638,10 +677,10 @@ jobs:
           set -e
           tar -xf generate-output.tar && rm generate-output.tar
         shell: bash
-      - name: Build asciidoc, diff, jinja2, markdown, svelte, typst, vue
+      - name: Build asciidoc, diff, jinja2, markdown, markdown_inline, pug, svelte, typst, vue
         run: |-
           set -e
-          ./xtask/target/release/xtask build asciidoc diff jinja2 markdown svelte typst vue -o dist/plugins
+          ./xtask/target/release/xtask build asciidoc diff jinja2 markdown markdown_inline pug svelte typst vue -o dist/plugins
         shell: bash
       - name: Upload plugins artifact
         uses: actions/upload-artifact@v5

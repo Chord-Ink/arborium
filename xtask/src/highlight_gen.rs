@@ -85,3 +85,9 @@ pub fn parse_highlights(crates_dir: &Utf8Path) -> Result<Highlights, String> {
 
     Ok(Highlights { defs, name_to_index })
 }
+
+// This standalone module has no dependencies on generated theme data. Use the
+// renderer's mapping itself so JS consumers get exactly the same tags as Rust.
+#[allow(dead_code)]
+#[path = "../../crates/arborium-theme/src/highlights.rs"]
+pub mod render_highlights;

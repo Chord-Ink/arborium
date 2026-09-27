@@ -14,7 +14,7 @@ export {
   getAvailableLanguages,
   isLanguageAvailable,
 } from "./loader.js";
-export { availableLanguages, highlights, pluginVersion } from "./plugins-manifest.js";
+export { availableLanguages, highlights, getTagForCapture, pluginVersion } from "./plugins-manifest.js";
 export type {
   ArboriumConfig,
   Edit,

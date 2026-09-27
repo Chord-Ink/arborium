@@ -170,7 +170,7 @@ bool tree_sitter_cobol_external_scanner_scan(void *payload, TSLexer *lexer,
     }
 
     if(valid_symbols[LINE_PREFIX_COMMENT] && lexer->get_column(lexer) <= 5) {
-        while(lexer->get_column(lexer) <= 5) {
+        while(!lexer->eof(lexer) && lexer->get_column(lexer) <= 5) {
             lexer->advance(lexer, true);
         }
         lexer->result_symbol = LINE_PREFIX_COMMENT;

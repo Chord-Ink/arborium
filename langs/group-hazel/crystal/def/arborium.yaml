@@ -1,0 +1,18 @@
+repo: https://github.com/crystal-lang-tools/tree-sitter-crystal
+commit: 50ca9e6fcfb16a2cbcad59203cfd8ad650e25c49
+license: MIT
+
+grammars:
+  - id: crystal
+    name: Crystal
+    tag: code
+    tier: 3
+    has_scanner: true
+    generate_plugin: true
+    description: Crystal syntax highlighting.
+    link: https://github.com/crystal-lang-tools/tree-sitter-crystal
+    aliases: ["cr"]
+    samples:
+      - path: samples/example.cr
+        description: Basic Crystal example.
+        license: MIT OR Apache-2.0

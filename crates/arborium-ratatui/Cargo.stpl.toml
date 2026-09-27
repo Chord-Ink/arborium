@@ -1,0 +1,18 @@
+[package]
+name = "arborium-ratatui"
+version = "<%= version %>"
+edition = "2024"
+rust-version = "1.90"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/bearcove/arborium"
+description = "Ratatui text rendering for Arborium syntax highlighting"
+readme = "README.md"
+
+[dependencies]
+arborium = { version = "<%= version %>", path = "../arborium", default-features = false }
+arborium-highlight = { version = "<%= version %>", path = "../arborium-highlight" }
+arborium-theme = { version = "<%= version %>", path = "../arborium-theme" }
+ratatui-core = "0.1"
+
+[dev-dependencies]
+arborium = { version = "<%= version %>", path = "../arborium", features = ["lang-rust"] }

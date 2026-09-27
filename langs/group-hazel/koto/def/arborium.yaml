@@ -1,0 +1,17 @@
+repo: https://github.com/koto-lang/tree-sitter-koto
+commit: e8d41cbaca867aa1b0213e1fc1caeaf593da7bf7
+license: MIT
+
+grammars:
+  - id: koto
+    name: Koto
+    tag: code
+    tier: 3
+    has_scanner: true
+    generate_plugin: true
+    description: Koto syntax highlighting.
+    link: https://github.com/koto-lang/tree-sitter-koto
+    samples:
+      - path: samples/example.koto
+        description: Basic Koto example.
+        license: MIT OR Apache-2.0

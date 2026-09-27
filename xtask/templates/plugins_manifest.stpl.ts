@@ -18,3 +18,25 @@ export const highlights: Highlight[] = [
     parentTag: "<%= parent %>",<% } %>
   },
 <% } %>];
+
+/** The exact capture-to-tag mapping used by the Rust HTML renderer. */
+const captureTags = new Map<string, string | null>([
+<% for name in crate::highlight_gen::render_highlights::CAPTURE_NAMES { %>
+  ["<%= name %>", <%- crate::highlight_gen::render_highlights::tag_for_capture(name).map(|tag| format!("\"{tag}\"")).unwrap_or_else(|| "null".into()) %>],
+<% } %>
+]);
+const capturePrefixes: [string, string][] = [
+<% for (prefix, slot) in crate::highlight_gen::render_highlights::CAPTURE_PREFIXES { %>
+  ["<%= prefix %>", "<%= slot.tag().unwrap_or("") %>"],
+<% } %>
+];
+
+/**
+ * Get the short tag suffix used by HTML and theme CSS, e.g. `function.call` → `f`.
+ * Returns null for captures with no styling. A leading @ is accepted.
+ */
+export function getTagForCapture(capture: string): string | null {
+  const name = capture.startsWith("@") ? capture.slice(1) : capture;
+  if (captureTags.has(name)) return captureTags.get(name)!;
+  return capturePrefixes.find(([prefix]) => name.startsWith(prefix))?.[1] ?? null;
+}

@@ -1,5 +1,5 @@
 repo: https://github.com/tree-sitter-grammars/tree-sitter-markdown
-commit: 2dfd57f547f06ca5631a80f601e129d73fc8e9f0
+commit: a0a00f817d02412bd92c54d316f164d827b57b5c
 license: MIT
 
 grammars:
@@ -14,6 +14,7 @@ grammars:
       - mdx
 
     injections:
+      - markdown_inline
       - html
       - yaml
       - toml

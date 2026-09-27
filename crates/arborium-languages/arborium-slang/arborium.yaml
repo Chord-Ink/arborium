@@ -1,0 +1,24 @@
+repo: https://github.com/tree-sitter-grammars/tree-sitter-slang
+commit: 1dbcc4abc7b3cdd663eb03d93031167d6ed19f56
+license: MIT
+
+grammars:
+  - id: slang
+    name: Slang
+    tag: code
+    tier: 3
+    has_scanner: true
+    generate_plugin: true
+    description: Slang syntax highlighting.
+    link: https://github.com/tree-sitter-grammars/tree-sitter-slang
+    dependencies:
+      - npm: tree-sitter-hlsl
+        crate: arborium-hlsl
+      - npm: tree-sitter-cpp
+        crate: arborium-cpp
+      - npm: tree-sitter-c
+        crate: arborium-c
+    samples:
+      - path: samples/example.slang
+        description: Basic Slang example.
+        license: MIT OR Apache-2.0

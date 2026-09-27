@@ -1,0 +1,231 @@
+===========================================================================================
+string_single_line
+===========================================================================================
+
+''
+'hello'
+"goodbye"
+'#'
+'"'
+"'"
+
+---
+
+(module
+  (string
+    (string_quote)
+    (string_quote))
+  (string
+    (string_quote)
+    (string_content)
+    (string_quote))
+  (string
+    (string_quote)
+    (string_content)
+    (string_quote))
+  (string
+    (string_quote)
+    (string_content)
+    (string_quote))
+  (string
+    (string_quote)
+    (string_content)
+    (string_quote))
+  (string
+    (string_quote)
+    (string_content)
+    (string_quote)))
+
+===========================================================================================
+string_multi_line
+===========================================================================================
+
+'multi
+line
+string'
+"another
+long
+string"
+
+---
+
+(module
+  (string
+    (string_quote)
+    (string_content)
+    (string_quote))
+  (string
+    (string_quote)
+    (string_content)
+    (string_quote)))
+
+===========================================================================================
+string_interpolated
+===========================================================================================
+
+'foo is {foo}'
+'foo, bar is {foo, bar}'
+'inline comment in expression {foo, #- bar -# bar}'
+
+---
+
+(module
+  (string
+    (string_quote)
+    (string_content
+      (interpolation
+        (identifier)))
+    (string_quote))
+  (string
+    (string_quote)
+    (string_content
+      (interpolation
+        (comma_separated
+          (identifier)
+          (identifier))))
+    (string_quote))
+  (string
+    (string_quote)
+    (string_content
+      (interpolation
+        (comma_separated
+          (identifier)
+          (comment)
+          (identifier))))
+    (string_quote)))
+
+===========================================================================================
+format_string_in_interpolated_expression
+===========================================================================================
+
+'{foo:.2}'
+'{foo:>9.1}'
+'{foo:_^8.2}'
+
+---
+
+(module
+  (string
+    (string_quote)
+    (string_content
+      (interpolation
+        (identifier)
+        (format
+          (number))))
+    (string_quote))
+  (string
+    (string_quote)
+    (string_content
+      (interpolation
+        (identifier)
+        (format
+          (alignment)
+          (number))))
+    (string_quote))
+  (string
+    (string_quote)
+    (string_content
+      (interpolation
+        (identifier)
+        (format
+          (fill_char)
+          (alignment)
+          (number))))
+    (string_quote)))
+
+===========================================================================================
+escapes
+===========================================================================================
+
+'foo\n\t\r\\\{bar'
+'\'\'\''
+"\"''\""
+'\x4e foo \xF9'
+'foo \u{100abc} \u{f} bar'
+'foo \
+ bar
+'
+
+---
+
+(module
+  (string
+    (string_quote)
+    (string_content
+      (escape)
+      (escape)
+      (escape)
+      (escape)
+      (escape))
+    (string_quote))
+  (string
+    (string_quote)
+    (string_content
+      (escape)
+      (escape)
+      (escape))
+    (string_quote))
+  (string
+    (string_quote)
+    (string_content
+      (escape)
+      (escape))
+    (string_quote))
+  (string
+    (string_quote)
+    (string_content
+      (escape)
+      (escape))
+    (string_quote))
+  (string
+    (string_quote)
+    (string_content
+      (escape)
+      (escape))
+    (string_quote))
+  (string
+    (string_quote)
+    (string_content
+      (escape))
+    (string_quote)))
+
+===========================================================================================
+raw_strings
+===========================================================================================
+
+r'{foo}\r\n'
+r"'\#"
+r#""bar""#
+r##"#"hi"#"##
+
+---
+
+(module
+  (string
+    (raw_string_content))
+  (string
+    (raw_string_content))
+  (string
+    (raw_string_content))
+  (string
+    (raw_string_content)))
+
+===========================================================================================
+incomplete_string_interpolation
+===========================================================================================
+
+'{} x'
+'y {'
+
+---
+
+(module
+  (string
+    (string_quote)
+    (string_content
+      (interpolation))
+    (string_quote))
+  (ERROR
+    (string_quote)
+    (ERROR
+      (string_quote))))

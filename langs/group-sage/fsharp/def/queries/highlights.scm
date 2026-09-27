@@ -348,7 +348,7 @@
     "finally"
   ] @keyword.exception)
 
-((_type
+((simple_type
   (long_identifier (identifier) @type.builtin))
  (#any-of? @type.builtin "bool" "byte" "sbyte" "int16" "uint16" "int" "uint" "int64" "uint64" "nativeint" "unativeint" "decimal" "float" "double" "float32" "single" "char" "string" "unit"))
 
@@ -373,7 +373,7 @@
 ((value_declaration
    (attributes
      (attribute
-       (_type
+       (simple_type
          (long_identifier
            (identifier) @attribute))))
    (function_or_value_defn

@@ -48,6 +48,7 @@ fn run_cmd_output(mut cmd: Command) -> std::io::Result<std::process::Output> {
 /// Verify nightly toolchain with wasm32-unknown-unknown target and rust-src are available.
 /// These should be pre-installed in CI (via Dockerfile.ci) or locally by the developer.
 fn ensure_rust_nightly_with_wasm_target() -> Result<()> {
+    crate::tool::check_wasm_c_compiler().map_err(report)?;
     // Check if nightly toolchain is installed
     let mut cmd = Command::new("rustup");
     cmd.args(["toolchain", "list"]);

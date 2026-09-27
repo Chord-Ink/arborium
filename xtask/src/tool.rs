@@ -36,6 +36,55 @@ pub const PLUGIN_TOOLS: &[Tool] = &[Tool::WasmBindgen, Tool::WasmOpt];
 /// Tools needed for `cargo xtask serve` (demo assets fetch).
 pub const SERVE_TOOLS: &[Tool] = &[Tool::Curl];
 
+/// Exercise the compiler selected by cc-rs, including target-specific overrides.
+/// Finding `clang` on PATH is insufficient: some builds have no WASM backend.
+pub fn check_wasm_c_compiler() -> Result<(), String> {
+    let temp = tempfile::tempdir().map_err(|e| e.to_string())?;
+    let source = temp.path().join("probe.c");
+    let object = temp.path().join("probe.o");
+    std::fs::write(&source, "int arborium_wasm_probe(void) { return 0; }\n")
+        .map_err(|e| e.to_string())?;
+    let rustc = std::env::var_os("RUSTC").unwrap_or_else(|| "rustc".into());
+    let version = Command::new(rustc)
+        .arg("-vV")
+        .output()
+        .map_err(|e| e.to_string())?;
+    let version = String::from_utf8_lossy(&version.stdout);
+    let host = version
+        .lines()
+        .find_map(|line| line.strip_prefix("host: "))
+        .ok_or("rustc -vV did not report its host target")?;
+    let compiler = cc::Build::new()
+        .target("wasm32-unknown-unknown")
+        .host(host)
+        .opt_level(0)
+        .debug(false)
+        .cargo_metadata(false)
+        .out_dir(temp.path())
+        .try_get_compiler()
+        .map_err(|e| e.to_string())?;
+    let output = compiler
+        .to_command()
+        .arg("-c")
+        .arg(&source)
+        .arg("-o")
+        .arg(&object)
+        .output()
+        .map_err(|e| e.to_string())?;
+    if output.status.success()
+        && std::fs::read(&object).is_ok_and(|bytes| bytes.starts_with(b"\0asm"))
+    {
+        return Ok(());
+    }
+    Err(format!(
+        "C compiler {} cannot produce wasm32-unknown-unknown objects.\n{}\n\
+         On macOS: brew install llvm, then run `direnv allow` or `source .envrc`.\n\
+         Alternatively set CC_wasm32_unknown_unknown to a WASM-enabled clang.",
+        compiler.path().display(),
+        String::from_utf8_lossy(&output.stderr),
+    ))
+}
+
 impl Tool {
     /// The executable name to search for in PATH.
     pub fn executable_name(self) -> &'static str {
@@ -275,6 +324,12 @@ pub struct ToolNotFound {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    #[ignore = "requires a C compiler with a WASM backend"]
+    fn wasm_c_compiler_support() {
+        check_wasm_c_compiler().unwrap();
+    }
 
     #[test]
     fn test_tool_names() {

@@ -10,29 +10,30 @@ const TERMPREC = {
   LOOPEX: 1,
   OROP: 2,
   ANDOP: 3,
-  LSTOP: 4,
-  COMMA: 5,
-  ASSIGNOP: 6,
-  QUESTION_MARK: 7,
-  DOTDOT: 8,
-  OROR: 9,
-  ANDAND: 10,
-  BITOROP: 11,
-  BITANDOP: 12,
-  CHEQOP: 13,
-  CHRELOP: 14,
-  UNOP: 15,
-  REQUIRE: 16,
-  SHIFTOP: 17,
-  ADDOP: 18,
-  MULOP: 19,
-  MATCHOP: 20,
-  UMINUS: 21,
-  POWOP: 22,
-  PREINC: 23,
-  POSTINC: 23,
-  ARROW: 24,
-  PAREN: 25,
+  NOTOP: 4,
+  LSTOP: 5,
+  COMMA: 6,
+  ASSIGNOP: 7,
+  QUESTION_MARK: 8,
+  DOTDOT: 9,
+  OROR: 10,
+  ANDAND: 11,
+  BITOROP: 12,
+  BITANDOP: 13,
+  CHEQOP: 14,
+  CHRELOP: 15,
+  UNOP: 16,
+  REQUIRE: 17,
+  SHIFTOP: 18,
+  ADDOP: 19,
+  MULOP: 20,
+  MATCHOP: 21,
+  UMINUS: 22,
+  POWOP: 23,
+  PREINC: 24,
+  POSTINC: 24,
+  ARROW: 25,
+  PAREN: 26,
 }
 
 const unop_pre = (op, term) =>
@@ -72,8 +73,27 @@ const trContent = ($, node) =>
 const aliasMany = (to, tokens) => tokens.map(t => alias(t, to))
 
 
-// little helper just to keep things DRY
-const subExtensions = () => repeat(choice('extended', 'async'))
+// Recovery-aware closers: use these instead of bare ')', ']', '}' so the
+// scanner can inject a synthetic close when a statement keyword appears
+// on the next line.  Defined as functions so every call-site shares the
+// same grammar node (no extra states).
+// NOTE: recoverBrace is only used in subscript rules (hash_element,
+// slice, keyval) — NOT in block or anonymous_hash_expression, where
+// block/hash ambiguity via shared _PERLY_BRACE_OPEN makes it unsafe.
+const recoverParen = ($) => choice(')', alias($._RECOVER_PAREN_CLOSE, ')'))
+const recoverBracket = ($) => choice(']', alias($._RECOVER_BRACKET_CLOSE, ']'))
+const recoverBrace = ($) => choice('}', alias($._RECOVER_BRACE_CLOSE, '}'))
+// Block-body closer: a DISTINCT recovery token from recoverBrace's subscript
+// `}`.  Used only on sub/method bodies (`_body_block`).  The scanner emits
+// `_RECOVER_BLOCK_CLOSE` only when a `method`/`class`/`role` keyword opens the
+// next line — keywords that never legitimately nest inside a body (verified
+// against ~2.4k modern-OO modules) — so a half-typed body closes just itself.
+// Distinct from `_RECOVER_BRACE_CLOSE` so subscript-brace recovery is untouched.
+const recoverBlock = ($) => choice('}', alias($._RECOVER_BLOCK_CLOSE, '}'))
+
+// little helper just to keep things DRY.  `async` is a contextual keyword
+// emitted by the scanner (aliased so it stays queryable/highlightable).
+const subExtensions = ($) => repeat(choice('extended', alias($._KW_ASYNC, 'async')))
 
 /**
  *
@@ -95,6 +115,20 @@ module.exports = grammar({
   ],
   word: $ => $._identifier,
   inline: $ => [
+    $._var_indirob,
+    $._semicolon,
+    $._fullstmt,
+    $._else,
+    $._conditionals,
+    $._quotelike_end,
+    $._quotelike_begin,
+    $._declared_vars,
+    $._interpolations,
+    $._nonvar_interpolation_fallbacks,
+    $._apostrophe,
+    $._brace_autoquoted,
+    $._version,
+    $._loops,
     $._func0op,
     $._func1op,
     $._map_grep,
@@ -131,6 +165,8 @@ module.exports = grammar({
     $.escape_sequence,
     $.escaped_delimiter,
     $._dollar_in_regexp,
+    $._regexp_open_bracket,
+    $._regexp_open_brace,
     $.pod,
     $._gobbled_content,
     $._attribute_value_begin,
@@ -143,6 +179,7 @@ module.exports = grammar({
     $._heredoc_middle,
     $.heredoc_end,
     $._fat_comma_autoquoted,
+    $._fat_comma_autoquoted_ahead,
     $._filetest,
     $._brace_autoquoted_token,
     /* zero-width lookahead tokens */
@@ -151,24 +188,49 @@ module.exports = grammar({
     $._no_interp_whitespace_zw,
     /* zero-width high priority token */
     $._NONASSOC,
+    /* synthetic tokens for error recovery */
+    $._RECOVER_PAREN_CLOSE,
+    $._RECOVER_BRACKET_CLOSE,
+    $._RECOVER_BRACE_CLOSE,
+    $._RECOVER_ARROW,
+    $._RECOVER_BLOCK_CLOSE,
+    /* opaque body of a `format NAME = ... .` declaration: from the line after
+     * `=` up to and including the lone-`.` terminator line */
+    $.format_content,
+    /* `x` repetition operator glued to its count (`"ab"x3`) — emitted only when
+     * an operator is expected, mirroring perl's XOPERATOR-state disambiguation */
+    $._x_op,
+    /* `class`/`role` emitted as keywords by the scanner ONLY in declaration
+     * position (followed by a name); otherwise the word lexes as a bareword so
+     * `role { … }`, `class($x)`, `-role` parse as ordinary calls/terms. */
+    $._KW_CLASS,
+    $._KW_ROLE,
+    $._KW_METHOD,
+    /* `async` emitted as a keyword only before `{`/`sub`/`method`; `try` only
+     * before a block `{`.  Otherwise the words lex as ordinary barewords so
+     * `async(...)`/`try(1,2,3)`/`try => 1` parse as calls/terms. */
+    $._KW_ASYNC,
+    $._KW_TRY,
     /* error condition must always be last; we don't use this in the grammar */
     $._ERROR
   ],
   extras: $ => [
-    /\p{White_Space}|\\\r?\n/,
+    /\p{White_Space}/,
     $.comment,
     $.pod,
     $.heredoc_content,
   ],
   conflicts: $ => [
     [$.preinc_expression, $.postinc_expression],
-    // we need this b/c otherwise a nested term will eat its children's nodes (print print 1, 2, 3)
-    [$._listexpr, $._term_rightward],
     // all of the following go GLR b/c they need extra tokens to allow postfixy autoquotes
     [$.return_expression],
     [$.function, $.bareword],
     [$.function, $.function_call_expression],
     [$._variables, $.indirect_object],
+    // a builtin filehandle after a list-op is ambiguous between the indirect
+    // object slot (`print STDERR LIST`) and a plain term argument
+    // (`binmode STDOUT, MODE`); GLR resolves on the following comma/term.
+    [$._term, $.indirect_object],
     [$.expression_statement, $._tricky_indirob_hashref],
     [$.autoquoted_bareword],
     // nameless params need extra lookahead
@@ -187,10 +249,18 @@ module.exports = grammar({
 
     block: $ => seq($._PERLY_BRACE_OPEN, repeat($._fullstmt), '}'),
 
+    // Like `block`, but recovery-aware: accepts a synthetic `}` injected by the
+    // scanner when a `method`/`class`/`role` keyword starts the next line.  Used
+    // ONLY for sub/method bodies (aliased back to `block` so node names are
+    // identical).  Class/role bodies stay plain `block`, which bounds recovery:
+    // closing a body lands in the enclosing class block, which cannot accept the
+    // synthetic `}`, so the cascade stops (no over-closing).
+    _body_block: $ => seq($._PERLY_BRACE_OPEN, repeat($._fullstmt), recoverBlock($)),
+
     _fullstmt: $ => choice($._barestmt, $.statement_label),
 
     // perly.y calls this labfullstmt
-    statement_label: $ => seq(field('label', $.identifier), ':', field('statement', $._fullstmt)),
+    statement_label: $ => seq(field('label', choice($.identifier, alias($._PHASE_NAME, $.identifier))), ':', field('statement', $._fullstmt)),
     _semicolon: $ => choice(';', $._PERLY_SEMICOLON),
 
     _barestmt: $ => choice(
@@ -203,6 +273,7 @@ module.exports = grammar({
       $.subroutine_declaration_statement,
       $.method_declaration_statement,
       $.phaser_statement,
+      $.format_statement,
       $.conditional_statement,
       /* TODO: given/when/default */
       $.loop_statement,
@@ -219,28 +290,37 @@ module.exports = grammar({
       seq('package', field('name', $.package), optional(field('version', $._version)), $.block),
     ),
     class_statement: $ => choice(
-      seq('class',
+      seq(alias($._KW_CLASS, "class"),
         field('name', $.package),
         optional(field('version', $._version)),
         optseq(':', optional(field('attributes', $.attrlist))),
         $._semicolon),
-      seq('class',
+      seq(alias($._KW_CLASS, "class"),
         field('name', $.package),
         optional(field('version', $._version)),
         optseq(':', optional(field('attributes', $.attrlist))),
         $.block),
     ),
     role_statement: $ => choice(
-      seq('role',
+      seq(alias($._KW_ROLE, "role"),
         field('name', $.package),
         optional(field('version', $._version)),
         optseq(':', optional(field('attributes', $.attrlist))),
         $._semicolon),
-      seq('role',
+      seq(alias($._KW_ROLE, "role"),
         field('name', $.package),
         optional(field('version', $._version)),
         optseq(':', optional(field('attributes', $.attrlist))),
         $.block),
+    ),
+    /* `format NAME = <newline> BODY .` — NAME defaults to STDOUT and is
+     * optional. The body (picture/argument lines up to a lone `.`) is opaque
+     * content read by the external scanner. */
+    format_statement: $ => seq(
+      'format',
+      optional(field('name', $.bareword)),
+      '=',
+      $.format_content,
     ),
     class_phaser_statement: $ => seq(
       field('phase', choice('BUILD', 'ADJUST')),
@@ -302,36 +382,42 @@ module.exports = grammar({
       ')'
     ),
     subroutine_declaration_statement: $ => seq(
-      optional(field('lexical', 'my')),
-      subExtensions(),
+      optional(choice(field('lexical', choice('my', 'state')), 'our')),
+      subExtensions($),
       'sub',
       field('name', $.bareword),
-      optseq(':', optional(field('attributes', $.attrlist))),
-      optional(choice($.prototype, $.signature)),
-      field('body', $.block),
+      $._sub_decl_tail,
     ),
 
     method_declaration_statement: $ => seq(
-      optional(field('lexical', 'my')),
-      subExtensions(),
-      'method',
+      optional(choice(field('lexical', choice('my', 'state')), 'our')),
+      subExtensions($),
+      alias($._KW_METHOD, "method"),
       field('name', $.bareword),
+      $._sub_decl_tail,
+    ),
+
+    // A *named* sub/method declaration may be a forward declaration (no body,
+    // just `;`) as well as a definition — `sub foo;`, `sub foo :attr;`,
+    // `sub foo ($sig);`. Anonymous subs always need a body, so they keep
+    // `_anon_sub_tail`; here we allow either a body or a terminating `;`.
+    _sub_decl_tail: $ => seq(
       optseq(':', optional(field('attributes', $.attrlist))),
       optional(choice($.prototype, $.signature)),
-      field('body', $.block),
+      choice(field('body', alias($._body_block, $.block)), $._semicolon),
     ),
 
     // perly.y's grammar just considers a phaser to be a `sub` with a special
     // name and lacking the `sub` keyword, but most tree consumers are likely
     // to care about distinguishing it
-    phaser_statement: $ => seq(field('phase', $._PHASE_NAME), $.block),
+    phaser_statement: $ => seq(field('phase', $._PHASE_NAME), alias($._body_block, $.block)),
 
     conditional_statement: $ =>
       seq($._conditionals, '(', field('condition', $._expr), ')',
-        field('block', $.block),
+        field('block', alias($._body_block, $.block)),
         optional($._else)
       ),
-    _loop_body: $ => seq(field('block', $.block), optseq('continue', field('continue', $.block))),
+    _loop_body: $ => seq(field('block', alias($._body_block, $.block)), optseq('continue', field('continue', alias($._body_block, $.block)))),
     loop_statement: $ => seq($._loops, '(', field('condition', $._expr), ')', $._loop_body),
     cstyle_for_statement: $ =>
       seq($._KW_FOR,
@@ -344,7 +430,8 @@ module.exports = grammar({
       ),
     _for_initializer: $ => choice(
       seq(optional(choice('my', 'state', 'our')), field('variable', $.scalar)),
-      seq('my', field('variables', paren_list_of($.scalar))),
+      seq(optional(choice('my', 'state', 'our')), field('variable', $.refalias_variable)),
+      seq('my', paren_list_of(field('variables', $.scalar))),
     ),
     for_statement: $ =>
       seq($._KW_FOR,
@@ -354,19 +441,19 @@ module.exports = grammar({
       ),
 
     try_statement: $ => seq(
-      'try',
-      field('try_block', $.block),
+      alias($._KW_TRY, 'try'),
+      field('try_block', alias($._body_block, $.block)),
       // regular perl only permits catch(VAR) but we get easy compatibility
       // with Syntax::Keyword::Try too by being a bit more flexible
       optseq('catch', optseq('(', field('catch_expr', $._expr), ')'),
-        field('catch_block', $.block)),
+        field('catch_block', alias($._body_block, $.block))),
       optseq('finally',
-        field('finally_block', $.block)),
+        field('finally_block', alias($._body_block, $.block))),
     ),
 
     defer_statement: $ => seq(
       'defer',
-      field('block', $.block),
+      field('block', alias($._body_block, $.block)),
     ),
 
     // perly.y calls this `sideff`
@@ -386,10 +473,10 @@ module.exports = grammar({
     yadayada: $ => '...',
 
     _else: $ => choice($.else, $.elsif),
-    else: $ => seq('else', field('block', $.block)),
+    else: $ => seq('else', field('block', alias($._body_block, $.block))),
     elsif: $ =>
       seq('elsif', '(', field('condition', $._expr), ')',
-        field('block', $.block),
+        field('block', alias($._body_block, $.block)),
         optional($._else)
       ),
 
@@ -399,14 +486,30 @@ module.exports = grammar({
       prec.left(TERMPREC.OROP, binop(choice('or', 'xor'), $._expr)),
     ),
 
+    /* A parenless list operator gobbles everything to its right
+     * (`return bless {}, $class` ≡ `return bless({}, $class)`), so at a comma
+     * the parser must ALWAYS continue the innermost open list, never close a
+     * call and let the comma escape to an enclosing return/list. We force that
+     * branch statically: the `_term` production here is prec.right, so the
+     * equal-precedence shift/reduce against `_term_rightward`'s comma resolves
+     * toward the shift (right-assoc reduce = prefer shift) and the escape
+     * readings are never even forked. Which consumer owns the finished flat
+     * list stays deterministic — it reduces to whatever's below it on the
+     * stack, which is exactly the innermost list-taker. */
     _listexpr: $ => choice(
       alias($._term_rightward, $.list_expression),
-      $._term
+      prec.right($._term)
     ),
-    /* ensure that an entire list expression's contents appear in one big flat
-    * list, while permitting multiple internal commas and an optional trailing one */
+    /* one flat list: internal commas plus an optional trailing one.  The trailing
+     * slot is at the END, not an interior `optional` after every comma — an
+     * interior empty slot competes with a `++`/`--` after a comma and the
+     * `prec.right` gobble closes the list instead (so `push @a, ++$x` reads `++`
+     * as a postfix).  Slot-at-end forces `++` to shift as a prefix; `,,` empties
+     * (sitting before a comma) still reduce. */
     _term_rightward: $ => prec.right(seq(
-      $._term, repeat1(seq($._PERLY_COMMA, optional($._term))),
+      $._term, $._PERLY_COMMA,
+      repeat(seq(optional($._term), $._PERLY_COMMA)),
+      optional($._term),
     )),
 
     subscripted: $ => choice(
@@ -421,55 +524,69 @@ module.exports = grammar({
     // for highlighting. We raise its prec b/c in a print (print $thing{stuff}) it becomes a var
     // not an indirob
     container_variable: $ => prec(2, seq('$', $._var_indirob)),
+    _glob_slot_subscript: $ => seq('{', $._hash_key, '}'),
     glob_slot_expression: $ => choice(
-      seq($.glob, '{', $._hash_key, '}'),
-      prec.left(TERMPREC.ARROW, seq($._term, '->', '*', '{', $._hash_key, '}')),
+      seq($.glob, $._glob_slot_subscript),
+      prec.left(TERMPREC.ARROW, seq($._term, '->', '*', $._glob_slot_subscript)),
     ),
+    _index_subscript: $ => seq('[', field('index', $._expr), recoverBracket($)),
+    _key_subscript: $ => seq('{', field('key', $._hash_key), recoverBrace($)),
+    _args_subscript: $ => seq('(', optional(field('arguments', $._expr)), recoverParen($)),
     array_element_expression: $ => choice(
       // perly.y matches scalar '[' expr ']' here but that would yield a scalar var node
-      seq(field('array', $.container_variable), '[', field('index', $._expr), ']'),
-      prec.left(TERMPREC.ARROW, seq($._term, '->', '[', field('index', $._expr), ']')),
-      seq($.subscripted, '[', field('index', $._expr), ']'),
+      seq(field('array', $.container_variable), $._index_subscript),
+      prec.left(TERMPREC.ARROW, seq($._term, '->', $._index_subscript)),
+      seq($.subscripted, $._index_subscript),
     ),
     _hash_key: $ => choice($._brace_autoquoted, $._expr),
     hash_element_expression: $ => choice(
       // perly.y matches scalar '{' expr '}' here but that would yield a scalar var node
-      seq(field('hash', $.container_variable), '{', field('key', $._hash_key), '}'),
-      prec.left(TERMPREC.ARROW, seq($._term, '->', '{', field('key', $._hash_key), '}')),
-      seq($.subscripted, '{', field('key', $._hash_key), '}'),
+      seq(field('hash', $.container_variable), $._key_subscript),
+      prec.left(TERMPREC.ARROW, seq($._term, '->', $._key_subscript)),
+      seq($.subscripted, $._key_subscript),
     ),
     coderef_call_expression: $ => choice(
-      prec.left(TERMPREC.ARROW, seq($._term, '->', '(', optional(field('arguments', $._expr)), ')')),
-      seq($.subscripted, '(', optional(field('arguments', $._expr)), ')'),
+      prec.left(TERMPREC.ARROW, seq($._term, '->', $._args_subscript)),
+      seq($.subscripted, $._args_subscript),
     ),
+    _anon_slice_subscript: $ => seq('[', $._expr, ']'),
     anonymous_slice_expression: $ => choice(
-      seq('(', optional(field('list', $._expr)), ')', '[', $._expr, ']'),
-      seq(field('list', $.quoted_word_list), '[', $._expr, ']'),
+      seq('(', optional(field('list', $._expr)), ')', $._anon_slice_subscript),
+      seq(field('list', $.quoted_word_list), $._anon_slice_subscript),
     ),
 
     slices: $ => choice(
       $.slice_expression,
       $.keyval_expression,
     ),
+    _slice_index_subscript: $ => seq('[', $._expr, recoverBracket($)),
+    _slice_key_subscript: $ => seq('{', $._hash_key, recoverBrace($)),
     slice_container_variable: $ => seq('@', $._var_indirob),
     slice_expression: $ => choice(
-      seq(field('array', $.slice_container_variable), '[', $._expr, ']'),
-      seq(field('hash', $.slice_container_variable), '{', $._hash_key, '}'),
+      seq(field('array', $.slice_container_variable), $._slice_index_subscript),
+      seq(field('hash', $.slice_container_variable), $._slice_key_subscript),
       prec.left(TERMPREC.ARROW,
-        seq(field('arrayref', $._term), '->', '@', '[', $._expr, ']')),
+        seq(field('arrayref', $._term), '->', '@', $._slice_index_subscript)),
       prec.left(TERMPREC.ARROW,
-        seq(field('hashref', $._term), '->', '@', '{', $._hash_key, '}')),
+        seq(field('hashref', $._term), '->', '@', $._slice_key_subscript)),
     ),
     keyval_container_variable: $ => seq($._HASH_PERCENT, $._var_indirob),
     keyval_expression: $ => choice(
-      seq(field('array', $.keyval_container_variable), '[', $._expr, ']'),
-      seq(field('hash', $.keyval_container_variable), '{', $._hash_key, '}'),
+      seq(field('array', $.keyval_container_variable), $._slice_index_subscript),
+      seq(field('hash', $.keyval_container_variable), $._slice_key_subscript),
       prec.left(TERMPREC.ARROW,
-        seq(field('arrayref', $._term), '->', '%', '[', $._expr, ']')),
+        seq(field('arrayref', $._term), '->', '%', $._slice_index_subscript)),
       prec.left(TERMPREC.ARROW,
-        seq(field('hashref', $._term), '->', '%', '{', $._hash_key, '}')),
+        seq(field('hashref', $._term), '->', '%', $._slice_key_subscript)),
     ),
 
+    // A parenthesized expression is its own node rather than a transparent
+    // `('(' _expr ')')`: a field wrapping a transparent-paren term (e.g. binop's
+    // `right:`) otherwise splats onto the `(`/`)` tokens, since tree-sitter
+    // attaches a field to every child spliced up from a hidden/inline rule (see
+    // upstream tree-sitter#1526). Every mature grammar (js/python/c/rust) gives
+    // parens a named node for exactly this reason. Costs zero extra parser states.
+    parenthesized_expression: $ => seq('(', $._expr, ')'),
     _term: $ => choice(
       $.readline_expression,
       $.fileglob_expression,
@@ -484,13 +601,14 @@ module.exports = grammar({
       $.anonymous_hash_expression,
       $.anonymous_subroutine_expression,
       $.anonymous_method_expression,
+      $.async_block_expression,
       $.do_expression,
       $.eval_expression,
       $.await_expression,
       $.conditional_expression,
       $.refgen_expression,
       $.localization_expression,
-      seq('(', $._expr, ')'),
+      $.parenthesized_expression,
       $.quoted_word_list,
       $.heredoc_token,
       $.command_heredoc_token,
@@ -505,8 +623,9 @@ module.exports = grammar({
       $.goto_expression,
       $.return_expression,
       $.undef_expression,
-      /* NOTOP listexpr
-       * UNIOP
+      /* NOTOP listexpr */
+      $.logical_not_expression,
+      /* UNIOP
        * UNIOP block
        * UNIOP term
        */
@@ -519,7 +638,13 @@ module.exports = grammar({
       $.map_grep_expression,
       $.sort_expression,
       /* PMFUNC */
+      alias($._builtin_filehandle, $.filehandle),
       $.bareword,
+      // builtin list-op words used as a bare term (e.g. `die if …`, `print;`)
+      // need a standalone reading too, since they're otherwise only reachable
+      // through the list-op function-call branches. They're unambiguously
+      // builtins, so emit `function`, not `bareword`.
+      alias(choice($._listop_keyword, $._indirob_listop), $.function),
       $.autoquoted_bareword,
       $._listop,
 
@@ -554,13 +679,19 @@ module.exports = grammar({
     assignment_expression: $ => prec.right(TERMPREC.ASSIGNOP,
       binop(
         choice( // _ASSIGNOP
-          '=', '**=',
+          // The compound-assigns starting with a sigil char (`*` `%` `&`) need
+          // higher lexer prec than the `*`/`%`/`&` sigils (`_GLOB_STAR`/
+          // `_HASH_PERCENT`/`_SUB_AMPER`, all prec 2) so that after a bareword in
+          // term position (`FOO **= 1`, `FOO %= 1`, `FOO &= 1`, …) the operator
+          // wins on longest-match instead of the leading sigil char being eaten
+          // as a `*glob`/`%hash`/`&sub` sigil (which orphaned the tail into ERROR).
+          '=', token(prec(2, '**=')),
           '+=', '-=', '.=',
-          '*=', '/=', '%=', 'x=',
-          '&=', '|=', '^=',
+          token(prec(2, '*=')), '/=', token(prec(2, '%=')), 'x=',
+          token(prec(2, '&=')), '|=', '^=',
           // TODO: Also &.= |.= ^.= when enabled
           '<<=', '>>=',
-          '&&=', '||=', '//=',
+          token(prec(2, '&&=')), '||=', '//=',
         ),
         $._term
       )
@@ -569,14 +700,20 @@ module.exports = grammar({
     binary_expression: $ => {
       const table = [
         [prec.right, binop.nonassoc, choice('..', '...'), TERMPREC.DOTDOT], // _DOTDOT
-        [prec.right, binop, '**', TERMPREC.POWOP], // _POWOP
+        // `**` needs higher lexer prec than the `*` glob sigil (`_GLOB_STAR`,
+        // prec 2) so `FOO ** 2` after a bareword isn't mis-lexed as a `*glob`.
+        [prec.right, binop, token(prec(2, '**')), TERMPREC.POWOP], // _POWOP
         [prec.left, binop, choice('||', '//', '^^'), TERMPREC.OROR], // _OROR_DORDOR
-        [prec.left, binop, '&&', TERMPREC.ANDAND], // _ANDAND
+        // `&&` needs higher lexer prec than the `&` sub sigil (`_SUB_AMPER`,
+        // prec 2) so that after a bareword in term position (`FOO && 1`) the
+        // logical-and operator wins instead of the leading `&` being eaten as
+        // a sub-call sigil (which orphaned the trailing `& 1` into an ERROR).
+        [prec.left, binop, token(prec(2, '&&')), TERMPREC.ANDAND], // _ANDAND
         [prec.left, binop, choice('|', '^'), TERMPREC.BITOROP], // _BITORDOP
         [prec.left, binop, '&', TERMPREC.BITANDOP], // _BITANDOP
         [prec.left, binop, choice('<<', '>>'), TERMPREC.SHIFTOP], // _SHIFTOP
         [prec.left, binop, choice('+', '-', '.'), TERMPREC.ADDOP], // _ADDOP
-        [prec.left, binop, choice('*', '/', '%', 'x'), TERMPREC.MULOP], // _MULOP
+        [prec.left, binop, choice('*', '/', '%', 'x', alias($._x_op, 'x')), TERMPREC.MULOP], // _MULOP
         [prec.left, binop, choice('=~', '!~'), TERMPREC.MATCHOP], // _MATCHOP
       ]
 
@@ -610,6 +747,12 @@ module.exports = grammar({
       prec(TERMPREC.UMINUS, unop_pre('~', $._term)), // TODO: also ~. when enabled
       prec(TERMPREC.UMINUS, unop_pre('!', $._term)),
     ),
+    // perly.y models this as `term: NOTOP listexpr`, so unlike `and`/`or`/`xor`
+    // (which live in lowprec_logical_expression at the _expr level) `not` is a
+    // _term and may appear e.g. on the RHS of an assignment. Its operand is a
+    // listexpr, so it binds looser than the comma but tighter than and/or.
+    logical_not_expression: $ =>
+      prec.right(TERMPREC.NOTOP, unop_pre('not', $._listexpr)),
     preinc_expression: $ =>
       prec(TERMPREC.PREINC, unop_pre(choice('++', '--'), $._term)),
     postinc_expression: $ =>
@@ -622,13 +765,21 @@ module.exports = grammar({
     refgen_expression: $ => prec.left(TERMPREC.UMINUS, seq('\\', choice(alias($.amper_sub, $.function), $._term))), // _REFGEN
 
     anonymous_array_expression: $ => seq(
-      '[', optional($._expr), ']'
+      '[', optional($._expr), recoverBracket($)
     ),
 
     // we use the precedence here to ensure that we turn map { q'thingy" => $_ } into a hashref
     // it just needs to be arbitrarily higher than the _literal rule.
-    _tricky_list: $ => prec(1, seq(
-      choice($.string_literal, $.interpolated_string_literal, $.command_string, $.autoquoted_bareword, $.number), $._PERLY_COMMA, $._listexpr
+    // The tail mirrors `_term_rightward` (flat list + empty/trailing slots) rather
+    // than delegating to `_listexpr` — a delegated `_listexpr` can't begin with a
+    // comma, so `{ hi =>, 'thing' }` (a fat comma followed by an empty slot, valid
+    // Perl) used to error. Inlining the empty-slot-aware repeat also flattens the
+    // list instead of nesting a second `list_expression` after the first comma.
+    _tricky_list: $ => prec.right(1, seq(
+      choice($.string_literal, $.interpolated_string_literal, $.command_string, $.autoquoted_bareword, $.number),
+      $._PERLY_COMMA,
+      repeat(seq(optional($._term), $._PERLY_COMMA)),
+      optional($._term),
     )),
     anonymous_hash_expression: $ => choice(
       seq($._PERLY_BRACE_OPEN, $._expr, '}'),
@@ -638,28 +789,40 @@ module.exports = grammar({
       seq($._PERLY_BRACE_OPEN, alias($._tricky_list, $.list_expression), '}'),
     ),
 
-    anonymous_subroutine_expression: $ => seq(
-      subExtensions(),
-      'sub',
+    _anon_sub_tail: $ => seq(
       optseq(':', optional(field('attributes', $.attrlist))),
       optional(choice($.prototype, $.signature)),
       field('body', $.block),
     ),
 
+    anonymous_subroutine_expression: $ => seq(
+      subExtensions($),
+      'sub',
+      $._anon_sub_tail,
+    ),
+
     anonymous_method_expression: $ => seq(
-      subExtensions(),
-      'method',
-      optseq(':', optional(field('attributes', $.attrlist))),
-      optional(choice($.prototype, $.signature)),
-      field('body', $.block),
+      subExtensions($),
+      alias($._KW_METHOD, "method"),
+      $._anon_sub_tail,
+    ),
+
+    // `async { … }` block (threads::async — a bare block run as an anon sub).
+    // The scanner emits `_KW_ASYNC` here only before a `{`, so `async`/`async(...)`
+    // as a plain sub stays an ordinary call.
+    async_block_expression: $ => seq(
+      alias($._KW_ASYNC, 'async'),
+      $.block,
     ),
 
     // do FILENAME is more of an eval, so we parse it as eval_expression w/ a filename
     // node inside
     do_expression: $ => choice(seq('do', $.block)),
-    eval_expression: $ => prec(TERMPREC.UNOP,
+    eval_expression: $ => prec.left(TERMPREC.UNOP,
       choice(
-        seq('eval', choice($.block, $._term)),
+        // bare `eval` (no arg) defaults to `$_` (`map { eval } @list`);
+        // `prec.left` resolves the resulting `eval` • term shift/reduce.
+        seq('eval', optional(choice($.block, $._term))),
         seq('do', alias($._term, $.filename))
       )
     ),
@@ -671,21 +834,57 @@ module.exports = grammar({
       alias($._declare_hash, $.hash),
     ),
 
+    // refaliasing: `\$x`, `\@a`, `\%h` as a declaration or for-loop iterator.
+    //
+    // This is its own visible node (not just a `refgen_expression`) on purpose:
+    // a `\`-var after `my`/`state`/`our` or in a for-iterator can *only* be a
+    // refalias, so the distinct node is a real syntactic category, not a
+    // semantic overlay -- and refaliasing has different binding semantics that
+    // downstream consumers should see. (In `\$x = ...` assignment the `\` is a
+    // genuine refgen lvalue, exactly as Perl parses it, so that case stays a
+    // `refgen_expression`; refalias-there is positional. The node boundary
+    // tracks where the grammar actually disambiguates.)
+    //
+    // it's not folded under other _declared_vars b/c you need to guard against REVERSE
+    // SOLIDUS RECUSRION
+    refalias_variable: $ => seq('\\', $._declared_vars),
+
     variable_declaration: $ => prec.left(TERMPREC.QUESTION_MARK + 1,
       seq(
         choice('my', 'state', 'our', 'field'),
         choice(
-          field('variable', $._declared_vars),
-          field('variables', $._decl_variable_list)),
+          // typed lexical: `my Dog $spot` — an optional class/type name (a
+          // package name, possibly `::`-qualified) before the variable.
+          // Unambiguous: the variable always starts with a sigil, never a bareword.
+          seq(optional(field('type', $.package)), field('variable', $._declared_vars)),
+          field('variable', $.refalias_variable),
+          $._decl_variable_list),
         optseq(':', optional(field('attributes', $.attrlist))))
     ),
 
-    _decl_variable_list: $ => paren_list_of(
-      choice(
-        $.undef_expression,
-        $._declared_vars
-      )
+    _decl_variable_list: $ => seq('(', optional($._decl_variable_list_body), ')'),
+
+    // The body intentionally avoids `paren_list_of`'s leading-`optional(rule)`
+    // shape: that admits an empty leading element, which collides with a nested
+    // `(` group opener and makes tree-sitter drop the group shift. Requiring the
+    // first element (while still allowing empty/trailing slots after a comma)
+    // keeps the nested-group `(` unambiguous.
+    _decl_variable_list_body: $ => seq(
+      field('variables', $._decl_variable_list_element),
+      repeat(seq(',', optional(field('variables', $._decl_variable_list_element))))
     ),
+
+    _decl_variable_list_element: $ => choice(
+      $.undef_expression,
+      $._declared_vars,
+      $.refalias_variable,
+      // a nested parenthesized group: perl flattens `my ($a, ($b, $c))` to
+      // `my ($a, $b, $c)`, so structurally the inner `( ... )` is just another
+      // (recursive) variable list.
+      $.variable_group
+    ),
+
+    variable_group: $ => seq('(', optional($._decl_variable_list_body), ')'),
 
     localization_expression: $ =>
       prec(TERMPREC.UNOP, seq(choice('local', 'dynamically'), $._term)),
@@ -774,33 +973,104 @@ module.exports = grammar({
     ),
 
     indirect_object: $ => choice(
-      // we intentionally don't do bareword filehandles b/c we can't possibly do it right
-      // since we can't know what subs have been defined
+      // We punt on *arbitrary* bareword filehandles (can't know what subs are
+      // defined), but the standard predefined handles are a safe closed set —
+      // nobody sanely defines `sub STDOUT` — so we accept those.
+      alias($._builtin_filehandle, $.filehandle),
       $.block,
       // this may be kinda evil, but we use this token as a flag to not accept a search slash
       seq($.scalar, optional($._no_search_slash_plz)),
     ),
-    _unambiguous_function: $ => alias(choice($._bareword, $.amper_sub), $.function),
+    // Perl's predefined filehandles. A closed set, so recognizing them as
+    // filehandles (in the indirect-object slot and as filetest/func1 operands)
+    // can't collide with a user sub. Non-standard bareword handles are punted.
+    _builtin_filehandle: $ => choice('STDIN', 'STDOUT', 'STDERR'),
+    _unambiguous_function: $ => alias(choice($._bareword, $._listop_keyword, $._indirob_listop, $.amper_sub), $.function),
     function_call_expression: $ => choice(
       seq(field('function', alias($.amper_sub, $.function))),
       // the usage of NONASSOC here is to make it that any parse of a paren after a func
       // automatically becomes a non-ambiguous function call
-      seq(field('function', $._unambiguous_function), '(', $._NONASSOC, optional(field('arguments', $._expr)), ')'),
-      seq(field('function', $._unambiguous_function), '(', $._NONASSOC, $.indirect_object, field('arguments', $._expr), ')'),
+      seq(field('function', $._unambiguous_function), '(', $._NONASSOC, optional(field('arguments', $._expr)), recoverParen($)),
+      // The indirect-object call form `FUNC(INDIROB ARGS)` is only valid for the
+      // indirob set (print/printf/say/exec/system) and userland barewords — NOT
+      // the other builtin list-ops. Otherwise `bless({%$arg}, $class)` reads its
+      // leading `{…}` as a block indirect-object instead of a hashref argument.
+      // Listed as the disjoint pieces (`_indirob_listop` direct, the named
+      // `function` rule for barewords) rather than one combined alias, so a
+      // keyword reduces to a single hidden rule (no reduce/reduce that would
+      // starve print's indirob in favor of the hashref reading).
+      seq(field('function', alias($._indirob_listop, $.function)), '(', $._NONASSOC, $.indirect_object, field('arguments', $._expr), recoverParen($)),
+      seq(field('function', $.function), '(', $._NONASSOC, $.indirect_object, field('arguments', $._expr), recoverParen($)),
     ),
     _tricky_indirob_hashref: $ => seq($._PERLY_BRACE_OPEN, $._expr, $._PERLY_SEMICOLON, '}'),
     ambiguous_function_call_expression: $ =>
       // we need the right precedence here so we can read ahead for the hash/sub disambiguation
       prec.right(TERMPREC.LSTOP,
         choice(
-          seq(field('function', $.function), field('arguments', $._listexpr)),
+          // The no-paren list-op form. Builtin LIST operators (print, split,
+          // join, …) keep regex-after-bareword behavior (`split /,/`, `print
+          // /x/`). For generic/userland barewords we apply PPI's heuristic: a
+          // following `/` is division by default, NOT a regex. The
+          // `_no_search_slash_plz` marker suppresses the search-slash token so
+          // `FOO / 1.05` lexes the `/` as division (the bareword then falls
+          // through to a plain term in a binary_expression). This sacrifices
+          // `myfunc /x/` (becomes division), but `myfunc(/x/)` is unaffected
+          // (parens make it unambiguous).
+          seq(field('function', alias($._listop_keyword, $.function)), field('arguments', $._listexpr)),
+          seq(field('function', alias($._indirob_listop, $.function)), field('arguments', $._listexpr)),
+          seq(field('function', $.function), optional($._no_search_slash_plz), field('arguments', $._listexpr)),
           seq(field('function', $.function), $.indirect_object, field('arguments', $._listexpr)),
+          seq(field('function', alias($._indirob_listop, $.function)), $.indirect_object, field('arguments', $._listexpr)),
           // we handle this_takes_a_block { thing; other_thing }; here. we don't wanna accept an indirob of scalar tho
           seq(field('function', $.function), alias($.block, $.indirect_object)),
           // we handle cases like takes_a_hash { 1 => 2 }; by having this special case
           seq(field('function', $.function), field('arguments', alias($._tricky_indirob_hashref, $.anonymous_hash_expression)), optseq($._PERLY_COMMA, field('arguments', $._listexpr)))
         )
       ),
+    // Builtin LIST operators. This is the `@function.builtin` list-op set from
+    // queries/highlights.scm, minus words that already have dedicated grammar
+    // handling (return → return_expression, sort → sort_expression) which would
+    // otherwise create unresolved conflicts.
+    //
+    // DESIGN NOTE — why these are folded into `ambiguous_function_call_expression`
+    // (aliased to `function`) rather than getting their own `listop_call_expression`
+    // node like func0op/func1op/sort do:
+    //   This token exists ONLY to control one thing — the search-slash heuristic
+    //   above (a `/` after a builtin list-op stays a regex: `split /,/`, `print
+    //   /x/`; after a generic bareword it's division). It is NOT meant to claim
+    //   these are "really" ambiguous. A dedicated node would read more cleanly,
+    //   BUT it isn't worth it: (a) it renames the node for every `print`/`split`/…
+    //   call, a breaking change for tree consumers, and (b) it costs ~+46 large
+    //   states (the no-paren call shapes — args / indirect-object / block-indirob
+    //   / hashref — have to be duplicated for the new node). So we reuse the
+    //   existing call machinery and only split the one search-slash-sensitive arg
+    //   branch. The `function` alias keeps the emitted node identical to a plain
+    //   bareword call.
+    // The builtin list-ops that take a no-comma indirect object `FUNC {EXPR} LIST`
+    // (perlfunc): print/printf/say take a filehandle there, exec/system the
+    // program. Only these get the block/filehandle-indirob branch — for every
+    // other list-op (bless, join, push, …) a `{…}` is a hashref argument, not an
+    // indirect object. (sort's `{$a<=>$b}` comparator is its own rule.)
+    _indirob_listop: $ => choice('print', 'printf', 'say', 'exec', 'system'),
+    // NB: the no-comma-indirect-object list-ops (print/printf/say/exec/system)
+    // live in `_indirob_listop`, NOT here — the two sets are kept disjoint so a
+    // keyword reduces to exactly one hidden rule (overlap = reduce/reduce
+    // conflict). Use `choice($._listop_keyword, $._indirob_listop)` where you
+    // want "any builtin list-op".
+    _listop_keyword: $ => choice(
+      'accept', 'atan2', 'bind', 'binmode', 'bless', 'crypt', 'chmod', 'chown',
+      'connect', 'die', 'dbmopen', 'fcntl', 'flock', 'getpriority',
+      'getprotobynumber', 'gethostbyaddr', 'getnetbyaddr', 'getservbyname',
+      'getservbyport', 'getsockopt', 'glob', 'index', 'ioctl', 'join', 'kill',
+      'link', 'listen', 'mkdir', 'msgctl', 'msgget', 'msgrcv', 'msgsend',
+      'opendir', 'push', 'pack', 'pipe', 'rename', 'rindex',
+      'read', 'recv', 'reverse', 'select', 'seek', 'semctl', 'semget',
+      'semop', 'send', 'setpgrp', 'setpriority', 'seekdir', 'setsockopt',
+      'shmctl', 'shmread', 'shmwrite', 'shutdown', 'socket', 'socketpair',
+      'split', 'sprintf', 'splice', 'substr', 'symlink', 'syscall',
+      'sysopen', 'sysseek', 'sysread', 'syswrite', 'tie', 'truncate', 'unlink',
+      'unpack', 'utime', 'unshift', 'vec', 'warn', 'waitpid', 'formline', 'open'
+    ),
     // we only parse a function if it won't be an indirob
     function: $ => $._bareword,
 
@@ -809,9 +1079,9 @@ module.exports = grammar({
       '->',
       optional('&'),
       field('method', $.method),
-      optseq('(', optional(field('arguments', $._expr)), ')')
+      optional($._args_subscript)
     )),
-    method: $ => choice($._bareword, $.scalar),
+    method: $ => choice($._bareword, $.scalar, $._RECOVER_ARROW),
 
     _variables: $ => choice(
       $.scalar,
@@ -822,10 +1092,10 @@ module.exports = grammar({
     ),
     _signature_varname: $ => alias($._identifier, $.varname),
     scalar: $ => seq('$', $._var_indirob),
-    _declare_scalar: $ => seq('$', $.varname),
+    _declare_scalar: $ => seq('$', choice($.varname, $._var_indirob_autoquote)),
     _signature_scalar: $ => seq('$', $._signature_varname),
     array: $ => seq('@', $._var_indirob),
-    _declare_array: $ => seq('@', $.varname),
+    _declare_array: $ => seq('@', choice($.varname, $._var_indirob_autoquote)),
     _signature_array: $ => seq('@', $._signature_varname),
     // these need to have higher prec than the equivalent operator symbols
     _HASH_PERCENT: $ => alias(token(prec(2, '%')), '%'), // self-aliasing b/c token
@@ -833,15 +1103,35 @@ module.exports = grammar({
     _GLOB_STAR: $ => alias(token(prec(2, '*')), '*'), // self-aliasing b/c token
 
     hash: $ => seq($._HASH_PERCENT, $._var_indirob),
-    _declare_hash: $ => seq($._HASH_PERCENT, $.varname),
+    _declare_hash: $ => seq($._HASH_PERCENT, choice($.varname, $._var_indirob_autoquote)),
     _signature_hash: $ => seq($._HASH_PERCENT, $._signature_varname),
 
     arraylen: $ => seq('$#', $._var_indirob),
-    glob: $ => seq($._GLOB_STAR, $._var_indirob),
+    // Like amper_sub: a braced-block glob target (`*{$x}`, `*{"Foo::$s"}`,
+    // `*{ EXPR }`) is a glob dereference of whatever EXPR yields, not the glob's
+    // literal name — so emit the target as a deref instead of burying it in
+    // varname. `*foo` / `*$ref` / `*{name}` keep their varname reading.
+    glob: $ => seq($._GLOB_STAR, choice(
+      alias($._amper_indirob, $.varname),
+      $._var_indirob_autoquote,
+      alias($._code_deref, $.glob_deref_expression),
+    )),
 
     // NOTE - amper_sub does NOT go into variable, b/c it's always a function call
     // unless it got refgen-ed
-    amper_sub: $ => seq($._SUB_AMPER, $._var_indirob),
+    amper_sub: $ => seq($._SUB_AMPER, choice(
+      // &foo / &$ref / &$punct — the name (or scalar) slot of a sub call
+      alias($._amper_indirob, $.varname),
+      // &{name} — a braced bareword autoquotes to a sub name (perl calls sub `name`)
+      $._var_indirob_autoquote,
+      // &{ EXPR } — a real code-dereference of whatever EXPR yields (a coderef in
+      // a scalar, a symbolic name from a string, or a code block). A distinct node
+      // lets consumers tell this from "call the sub literally named NAME".
+      alias($._code_deref, $.code_deref_expression),
+    )),
+    // _indirob minus the block arm; the braced-block case becomes code_deref
+    _amper_indirob: $ => choice($._bareword, $._ident_special, $.scalar),
+    _code_deref: $ => $.block,
 
     _indirob: $ => choice(
       $._bareword,
@@ -858,7 +1148,7 @@ module.exports = grammar({
     // not all indirobs are alike; for variables, they have autoquoting behavior
     _var_indirob_autoquote: $ => seq(
       $._PERLY_BRACE_OPEN,
-      alias(choice($._brace_autoquoted_token, $._bareword, $._ident_special, /\^\w+/), $.varname),
+      alias(choice($._brace_autoquoted_token, $._bareword, $._special_var_name, /\^\w+/), $.varname),
       $._brace_end_zw, '}'
     ),
     _var_indirob: $ => choice(
@@ -948,6 +1238,12 @@ module.exports = grammar({
       $.match_regexp,
       $.substitution_regexp,
       $.transliteration_expression,
+      // v-strings in expression position require at least one dot.  A bare `vN`
+      // is ambiguous — perl parses it as a function call when a `sub vN` is in
+      // scope, else as a v-string — so we leave the single-token form a bareword
+      // and only claim the unambiguous dotted form (`v5.6.0`), which can't be a
+      // call.  `use`/`package`/`require` keep the permissive `version` token.
+      alias(token(prec(1, /v[0-9]+(?:\.[0-9]+)+/)), $.version),
     ),
 
     // we cast these into imaginary tokens to be quote chars with handedness
@@ -1000,12 +1296,14 @@ module.exports = grammar({
     _array_element_interpolation: $ => choice(
       seq(field('array', alias($.scalar, $.container_variable)), token.immediate('['), field('index', $._expr), ']'),
       prec.left(TERMPREC.ARROW, seq($.scalar, $._interp_arrow, '[', field('index', $._expr), ']')),
-      seq($._subscripted_interpolations, token.immediate('['), field('index', $._expr), ']'),
+      // chained subscript: implicit (`$h{a}[0]`) or with an explicit arrow (`$h->{a}->[0]`)
+      seq($._subscripted_interpolations, optional($._interp_arrow), token.immediate('['), field('index', $._expr), ']'),
     ),
     _hash_element_interpolation: $ => choice(
       seq(field('hash', alias($.scalar, $.container_variable)), token.immediate('{'), field('key', $._hash_key), '}'),
       prec.left(TERMPREC.ARROW, seq($.scalar, $._interp_arrow, '{', field('key', $._hash_key), '}')),
-      seq($._subscripted_interpolations, token.immediate('{'), field('key', $._hash_key), '}'),
+      // chained subscript: implicit (`$h{a}{b}`) or with an explicit arrow (`$h->{a}->{b}`)
+      seq($._subscripted_interpolations, optional($._interp_arrow), token.immediate('{'), field('key', $._hash_key), '}'),
     ),
     _slice_expression_interpolation: $ => choice(
       seq(field('array', alias($.array, $.slice_container_variable)), token.immediate('['), $._expr, ']'),
@@ -1019,6 +1317,7 @@ module.exports = grammar({
     _array_deref_interpolation: $ => prec.left(TERMPREC.ARROW, seq(field('arrayref', $.scalar), $._interp_arrow, token.immediate('@*'))),
     _interpolations: $ => choice(
       $.scalar,
+      $.arraylen,
       $.array,
       alias($._scalar_deref_interpolation, $.scalar_deref_expression),
       alias($._array_deref_interpolation, $.array_deref_expression),
@@ -1165,6 +1464,8 @@ module.exports = grammar({
         $.escape_sequence,
         $.escaped_delimiter,
         $._dollar_in_regexp,
+        alias($._regexp_open_bracket, '['),
+        alias($._regexp_open_brace, '{'),
         $._interpolation_fallbacks,
         $._interpolations,
         seq('$', $._no_interp_whitespace_zw),
@@ -1239,8 +1540,16 @@ module.exports = grammar({
 
     package: $ => $._bareword,
     _version: $ => prec(1, choice($.number, $.version)),
-    // we have to up the lexical prec here to prevent v5 from being read as a bareword
-    version: $ => token(prec(1, /v[0-9]+(?:\.[0-9]+)*/)),
+    // Two forms: a v-string (`v5`, `v5.26.0`), and a bare numeric version with
+    // at least two dots (`5.14.0`, `1.2.3.4`) as used by `use 5.14.0;` /
+    // `package Foo 5.14.0;`. The bare form needs >=2 dots so it doesn't swallow
+    // an ordinary one-dot float (`5.14` stays a `number`).
+    // Lexical prec 2 (> the dotted v-string token in `_literal`, prec 1): in
+    // use/package/require contexts both tokens can match a dotted version, and
+    // this permissive form must win so `require v5.26` stays a
+    // require_version_expression.  The raised prec also keeps `v5` from lexing
+    // as a bareword.
+    version: $ => token(prec(2, /v[0-9]+(?:\.[0-9]+)*|[0-9]+(?:\.[0-9]+){2,}/)),
 
     _conditionals: $ => choice('if', 'unless'),
     _loops: $ => choice('while', 'until'),
@@ -1251,7 +1560,7 @@ module.exports = grammar({
         // minus autoquoting
         prec(TERMPREC.PAREN, seq('-', $._bareword)),
       ),
-      seq(optional('-'), $._fat_comma_autoquoted)
+      seq(optional($._fat_comma_autoquoted_ahead), optional('-'), $._fat_comma_autoquoted)
     ),
     // NOTE - these have zw lookaheads so they override just being read as barewords
     _brace_autoquoted: $ => alias($._brace_autoquoted_token, $.autoquoted_bareword),
@@ -1263,12 +1572,17 @@ module.exports = grammar({
     // this pattern tries to encapsulate the joys of S_scan_ident in toke.c in perl core
     // _dollar_ident_zw takes care of the subtleties that distinguish $$; ( only $$
     // followed by semicolon ) from $$deref
-    _ident_special: $ => choice(/[0-9]+|\^([A-Z[?\^_]|])|\S/, seq('$', $._dollar_ident_zw)),
+    // the punctuation/number/caret special-variable NAME ($!, $0, $^W). Split out
+    // so the ${...} autoquote can use just this — NOT the `$`-prefixed form below,
+    // since `${ $foo }` / `${ $/ }` is always a dereference, not an autoquoted name.
+    _special_var_name: $ => /[0-9]+|\^([A-Z[?\^_]|])|\S/,
+    _ident_special: $ => choice($._special_var_name, seq('$', $._dollar_ident_zw)),
 
     bareword: $ => prec.dynamic(1, $._bareword),
-    // _bareword is at the very end b/c the lexer prefers tokens defined earlier in the grammar
-    //_bareword: $ => choice($._identifier, unicode_ranges.bareword),
-    _bareword: $ => choice($._identifier, /((::)|([a-zA-Z_]\w*))+/),
+    // _bareword is at the very end b/c the lexer prefers tokens defined earlier in the grammar.
+    // unicode-aware (XID_Start/XID_Continue) dotted/qualified bareword, so package
+    // names allow unicode like the `_identifier` (sub name) path already does.
+    _bareword: $ => choice($._identifier, unicode_ranges.bareword),
     ...primitives,
   }
 })

@@ -179,3 +179,14 @@ Run it with:
 ```bash
 cargo run --manifest-path examples/arborium-example-json/Cargo.toml --example highlight_with_arborium
 ```
+
+## Avoiding two tree-sitter runtimes
+
+Use `tree-sitter-language::LanguageFn` at the grammar boundary and convert it to
+`arborium::tree_sitter::Language` with `.into()`. Register the compiled grammar in
+an `Arc<GrammarStore>`, then pass that store to `Highlighter::with_store`.
+
+Do not add an upstream `tree-sitter` runtime dependency merely to expose a grammar:
+Arborium already links its patched runtime, and Cargo cannot link two crates with
+the same native `links` name. Older grammar bindings that return an upstream
+`tree_sitter::Language` need their binding updated to export a `LanguageFn`.

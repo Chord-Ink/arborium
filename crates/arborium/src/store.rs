@@ -113,6 +113,10 @@ impl GrammarStore {
 
             "adoc" => Cow::Borrowed("asciidoc"),
 
+            "as" => Cow::Borrowed("actionscript"),
+
+            "as3" => Cow::Borrowed("actionscript"),
+
             "assembly" => Cow::Borrowed("asm"),
 
             "bat" => Cow::Borrowed("batch"),
@@ -140,6 +144,8 @@ impl GrammarStore {
             "conf" => Cow::Borrowed("ini"),
 
             "cpy" => Cow::Borrowed("cobol"),
+
+            "cr" => Cow::Borrowed("crystal"),
 
             "cs" => Cow::Borrowed("c-sharp"),
 
@@ -190,6 +196,8 @@ impl GrammarStore {
             "idr" => Cow::Borrowed("idris"),
 
             "j2" => Cow::Borrowed("jinja2"),
+
+            "jade" => Cow::Borrowed("pug"),
 
             "jinja" => Cow::Borrowed("jinja2"),
 
@@ -319,6 +327,8 @@ impl GrammarStore {
 
             "wasm-interface" => Cow::Borrowed("wit"),
 
+            "wast" => Cow::Borrowed("wat"),
+
             "x86" => Cow::Borrowed("x86asm"),
 
             "xsl" => Cow::Borrowed("xml"),
@@ -351,6 +361,8 @@ impl GrammarStore {
         }
 
         // All languages (generated from arborium.kdl)
+
+        try_lang!("lang-actionscript", lang_actionscript, "actionscript");
 
         try_lang!("lang-ada", lang_ada, "ada");
 
@@ -387,6 +399,8 @@ impl GrammarStore {
         try_lang!("lang-commonlisp", lang_commonlisp, "commonlisp");
 
         try_lang!("lang-cpp", lang_cpp, "cpp");
+
+        try_lang!("lang-crystal", lang_crystal, "crystal");
 
         try_lang!("lang-css", lang_css, "css");
 
@@ -460,6 +474,8 @@ impl GrammarStore {
 
         try_lang!("lang-kotlin", lang_kotlin, "kotlin");
 
+        try_lang!("lang-koto", lang_koto, "koto");
+
         try_lang!("lang-lean", lang_lean, "lean");
 
         try_lang!("lang-lua", lang_lua, "lua");
@@ -467,6 +483,8 @@ impl GrammarStore {
         try_lang!("lang-make", lang_make, "make");
 
         try_lang!("lang-markdown", lang_markdown, "markdown");
+
+        try_lang!("lang-markdown_inline", lang_markdown_inline, "markdown_inline");
 
         try_lang!("lang-matlab", lang_matlab, "matlab");
 
@@ -496,6 +514,8 @@ impl GrammarStore {
 
         try_lang!("lang-proto", lang_proto, "proto");
 
+        try_lang!("lang-pug", lang_pug, "pug");
+
         try_lang!("lang-python", lang_python, "python");
 
         try_lang!("lang-query", lang_query, "query");
@@ -519,6 +539,8 @@ impl GrammarStore {
         try_lang!("lang-scheme", lang_scheme, "scheme");
 
         try_lang!("lang-scss", lang_scss, "scss");
+
+        try_lang!("lang-slang", lang_slang, "slang");
 
         try_lang!("lang-solidity", lang_solidity, "solidity");
 
@@ -561,6 +583,8 @@ impl GrammarStore {
         try_lang!("lang-vim", lang_vim, "vim");
 
         try_lang!("lang-vue", lang_vue, "vue");
+
+        try_lang!("lang-wat", lang_wat, "wat");
 
         try_lang!("lang-wit", lang_wit, "wit");
 

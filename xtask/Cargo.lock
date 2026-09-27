@@ -2071,6 +2071,7 @@ dependencies = [
  "blake3",
  "brotli",
  "camino",
+ "cc",
  "chrono",
  "facet",
  "facet-args",

@@ -29,9 +29,9 @@ export const defaultConfig: Required<ArboriumConfig> = {
   pluginsUrl: "", // Empty means use bundled manifest
   hostUrl: "", // Empty means use CDN based on version
   logger: console,
-  resolveHostJs: ({ baseUrl, path }) => import(/* @vite-ignore */ `${baseUrl}/${path}`),
+  resolveHostJs: ({ baseUrl, path }) => import(/* @vite-ignore */ /* webpackIgnore: true */ `${baseUrl}/${path}`),
   resolveHostWasm: ({ baseUrl, path }) => fetch(`${baseUrl}/${path}`),
-  resolveJs: ({ baseUrl, path }) => import(/* @vite-ignore */ `${baseUrl}/${path}`),
+  resolveJs: ({ baseUrl, path }) => import(/* @vite-ignore */ /* webpackIgnore: true */ `${baseUrl}/${path}`),
   resolveWasm: ({ baseUrl, path }) => fetch(`${baseUrl}/${path}`),
 };
 

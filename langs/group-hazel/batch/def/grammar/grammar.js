@@ -17,7 +17,11 @@ module.exports = grammar({
       $.variable_declaration,
       $.variable_reference,
       $.keyword,
-      $.function_definition
+      $.function_definition,
+      $.string,
+      $.number,
+      $.identifier,
+      $.text
     )),
     echooff: $ => seq(optional('@'),"echo off"),
     // Comments (both :: and REM)
@@ -42,7 +46,7 @@ module.exports = grammar({
     // Keywords (predefined list of Batch commands)
     keyword: $ => prec(1, seq(optional('@'), choice(
       "ECHO", "SET", "IF", "GOTO", "EXIT", "FOR", "REM", "PAUSE", "CLS","echo", "set", "if","goto", "exit", "for", "rem", "pause", "cls", "VER", "ASSOC", "CD", "COPY", "DEL", "DIR", "DATE", "MD", "MOVE", "PATH", "PROMPT", "RD", "REN", "START", "TIME", "TYPE", "VOL", "ATTRIB", "CHKDSK", "CHOICE", "CMD", "COMP", "CONVERT", "DRIVERQUERY", "EXPAND", "FIND", "FORMAT", "HELP", "IPCONFIG", "LABEL", "NET", "PING", "SHUTDOWN", "SORT", "SUBST", "SYSTEMINFO", "TASKKILL", "TASKLIST", "XCOPY", "TREE", "FC", "DISKPART", "TITLE", "ver", "assoc", "cd", "copy", "del", "dir", "date", "md", "move", "path", "prompt", "rd", "ren", "start", "time", "type", "vol", "attrib", "chkdsk", "choice", "cmd", "comp", "convert", "driverquery", "expand", "find", "format", "help", "ipconfig", "label", "net", "ping", "shutdown", "sort", "subst", "systeminfo", "taskkill", "tasklist", "tasklist", "xcopy", "tree", "fc", "diskpart", "title"
-    ), optional(choice($.string, $.number))
+    )
     )),
 
     // Function definitions (labels starting with :)
@@ -62,6 +66,11 @@ module.exports = grammar({
       '"'
     ),
     // Numbers (e.g., 1234)
-    number: $ => /\d+/
+    number: $ => /\d+/,
+
+    // CMD accepts arbitrary command arguments, redirections and prompt escape
+    // sequences. Keep unsupported arguments local instead of recovering over
+    // subsequent lines (upstream issue #197).
+    text: $ => token(prec(-10, /[^\s]+/))
   }
 });

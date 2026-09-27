@@ -422,7 +422,7 @@ fn parse_case(language: LanguageFn, name: &str, case: &CorpusCase) -> HarnessRes
     Ok(tree)
 }
 
-fn collect_kinds(node: Node, out: &mut HashSet<&str>) {
+fn collect_kinds<'tree>(node: Node<'tree>, out: &mut HashSet<&'tree str>) {
     out.insert(node.kind());
     let mut cursor = node.walk();
     for child in node.children(&mut cursor) {

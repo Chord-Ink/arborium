@@ -1,0 +1,155 @@
+===========================================================================================
+assignment_single_line
+===========================================================================================
+
+a = 3
+a, b = c
+a = b, c
+a = 1, 2, 3, 4
+
+---
+
+(module
+  (assign
+    lhs: (identifier)
+    rhs: (number))
+  (multi_assign
+    lhs: (assign_targets
+      (identifier)
+      (identifier))
+    rhs: (identifier))
+  (assign
+    lhs: (identifier)
+    rhs: (assign_expressions
+      (identifier)
+      (identifier)))
+  (assign
+    lhs: (identifier)
+    rhs: (assign_expressions
+      (number)
+      (number)
+      (number)
+      (number))))
+
+===========================================================================================
+modify_assign_of_assign
+===========================================================================================
+
+b += c = d
+
+---
+
+(module
+  (modify_assign
+    (identifier)
+    (assign
+      lhs: (identifier)
+      rhs: (identifier))))
+
+===========================================================================================
+assignment_multi_line
+===========================================================================================
+
+a =
+  1, 2
+foo = 1,
+      2
+
+---
+
+(module
+  (assign
+    lhs: (identifier)
+    rhs: (assign_expressions
+      (number)
+      (number)))
+  (assign
+    lhs: (identifier)
+    rhs: (assign_expressions
+      (number)
+      (number))))
+
+===========================================================================================
+assign_to_unpacked_map
+===========================================================================================
+
+{x} = m
+{x: String} = m
+{x as y} = m
+{x as y: String} = m
+
+---
+
+(module
+  (assign
+    lhs: (unpacked_map
+      binding: (variable
+        (identifier)))
+    rhs: (identifier))
+  (assign
+    lhs: (unpacked_map
+      binding: (variable
+        (identifier)
+        (type
+          (identifier))))
+    rhs: (identifier))
+  (assign
+    lhs: (unpacked_map
+      source: (identifier)
+      binding: (variable
+        (identifier)))
+    rhs: (identifier))
+  (assign
+    lhs: (unpacked_map
+      source: (identifier)
+      binding: (variable
+        (identifier)
+        (type
+          (identifier))))
+    rhs: (identifier)))
+
+===========================================================================================
+let_assignment
+===========================================================================================
+
+let x: String = 'hello'
+let y: String? = 'goodbye'
+
+---
+
+(module
+  (let_assign
+    (variable
+      (identifier)
+      (type
+        (identifier)))
+    (string
+      (string_quote)
+      (string_content)
+      (string_quote)))
+  (let_assign
+    (variable
+      (identifier)
+      (type
+        (identifier)))
+    (string
+      (string_quote)
+      (string_content)
+      (string_quote))))
+
+===========================================================================================
+test_assignment
+===========================================================================================
+
+@test foo = || true
+
+---
+
+(module
+  (assign
+    lhs: (meta
+      (test)
+      name: (identifier))
+    rhs: (function
+      (args)
+      body: (true))))

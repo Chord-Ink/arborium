@@ -228,8 +228,8 @@ struct CratesArboriumReadmeTemplate<'a> {
     version: &'a str,
     /// List of permissively-licensed grammars (MIT, Apache-2.0, etc.)
     permissive_grammars: &'a [LanguageEntry],
-    /// List of GPL-licensed grammars
-    gpl_grammars: &'a [LanguageEntry],
+    /// List of copyleft-licensed grammars
+    copyleft_grammars: &'a [LanguageEntry],
 }
 
 #[derive(TemplateSimple)]
@@ -257,8 +257,8 @@ struct UmbrellaLibRsTemplate<'a> {
     extensions: &'a [(String, String)],
     /// List of permissively-licensed grammars (MIT, Apache-2.0, etc.)
     permissive_grammars: &'a [LanguageEntry],
-    /// List of GPL-licensed grammars
-    gpl_grammars: &'a [LanguageEntry],
+    /// List of copyleft-licensed grammars
+    copyleft_grammars: &'a [LanguageEntry],
 }
 
 #[derive(TemplateSimple)]
@@ -1807,6 +1807,18 @@ fn plan_crate_files_only(
         plan_copy_grammar_sources(&mut plan, &def_grammar_dir, &crate_grammar_dir, mode)?;
     }
 
+    // Preserve upstream copyright notices for vendored grammar sources.
+    let grammar_license = def_grammar_dir.join("LICENSE");
+    if grammar_license.exists() {
+        plan_file_update(
+            &mut plan,
+            &crate_grammar_dir.join("LICENSE"),
+            fs::read_to_string(&grammar_license)?,
+            "grammar/LICENSE",
+            mode,
+        )?;
+    }
+
     // Also check for common/ at the language level (def/common/)
     let def_lang_common = def_path.join("common");
     if def_lang_common.exists() {
@@ -2082,6 +2094,21 @@ fn plan_plugin_crate_files(
     Ok(plan)
 }
 
+/// Explicitly classify the license expressions used by bundled grammars.
+/// Do not silently add new or copyleft licenses to the permissive bundle.
+fn is_permissive_grammar_license(license: &str) -> bool {
+    matches!(
+        license,
+        "MIT"
+            | "Apache-2.0"
+            | "MIT OR Apache-2.0"
+            | "Apache-2.0 WITH LLVM-exception"
+            | "ISC"
+            | "Unlicense"
+            | "CC0-1.0"
+    )
+}
+
 /// Generate the umbrella crate (crates/arborium/Cargo.toml, src/lib.rs, src/provider.rs)
 /// This aggregates all grammar crates as optional dependencies with features.
 fn plan_umbrella_crate(prepared: &PreparedStructures) -> Result<Plan, Report> {
@@ -2149,10 +2176,37 @@ all-languages = [
     }
     content.push_str("]\n\n");
 
+    // Keep the opt-in license bundle consistent with the generated documentation.
+    content.push_str("# All grammars with permissive licenses\nall-permissive-languages = [\n");
+    for pt in &prepared.prepared_temps {
+        if is_permissive_grammar_license(&pt.config.license) {
+            for grammar in &pt.config.grammars {
+                if !grammar.is_internal() {
+                    content.push_str(&format!("    \"lang-{}\",\n", grammar.id));
+                }
+            }
+        }
+    }
+    content.push_str("]\n# Compatibility names used in earlier documentation.\nmit-languages = [\"all-permissive-languages\"]\nmit-grammars = [\"all-permissive-languages\"]\n\n");
+
     // Individual language features
     content.push_str("# Individual language features\n");
     for (name, grammar_id, _) in &grammar_crates {
-        content.push_str(&format!("lang-{} = [\"dep:{}\"]\n", grammar_id, name));
+        let mut features = vec![format!("dep:{name}")];
+        if let Some(pt) = prepared
+            .prepared_temps
+            .iter()
+            .find(|pt| pt.crate_state.name == *name)
+        {
+            if let Some(grammar) = pt.config.grammars.first() {
+                for injection in grammar.injections.iter().flatten() {
+                    if injection != grammar_id {
+                        features.push(format!("lang-{injection}"));
+                    }
+                }
+            }
+        }
+        content.push_str(&format!("lang-{grammar_id} = {features:?}\n"));
     }
 
     // Dependencies section (use full version for all dependencies)
@@ -2226,7 +2280,6 @@ indoc = "2"
     // Build grammars list for lib.rs template: (crate_name, grammar_id)
     let grammars_for_lib: Vec<(String, String)> = grammar_crates
         .iter()
-        .filter(|(_, grammar_id, _)| !grammar_id.ends_with("_inline"))
         .map(|(name, grammar_id, _)| (name.clone(), grammar_id.clone()))
         .collect();
 
@@ -2238,15 +2291,15 @@ indoc = "2"
     for (_state, _config, grammar) in prepared.registry.all_grammars() {
         let grammar_id = grammar.id().to_string();
 
-        // Skip internal grammars
-        if grammar.is_internal() || grammar_id.ends_with("_inline") {
-            continue;
-        }
-
         // Build feature name, module name, and grammar ID for try_lang! macro
         let feature = format!("lang-{}", grammar_id);
         let module = format!("lang_{}", grammar_id.replace('-', "_"));
         languages.push((feature, module, grammar_id.clone()));
+
+        // Internal grammars must be resolvable for injections but aren't file types.
+        if grammar.is_internal() || grammar_id.ends_with("_inline") {
+            continue;
+        }
 
         // Add canonical ID as an extension (e.g., "rust" -> "rust")
         extensions.push((grammar_id.clone(), grammar_id.clone()));
@@ -2288,6 +2341,9 @@ indoc = "2"
 
         // Process each grammar in this crate
         for grammar in &config.grammars {
+            if grammar.is_internal() {
+                continue;
+            }
             let entry = LanguageEntry {
                 feature: format!("lang-{}", grammar.id.as_str()),
                 name: grammar.name.to_string(),
@@ -2301,16 +2357,16 @@ indoc = "2"
     // Sort alphabetically by feature name
     all_grammars.sort_by(|a, b| a.feature.cmp(&b.feature));
 
-    // Separate into permissive and GPL licenses
+    // Separate into permissive and copyleft licenses
     let permissive_grammars: Vec<LanguageEntry> = all_grammars
         .iter()
-        .filter(|g| !g.license.starts_with("GPL"))
+        .filter(|g| is_permissive_grammar_license(&g.license))
         .cloned()
         .collect();
 
-    let gpl_grammars: Vec<LanguageEntry> = all_grammars
+    let copyleft_grammars: Vec<LanguageEntry> = all_grammars
         .iter()
-        .filter(|g| g.license.starts_with("GPL"))
+        .filter(|g| !is_permissive_grammar_license(&g.license))
         .cloned()
         .collect();
 
@@ -2321,7 +2377,7 @@ indoc = "2"
         grammars: &grammars_for_lib,
         extensions: &extensions,
         permissive_grammars: &permissive_grammars,
-        gpl_grammars: &gpl_grammars,
+        copyleft_grammars: &copyleft_grammars,
     }
     .render_once()
     .expect("UmbrellaLibRsTemplate render failed");
@@ -2382,7 +2438,7 @@ indoc = "2"
     let crates_arborium_readme_content = CratesArboriumReadmeTemplate {
         version: &prepared.workspace_version,
         permissive_grammars: &permissive_grammars,
-        gpl_grammars: &gpl_grammars,
+        copyleft_grammars: &copyleft_grammars,
     }
     .render_once()
     .expect("CratesArboriumReadmeTemplate render failed");
@@ -2428,6 +2484,7 @@ fn plan_shared_crates(prepared: &PreparedStructures, mode: PlanMode) -> Result<P
         "arborium-wire",
         "arborium-rustdoc",
         "arborium-mdbook",
+        "arborium-ratatui",
     ];
 
     for crate_name in shared_crates {
@@ -2483,6 +2540,7 @@ fn generate_shared_crate(
 /// Generate README content for a shared crate.
 fn generate_shared_crate_readme(crate_name: &str) -> String {
     let content = match crate_name {
+        "arborium-ratatui" => include_str!("../templates/ratatui_readme.stpl.md"),
         "arborium-theme" => {
             r#"# arborium-theme
 
@@ -3008,6 +3066,19 @@ all-languages = [
         content.push_str(&format!("    \"lang-{}\",\n", grammar_id));
     }
     content.push_str("]\n\n");
+
+    // Keep the opt-in license bundle consistent with the generated documentation.
+    content.push_str("# All grammars with permissive licenses\nall-permissive-languages = [\n");
+    for pt in &prepared.prepared_temps {
+        if is_permissive_grammar_license(&pt.config.license) {
+            for grammar in &pt.config.grammars {
+                if !grammar.is_internal() {
+                    content.push_str(&format!("    \"lang-{}\",\n", grammar.id));
+                }
+            }
+        }
+    }
+    content.push_str("]\n# Compatibility names used in earlier documentation.\nmit-languages = [\"all-permissive-languages\"]\nmit-grammars = [\"all-permissive-languages\"]\n\n");
 
     // Individual language features
     content.push_str("# Individual language features\n");

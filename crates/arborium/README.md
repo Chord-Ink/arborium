@@ -8,8 +8,8 @@ Batteries-included [tree-sitter](https://tree-sitter.github.io/tree-sitter/) gra
 
 ## Features
 
-- **112 language grammars** included out of the box
-- **111 permissively licensed** (MIT/Apache-2.0/CC0/Unlicense) grammars enabled by default
+- **118 language grammars** included out of the box
+- **116 permissively licensed** (MIT/Apache-2.0/CC0/Unlicense) grammars available via `all-permissive-languages`
 - **WASM support** with custom allocator fix
 - **Feature flags** for fine-grained control over included languages
 
@@ -38,7 +38,7 @@ C compiler. For `wasm32-unknown-unknown`, use a clang with WebAssembly support
 arborium = "2.18.2"
 ```
 
-By default, all permissively-licensed grammars are included. To select specific languages:
+No languages are enabled by default. Select the languages you need, or use `all-permissive-languages` for the permissive bundle:
 
 ```toml
 [dependencies]
@@ -166,16 +166,20 @@ Or let the IIFE bundle auto-inject it via the `data-theme` attribute.
 
 | Feature | Description |
 |---------|-------------|
-| `mit-grammars` | All permissively licensed grammars (MIT, Apache-2.0, CC0) - **default** |
-| `gpl-grammars` | GPL-licensed grammars (copyleft - may affect your project's license) |
-| `all-grammars` | All grammars including GPL |
+| `all-permissive-languages` | All permissively licensed grammars (MIT, Apache-2.0, CC0, Unlicense) |
+| `mit-languages`, `mit-grammars` | Compatibility aliases for `all-permissive-languages` |
+| `lang-nginx` | GPL-licensed Nginx grammar |
+| `lang-uiua` | MPL-licensed Uiua grammar |
+| `all-languages` | All grammars including GPL and MPL |
 
-### Permissive Grammars (111)
+### Permissive Grammars (116)
 
-These grammars use permissive licenses (MIT, Apache-2.0, CC0, Unlicense) and are included by default.
+These grammars use permissive licenses (MIT, Apache-2.0, CC0, Unlicense) and are enabled by `all-permissive-languages`.
 
 | Feature | Language | License | Source |
 |---------|----------|---------|--------|
+
+| `lang-actionscript` | ActionScript | MIT | [tree-sitter-actionscript](https://github.com/Rileran/tree-sitter-actionscript) |
 
 | `lang-ada` | Ada | MIT | [tree-sitter-ada](https://github.com/briot/tree-sitter-ada) |
 
@@ -212,6 +216,8 @@ These grammars use permissive licenses (MIT, Apache-2.0, CC0, Unlicense) and are
 | `lang-commonlisp` | Common Lisp | MIT | [tree-sitter-commonlisp](https://github.com/theHamsta/tree-sitter-commonlisp) |
 
 | `lang-cpp` | C++ | MIT | [tree-sitter-cpp](https://github.com/tree-sitter/tree-sitter-cpp) |
+
+| `lang-crystal` | Crystal | MIT | [tree-sitter-crystal](https://github.com/crystal-lang-tools/tree-sitter-crystal) |
 
 | `lang-css` | CSS | MIT | [tree-sitter-css](https://github.com/tree-sitter/tree-sitter-css) |
 
@@ -285,6 +291,8 @@ These grammars use permissive licenses (MIT, Apache-2.0, CC0, Unlicense) and are
 
 | `lang-kotlin` | Kotlin | MIT | [tree-sitter-kotlin](https://github.com/fwcd/tree-sitter-kotlin) |
 
+| `lang-koto` | Koto | MIT | [tree-sitter-koto](https://github.com/koto-lang/tree-sitter-koto) |
+
 | `lang-lean` | Lean | MIT | [tree-sitter-lean](https://github.com/Julian/tree-sitter-lean) |
 
 | `lang-lua` | Lua | MIT | [tree-sitter-lua](https://github.com/tree-sitter-grammars/tree-sitter-lua) |
@@ -319,6 +327,8 @@ These grammars use permissive licenses (MIT, Apache-2.0, CC0, Unlicense) and are
 
 | `lang-proto` | Protocol Buffers | MIT | [tree-sitter-proto](https://github.com/coder3101/tree-sitter-proto) |
 
+| `lang-pug` | Pug | MIT | [tree-sitter-pug](https://github.com/zealot128/tree-sitter-pug) |
+
 | `lang-python` | Python | MIT | [tree-sitter-python](https://github.com/tree-sitter/tree-sitter-python) |
 
 | `lang-query` | Tree-sitter Query | Apache-2.0 | [tree-sitter-query](https://github.com/tree-sitter-grammars/tree-sitter-query) |
@@ -341,7 +351,9 @@ These grammars use permissive licenses (MIT, Apache-2.0, CC0, Unlicense) and are
 
 | `lang-scheme` | Scheme | MIT | [tree-sitter-scheme](https://github.com/6cdh/tree-sitter-scheme) |
 
-| `lang-scss` | SCSS | MIT | [tree-sitter-scss](https://github.com/serenadeai/tree-sitter-scss) |
+| `lang-scss` | SCSS | MIT | [tree-sitter-scss](https://github.com/tree-sitter-grammars/tree-sitter-scss) |
+
+| `lang-slang` | Slang | MIT | [tree-sitter-slang](https://github.com/tree-sitter-grammars/tree-sitter-slang) |
 
 | `lang-solidity` | Solidity | MIT | [tree-sitter-solidity](https://github.com/JoranHonig/tree-sitter-solidity) |
 
@@ -373,8 +385,6 @@ These grammars use permissive licenses (MIT, Apache-2.0, CC0, Unlicense) and are
 
 | `lang-typst` | Typst | MIT | [tree-sitter-typst](https://github.com/uben0/tree-sitter-typst) |
 
-| `lang-uiua` | Uiua | MPL-2.0 | [tree-sitter-uiua](https://github.com/shnarazk/tree-sitter-uiua) |
-
 | `lang-vb` | Visual Basic | MIT | [tree-sitter-vb](https://github.com/CodeAnt-AI/tree-sitter-vb-dotnet) |
 
 | `lang-verilog` | Verilog | MIT | [tree-sitter-verilog](https://github.com/tree-sitter/tree-sitter-verilog) |
@@ -384,6 +394,8 @@ These grammars use permissive licenses (MIT, Apache-2.0, CC0, Unlicense) and are
 | `lang-vim` | Vimscript | MIT | [tree-sitter-vim](https://github.com/tree-sitter-grammars/tree-sitter-vim) |
 
 | `lang-vue` | Vue | MIT | [tree-sitter-vue](https://github.com/tree-sitter-grammars/tree-sitter-vue) |
+
+| `lang-wat` | WebAssembly Text | MIT | [tree-sitter-wat](https://github.com/g-plane/tree-sitter-wat) |
 
 | `lang-wit` | WIT | Apache-2.0 WITH LLVM-exception | [tree-sitter-wit](https://github.com/bytecodealliance/tree-sitter-wit) |
 
@@ -400,15 +412,17 @@ These grammars use permissive licenses (MIT, Apache-2.0, CC0, Unlicense) and are
 | `lang-zsh` | Zsh | MIT | [tree-sitter-zsh](https://github.com/georgeharker/tree-sitter-zsh) |
 
 
-### GPL-Licensed Grammars (1)
+### Copyleft-Licensed Grammars (2)
 
-These grammars are **not included by default** due to their copyleft license.
+These grammars are **not included by default** and are excluded from `all-permissive-languages`.
 Enabling them may have implications for your project's licensing.
 
 | Feature | Language | License | Source |
 |---------|----------|---------|--------|
 
 | `lang-nginx` | nginx | GPL-3.0 | [tree-sitter-nginx](https://gitlab.com/joncoole/tree-sitter-nginx) |
+
+| `lang-uiua` | Uiua | MPL-2.0 | [tree-sitter-uiua](https://github.com/shnarazk/tree-sitter-uiua) |
 
 
 ## HTML Tag Reference

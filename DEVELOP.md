@@ -9,15 +9,15 @@ This document covers the architecture and development workflow for arborium.
 Arborium consists of several types of crates:
 
 **Pre-group crates** (publish first):
-- `tree-sitter-patched-arborium` - Patched tree-sitter core
-- `tree-sitter-highlight-patched-arborium` - Patched highlighting library
+- `crates/arborium-tree-sitter` - Patched tree-sitter core
+- `crates/arborium-highlight` - Highlighting engine and renderers
 - `crates/arborium-sysroot` - WASM sysroot for grammar crates
 - `crates/arborium-test-harness` - Test utilities for grammars
 
 **Grammar crates** (in `crates/arborium-languages/arborium-*/`):
 - Each grammar is an independent crate (e.g., `arborium-rust`, `arborium-svelte`)
-- Only depends on pre-group crates, **not on other grammar crates**
-- Organized into groups: acorn, birch, cedar, fern, hazel, maple, moss, pine, sage, willow
+- Grammar inheritance and query composition can introduce dependencies on other grammars
+- Source definitions are organized into groups under `langs/`
 - Each grammar crate and its corresponding WASM plugin crate (in `npm/`) are independent,
   with their own `target/` directories for maximum build parallelism.
 
@@ -44,8 +44,9 @@ Injection queries (in `def/queries/injections.scm`) reference other languages **
  (#set! injection.language "css"))
 ```
 
-The grammar itself has **no Cargo dependency** on the injected languages. The dependency
-is purely nominal - it says "this region should be highlighted as javascript".
+Queries refer to injected languages by name. Generated language crates also expose
+optional injection dependencies, enabled by their default `injections` feature.
+The umbrella crate's `lang-*` features activate the injected languages in its registry.
 
 #### Injection Resolution by Platform
 
@@ -72,14 +73,15 @@ is purely nominal - it says "this region should be highlighted as javascript".
 
 ### Publishing Order
 
-Because grammar crates don't depend on each other (only on pre-group crates), they can
-be published in any order after pre-group and before post-group:
+Publish shared prerequisites first, followed by grammars in dependency order and
+then the umbrella and integration crates. The publisher's dependency graph accounts
+for grammar inheritance, query composition, and injections:
 
 ```bash
 # 1. Publish pre-group crates first
 cargo xtask publish crates --group pre
 
-# 2. Publish language groups (any order)
+# 2. Publish language groups after their dependencies
 cargo xtask publish crates --group acorn
 cargo xtask publish crates --group birch
 # ... etc
@@ -127,8 +129,6 @@ arborium/
 │   ├── group-pine/         # Misc modern languages (swift, dart, rescript)
 │   ├── group-sage/         # Legacy/enterprise (c-sharp, vb, elisp)
 │   └── group-willow/       # Markup/templating (markdown, svelte, vue)
-├── tree-sitter/            # Patched tree-sitter
-├── tree-sitter-highlight/  # Patched highlighting
 ├── demo/                   # WASM demo site
 └── xtask/                  # Build tooling
 ```
@@ -179,7 +179,7 @@ cargo xtask plugins build
 
 ```bash
 # 1. Edit grammar source files
-#    - arborium.kdl (config, license, metadata)
+#    - arborium.yaml (config, license, metadata)
 #    - grammar/grammar.js (tree-sitter grammar)
 #    - queries/highlights.scm (syntax highlighting)
 
@@ -204,35 +204,77 @@ This updates all `Cargo.toml` files with the correct version before publishing.
 
 See [PUBLISH.md](PUBLISH.md) for full release workflow details.
 
-### arborium.kdl Format
+### arborium.yaml Format
 
-Each grammar crate has an `arborium.kdl` file as its source of truth:
+Each language definition has an `arborium.yaml` file as its source of truth:
 
-```kdl
-repo "https://github.com/tree-sitter/tree-sitter-rust"
-commit "abc123..."
-license "MIT"
-
-grammar {
-    id "rust"
-    name "Rust"
-    tag "code"
-    tier 1
-    icon "devicon-plain:rust"
-    aliases "rs"
-    has-scanner #true
-    generate-plugin #true
-
-    sample {
-        path "samples/example.rs"
-        description "Example code"
-        license "MIT"
-    }
-}
+```yaml
+repo: https://github.com/tree-sitter/tree-sitter-rust
+commit: abc123...
+license: MIT
+grammars:
+  - id: rust
+    name: Rust
+    tag: code
+    tier: 1
+    icon: devicon-plain:rust
+    aliases: [rs]
+    has_scanner: true
+    generate_plugin: true
+    samples:
+      - path: samples/example.rs
+        description: Example code
+        license: MIT
 ```
 
 **Key fields:**
 - `license` - SPDX license for the grammar (used in generated Cargo.toml)
-- `generate-plugin #true` - Include in WASM plugin builds
-- `has-scanner #true` - Grammar has external scanner (scanner.c)
-- `tier` - 1-5, affects default feature inclusion
+- `generate_plugin: true` - Include in WASM plugin builds
+- `has_scanner: true` - Grammar has external scanner (scanner.c)
+- `tier` - 1-5, groups languages in generated documentation
+
+## Building the CLI from a checkout
+
+The committed language crates and CLI lockfile allow ordinary Cargo builds,
+including sandboxed package builds, without running `xtask` or Node.js:
+
+```sh
+cargo build --locked --release --manifest-path crates/arborium-cli/Cargo.toml
+cargo install --locked --path crates/arborium-cli
+```
+
+For Nix packaging, use the repository root as `src`, set
+`cargoRoot = "crates/arborium-cli"`, and use
+`cargoLock.lockFile = ./crates/arborium-cli/Cargo.lock` with `buildRustPackage`.
+The C compiler and vendored parser sources remain required. Parser generation and
+network access to grammar repositories are not part of the package build.
+
+## WASM preflight and regressions
+
+On macOS, install Homebrew LLVM (`brew install llvm`) and run `source .envrc`
+(or `direnv allow`). Some Apple clang versions lack the WASM backend.
+`cargo xtask build` compiles a small probe with the compiler chosen by cc-rs before
+starting plugin builds, honoring `CC_wasm32_unknown_unknown` and other cc-rs overrides.
+
+```sh
+cargo test --manifest-path crates/arborium/Cargo.toml --all-features
+python3 scripts/check_wasm.py
+python3 scripts/check_corpus.py
+```
+
+The first command compiles every grammar's queries and runs issue reproductions.
+The second links and executes both a direct tree-sitter consumer and an all-language
+WASM consumer in Node, rejecting unexpected host imports. The third runs the
+vendored upstream corpora against committed parsers with the tree-sitter CLI.
+Both corpus tests and CI's nextest runs impose timeouts on external scanners.
+
+The standalone Nix expression is `nix/package.nix`:
+
+```nix
+pkgs.callPackage ./nix/package.nix {
+  languageGrammars = [ "rust" "javascript" ];
+}
+```
+
+Omit `languageGrammars` for the complete bundle (including the GPL Nginx grammar).
+Flake users can run `nix build` or `nix run . -- --help`.

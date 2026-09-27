@@ -1,0 +1,17 @@
+repo: https://github.com/tree-sitter-grammars/tree-sitter-markdown
+commit: a0a00f817d02412bd92c54d316f164d827b57b5c
+license: MIT
+
+grammars:
+  - id: markdown_inline
+    name: Markdown Inline
+    tag: markup
+    tier: 2
+    internal: true
+    has_scanner: true
+    injections:
+      - html
+    inventor: John Gruber and Aaron Swartz
+    year: 2004
+    description: Inline Markdown syntax, including emphasis, links, and code spans.
+    link: https://spec.commonmark.org/

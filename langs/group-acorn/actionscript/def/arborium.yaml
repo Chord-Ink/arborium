@@ -1,0 +1,18 @@
+repo: https://github.com/Rileran/tree-sitter-actionscript
+commit: 24919034fc78fdf9bedaac6616b6a60af20ab9b5
+license: MIT
+
+grammars:
+  - id: actionscript
+    name: ActionScript
+    tag: code
+    tier: 3
+    has_scanner: false
+    generate_plugin: true
+    description: ActionScript syntax highlighting.
+    link: https://github.com/Rileran/tree-sitter-actionscript
+    aliases: ["as", "as3"]
+    samples:
+      - path: samples/example.as
+        description: Basic ActionScript example.
+        license: MIT OR Apache-2.0

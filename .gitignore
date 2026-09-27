@@ -7,6 +7,7 @@ __pycache__
 
 # Library crates don't need Cargo.lock (consumers use their own)
 crates/**/Cargo.lock
+!crates/arborium-cli/Cargo.lock
 langs/**/Cargo.lock
 
 # Version is derived from git tag in CI, not stored in repo

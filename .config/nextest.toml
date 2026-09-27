@@ -1,0 +1,3 @@
+# Parser regressions (especially scanner EOF loops) must fail rather than hang CI.
+[profile.default]
+slow-timeout = { period = "30s", terminate-after = 2 }

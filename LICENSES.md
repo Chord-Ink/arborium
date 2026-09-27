@@ -13,7 +13,13 @@ You may choose either license at your option.
 
 ## Bundled Grammar Licenses
 
-### Permissively Licensed (included by default)
+The generated [language table](crates/arborium/README.md#feature-flags) lists every
+grammar and its configured license. `all-permissive-languages` excludes both
+Nginx (GPL-3.0) and Uiua (MPL-2.0). MPL uses
+[file-level copyleft](https://www.mozilla.org/en-US/MPL/2.0/FAQ/); enable Uiua
+explicitly with `lang-uiua` or include it through `all-languages`.
+
+### Permissively Licensed (`all-permissive-languages`)
 
 | Grammar | License | Copyright |
 |---------|---------|-----------|
@@ -45,7 +51,7 @@ You may choose either license at your option.
 |---------|---------|-----------|
 | tree-sitter-nginx | GPL-3.0 | Copyright Jon Coole |
 
-**Warning**: Enabling `gpl-grammars` features will include GPL-3.0 licensed code, which may have implications for your project's licensing.
+**Warning**: Enabling `all-languages` or `lang-nginx` will include GPL-3.0 licensed code, which may have implications for your project's licensing.
 
 ---
 
@@ -377,4 +383,4 @@ Affirmer's express Statement of Purpose.
 
 The full GPL-3.0 license text can be found at: https://www.gnu.org/licenses/gpl-3.0.txt
 
-This license only applies when the `gpl-grammars` or `lang-nginx` feature is enabled.
+This license only applies when the `all-languages` or `lang-nginx` feature is enabled.

@@ -7,6 +7,8 @@
 ;-----------
 
 (property_identifier) @property
+(shorthand_property_identifier) @property
+(shorthand_property_identifier_pattern) @property
 
 ; Function and method definitions
 ;--------------------------------

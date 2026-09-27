@@ -9,7 +9,7 @@ Batteries-included [tree-sitter](https://tree-sitter.github.io/tree-sitter/) gra
 ## Features
 
 - **{{TOTAL_COUNT}} language grammars** included out of the box
-- **{{PERMISSIVE_COUNT}} permissively licensed** (MIT/Apache-2.0/CC0/Unlicense) grammars enabled by default
+- **{{PERMISSIVE_COUNT}} permissively licensed** (MIT/Apache-2.0/CC0/Unlicense) grammars available via `all-permissive-languages`
 - **WASM support** with custom allocator fix
 - **Feature flags** for fine-grained control over included languages
 
@@ -20,7 +20,7 @@ Batteries-included [tree-sitter](https://tree-sitter.github.io/tree-sitter/) gra
 arborium = "0.1"
 ```
 
-By default, all permissively-licensed grammars are included. To select specific languages:
+No languages are enabled by default. Select the languages you need, or use `all-permissive-languages` for the permissive bundle:
 
 ```toml
 [dependencies]
@@ -33,17 +33,19 @@ arborium = { version = "0.1", default-features = false, features = ["lang-rust",
 
 | Feature | Description |
 |---------|-------------|
-| `mit-grammars` | All permissively licensed grammars (MIT, Apache-2.0, CC0) - **default** |
-| `gpl-grammars` | GPL-licensed grammars (copyleft - may affect your project's license) |
-| `all-grammars` | All grammars including GPL |
+| `all-permissive-languages` | All permissively licensed grammars (MIT, Apache-2.0, CC0, Unlicense) |
+| `mit-languages`, `mit-grammars` | Compatibility aliases for `all-permissive-languages` |
+| `lang-nginx` | GPL-licensed Nginx grammar |
+| `lang-uiua` | MPL-licensed Uiua grammar |
+| `all-languages` | All grammars including GPL and MPL |
 
 ### Permissive Grammars ({{PERMISSIVE_COUNT}})
 
-These grammars use permissive licenses (MIT, Apache-2.0, CC0, Unlicense) and are included by default.
+These grammars use permissive licenses (MIT, Apache-2.0, CC0, Unlicense) and are enabled by `all-permissive-languages`.
 
 {{PERMISSIVE_TABLE}}
 
-### GPL-Licensed Grammars ({{GPL_COUNT}})
+### Copyleft-Licensed Grammars ({{GPL_COUNT}})
 
 These grammars are **not included by default** due to their copyleft license.
 Enabling them may have implications for your project's licensing.

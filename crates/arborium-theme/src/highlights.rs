@@ -326,38 +326,31 @@ pub fn capture_to_slot(capture: &str) -> ThemeSlot {
         // No styling
         "none" | "nospell" | "spell" | "text" | "markup" => ThemeSlot::None,
 
-        // Fallback: try to match by prefix
-        other => {
-            if other.starts_with("keyword") {
-                ThemeSlot::Keyword
-            } else if other.starts_with("function") || other.starts_with("method") {
-                ThemeSlot::Function
-            } else if other.starts_with("string") || other.starts_with("character") {
-                ThemeSlot::String
-            } else if other.starts_with("comment") {
-                ThemeSlot::Comment
-            } else if other.starts_with("type") {
-                ThemeSlot::Type
-            } else if other.starts_with("variable") || other.starts_with("parameter") {
-                ThemeSlot::Variable
-            } else if other.starts_with("constant") {
-                ThemeSlot::Constant
-            } else if other.starts_with("punctuation") {
-                ThemeSlot::Punctuation
-            } else if other.starts_with("tag") {
-                ThemeSlot::Tag
-            } else if other.starts_with("markup.heading") || other.starts_with("text.title") {
-                ThemeSlot::Title
-            } else if other.starts_with("markup") || other.starts_with("text") {
-                // Generic markup/text - no styling
-                ThemeSlot::None
-            } else {
-                // Unknown capture - no styling
-                ThemeSlot::None
-            }
-        }
+        // Prefix rules are also used to generate the JavaScript mapping helper.
+        other => CAPTURE_PREFIXES.iter()
+            .find(|(prefix, _)| other.starts_with(prefix))
+            .map_or(ThemeSlot::None, |(_, slot)| *slot),
     }
 }
+
+/// Ordered fallback rules for capture names not explicitly listed above.
+/// Shared with the JavaScript code generator to keep both renderers consistent.
+pub const CAPTURE_PREFIXES: &[(&str, ThemeSlot)] = &[
+    ("keyword", ThemeSlot::Keyword),
+    ("function", ThemeSlot::Function),
+    ("method", ThemeSlot::Function),
+    ("string", ThemeSlot::String),
+    ("character", ThemeSlot::String),
+    ("comment", ThemeSlot::Comment),
+    ("type", ThemeSlot::Type),
+    ("variable", ThemeSlot::Variable),
+    ("parameter", ThemeSlot::Variable),
+    ("constant", ThemeSlot::Constant),
+    ("punctuation", ThemeSlot::Punctuation),
+    ("tag", ThemeSlot::Tag),
+    ("markup.heading", ThemeSlot::Title),
+    ("text.title", ThemeSlot::Title),
+];
 
 /// A highlight category definition.
 ///
@@ -1075,6 +1068,7 @@ pub const CAPTURE_NAMES: &[&str] = &[
     "tag.builtin",
     // Macros
     "macro",
+    "preproc.macro",
     // Labels
     "label",
     // Namespaces

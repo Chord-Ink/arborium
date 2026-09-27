@@ -8,6 +8,14 @@
       forAllSystems = nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed;
     in
     {
+      packages = forAllSystems (system:
+        let pkgs = import nixpkgs { inherit system; };
+        in rec {
+          arborium = pkgs.callPackage ./nix/package.nix { };
+          default = arborium;
+        }
+      );
+
       devShells = forAllSystems (system:
         let
           pkgs = import nixpkgs {

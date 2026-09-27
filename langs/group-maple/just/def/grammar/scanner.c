@@ -5,9 +5,8 @@
 #include <string.h>
 #include <wctype.h>
 
-#ifdef NDEBUG
-#error "expected assertions to be enabled"
-#endif
+// assertf below performs its own checks independently of the standard assert
+// macro. Consumers may define NDEBUG (including Zig's size-optimized builds).
 
 // Enable this for debugging
 // #define DEBUG_PRINT

@@ -11,13 +11,13 @@ Batteries-included [tree-sitter](https://tree-sitter.github.io/tree-sitter/) gra
 ### As a Rust library
 
 ```bash
-cargo add arborium
+cargo add arborium --features lang-rust,lang-javascript
 ```
 
-By default, all permissively-licensed grammars are included (~70 languages). To select specific languages:
+No languages are enabled by default. Select specific languages, or enable the `all-permissive-languages` bundle:
 
 ```bash
-cargo add arborium --no-default-features --features lang-rust,lang-javascript
+cargo add arborium --features all-permissive-languages
 ```
 
 ### Using a Git dependency
@@ -53,10 +53,10 @@ arborium file.rs  # Syntax highlight in your terminal
 
 ## Features
 
-- **~70 language grammars** included out of the box
-- **Permissively licensed** (MIT/Apache-2.0/CC0/Unlicense) grammars enabled by default
+- **118 language grammars** included out of the box
+- **Permissively licensed** (MIT/Apache-2.0/CC0/Unlicense) grammars available via `all-permissive-languages`
 - **WASM support** with custom allocator fix
-- **HTML rendering** with 32 built-in themes
+- **HTML rendering** with 33 built-in themes
 - **Browser usage** via drop-in script tag or ESM module
 - **CLI tool** (`arborium-cli`) - syntax highlighting for terminal and HTML
 - **Feature flags** for fine-grained control over included languages
@@ -66,12 +66,14 @@ arborium file.rs  # Syntax highlight in your terminal
 For complete documentation including:
 - Full language support list
 - Browser usage guide (drop-in script, ESM modules, compile to WASM)
-- All 32 built-in themes
+- All 33 built-in themes
 - HTML tag reference
 - WASM build instructions
 - Feature flags reference
 
 See the **[arborium crate on crates.io](https://crates.io/crates/arborium)** or **[docs.rs](https://docs.rs/arborium)**.
+
+Additional guides: [themes](docs/theme-system.md), [JavaScript integrations](docs/javascript-integrations.md), [upstream issue review](docs/upstream-issue-review.md), and [custom grammars](EXTERNAL_GRAMMAR_CRATES.md).
 
 ## Repository Structure
 

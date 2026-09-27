@@ -39,7 +39,7 @@
 "\\" @operator
 
 [
-  "or" "xor" "and"
+  "or" "xor" "and" "not"
   "eq" "ne" "cmp" "lt" "le" "ge" "gt"
   "isa"
 ] @keyword.operator
@@ -117,6 +117,7 @@
   [(varname) (filehandle)] @variable.builtin
   (#match? @variable.builtin "^((ENV|ARGV|INC|ARGVOUT|SIG|STDIN|STDOUT|STDERR)|[_ab]|\\W|\\d+|\\^.*)$")
 )
+(filehandle (varname)) @variable
 
 [(array) (arraylen)] @variable.array
 (glob) @variable.builtin
@@ -134,12 +135,11 @@
    array: (_) @variable.array
    hash: (_) @variable.hash
   ])
-(postfix_deref ["@" "$#" ] @variable.array "*" @variable.array)
-(postfix_deref "%" @variable.hash "*" @variable.hash)
-(slices
-  hashref:_ [ "@" "%" ] @variable.hash )
-(slices
-  arrayref:_  [ "@" "%" ] @variable.array )
+(array_deref_expression [ "@" "*"] @variable.array)
+(arraylen_deref_expression [ "$#" "*"] @variable.array)
+(hash_deref_expression [ "%" "*"] @variable.hash)
+(array_element_expression array:(_) @variable.array)
+(slice_expression array:(_) @variable.array)
 
 
 
@@ -161,3 +161,7 @@
     "{" @punctuation.special
     "}" @punctuation.special))
 
+((_
+    (autoquoted_bareword)
+    (bareword) @constant)
+)

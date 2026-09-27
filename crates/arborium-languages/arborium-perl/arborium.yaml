@@ -1,5 +1,5 @@
 repo: https://github.com/tree-sitter-perl/tree-sitter-perl
-commit: ad74e6db234c35d537de9358799a8e0cc4f5dee0
+commit: f678e356280566100e7eed21716d6f59abdf96b7
 license: MIT
 
 grammars:

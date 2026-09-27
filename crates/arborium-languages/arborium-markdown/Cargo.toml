@@ -37,6 +37,8 @@ path = "src/lib.rs"
 tree-sitter-language = { version = "0.1" }
 
 
+arborium-markdown_inline = { version = "2.18.2", path = "../arborium-markdown_inline", optional = true }
+
 arborium-html = { version = "2.18.2", path = "../arborium-html", optional = true }
 
 arborium-yaml = { version = "2.18.2", path = "../arborium-yaml", optional = true }
@@ -47,7 +49,7 @@ arborium-toml = { version = "2.18.2", path = "../arborium-toml", optional = true
 
 [features]
 default = ["injections"]
-injections = ["arborium-html", "arborium-yaml", "arborium-toml"]
+injections = ["arborium-markdown_inline", "arborium-html", "arborium-yaml", "arborium-toml"]
 
 
 [dev-dependencies]

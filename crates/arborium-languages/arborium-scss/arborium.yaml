@@ -1,5 +1,5 @@
-repo: https://github.com/serenadeai/tree-sitter-scss
-commit: c478c6868648eff49eb04a4df90d703dc45b312a
+repo: https://github.com/tree-sitter-grammars/tree-sitter-scss
+commit: 2ef6d42e3ad7a8208900f9346f4529806ae0f9f9
 license: MIT
 
 grammars:
