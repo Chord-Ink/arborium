@@ -13,12 +13,11 @@ dependencies = [
 
 [[package]]
 name = "arborium"
-version = "2.15.0"
+version = "2.19.0"
 dependencies = [
  "arborium-highlight",
  "arborium-theme",
  "arborium-tree-sitter",
- "dlmalloc",
 ]
 
 [[package]]
@@ -32,7 +31,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-highlight"
-version = "2.15.0"
+version = "2.19.0"
 dependencies = [
  "arborium-theme",
  "arborium-tree-sitter",
@@ -41,7 +40,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-sysroot"
-version = "2.15.0"
+version = "2.19.0"
 dependencies = [
  "cc",
  "dlmalloc",
@@ -49,16 +48,15 @@ dependencies = [
 
 [[package]]
 name = "arborium-theme"
-version = "2.15.0"
+version = "2.19.0"
 
 [[package]]
 name = "arborium-tree-sitter"
-version = "2.15.0"
+version = "2.19.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
  "regex",
- "regex-syntax",
  "streaming-iterator",
  "tree-sitter-language",
 ]
@@ -151,9 +149,9 @@ checksum = "2b2231b7c3057d5e4ad0156fb3dc807d900806020c5ffa3ee6ff2c8c76fb8520"
 
 [[package]]
 name = "tree-sitter-language"
-version = "0.1.7"
+version = "0.1.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "009994f150cc0cd50ff54917d5bc8bffe8cad10ca10d81c34da2ec421ae61782"
+checksum = "ca0d1bf6fdd806e43ae5198f82f527056d359def39e54e67a0f478ac09dac081"
 
 [[package]]
 name = "windows-link"

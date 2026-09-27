@@ -2,7 +2,7 @@
 
 [package]
 name = "arborium-objc"
-version = "2.18.2"
+version = "2.19.0"
 edition = "2024"
 rust-version = "1.85"
 description = "Objective-C grammar for arborium (tree-sitter bindings)"
@@ -36,18 +36,18 @@ path = "src/lib.rs"
 [dependencies]
 tree-sitter-language = { version = "0.1" }
 
-arborium-c = { version = "2.18.2", path = "../arborium-c" }
+arborium-c = { version = "2.19.0", path = "../arborium-c" }
 
 
 
 
 [dev-dependencies]
-arborium-test-harness = { version = "2.18.2", path = "../../arborium-test-harness" }
+arborium-test-harness = { version = "2.19.0", path = "../../arborium-test-harness" }
 libtest-mimic = "0.8"
 
 # WASM allocator (only needed on WASM targets)
 [target.'cfg(target_family = "wasm")'.dependencies]
-arborium-sysroot = { version = "2.18.2", path = "../../arborium-sysroot" }
+arborium-sysroot = { version = "2.19.0", path = "../../arborium-sysroot" }
 
 [build-dependencies]
 cc = "1"
