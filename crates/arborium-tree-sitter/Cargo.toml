@@ -1,0 +1,41 @@
+[package]
+name = "arborium-tree-sitter"
+version = "2.18.2"
+description = "Rust bindings to the Tree-sitter parsing library (vendored for arborium WASM support)"
+authors = ["Max Brunsfeld <maxbrunsfeld@gmail.com>", "Amaan Qureshi <amaanq12@gmail.com>"]
+edition = "2024"
+rust-version = "1.90"
+readme = "README.md"
+license = "MIT"
+repository = "https://github.com/tree-sitter/tree-sitter"
+categories = [
+  "api-bindings",
+  "external-ffi-bindings",
+  "parsing",
+  "text-editors",
+]
+publish = true
+build = "binding_rust/build.rs"
+links = "tree-sitter"
+
+[package.metadata.cargo-shear]
+ignored = ["arborium-sysroot"]
+
+[features]
+default = ["std"]
+std = ["regex/std", "regex/perf"]
+
+[dependencies]
+regex = { version = "1.12.3", default-features = false, features = ["unicode"] }
+tree-sitter-language = "0.1.8"
+streaming-iterator = "0.1.9"
+
+# WASM allocator (only needed on WASM targets)
+[target.'cfg(target_family = "wasm")'.dependencies]
+arborium-sysroot = { version = "2.18.2", path = "../arborium-sysroot" }
+
+[build-dependencies]
+cc = "1"
+
+[lib]
+path = "binding_rust/lib.rs"

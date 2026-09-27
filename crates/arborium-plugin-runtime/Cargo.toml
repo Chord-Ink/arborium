@@ -1,0 +1,18 @@
+[package]
+publish = false
+name = "arborium-plugin-runtime"
+version = "2.18.2"
+edition = "2024"
+description = "Runtime library for arborium grammar plugins"
+license = "MIT"
+repository = "https://github.com/bearcove/arborium"
+readme = "README.md"
+
+[features]
+default = []
+
+[dependencies]
+tree-sitter-language = { version = "0.1" }
+arborium-tree-sitter = { version = "2.18.2", path = "../arborium-tree-sitter" }
+arborium-wire = { version = "2.18.2", path = "../arborium-wire" }
+arborium-sysroot = { version = "2.18.2", path = "../arborium-sysroot" }

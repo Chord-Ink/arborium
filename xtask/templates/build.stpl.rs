@@ -8,7 +8,7 @@ fn main() {
     //   grammar/
     //     scanner.c      (optional, hand-written)
     //     src/
-    //       parser.c
+    //       parser.c.gz (unpacked into OUT_DIR before compilation)
     //       grammar.json
     //       node-types.json
     //       tree_sitter/* (generated headers)
@@ -17,7 +17,15 @@ fn main() {
     let src_dir = manifest_dir.join("grammar/src");
     let grammar_dir = manifest_dir.join("grammar");
 
-    println!("cargo:rerun-if-changed={}", src_dir.join("parser.c").display());
+    let compressed_parser = src_dir.join("parser.c.gz");
+    println!("cargo:rerun-if-changed={}", compressed_parser.display());
+    let parser = std::path::PathBuf::from(std::env::var_os("OUT_DIR").expect("OUT_DIR is set by Cargo"))
+        .join("parser.c");
+    let mut input = flate2::read::GzDecoder::new(
+        std::fs::File::open(&compressed_parser).expect("open bundled parser source"),
+    );
+    let mut output = std::fs::File::create(&parser).expect("create unpacked parser source");
+    std::io::copy(&mut input, &mut output).expect("unpack bundled parser source");
 <% if has_scanner { %>
     println!("cargo:rerun-if-changed={}", grammar_dir.join("scanner.c").display());
 <% } %>
@@ -55,7 +63,7 @@ fn main() {
         }
     }
 
-    build.file(src_dir.join("parser.c"));
+    build.file(parser);
 <% if has_scanner { %>
     build.file(grammar_dir.join("scanner.c"));
 <% } %>

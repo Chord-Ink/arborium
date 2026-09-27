@@ -114,6 +114,13 @@ typedef struct TSLogger {
   void (*log)(void *payload, TSLogType log_type, const char *buffer);
 } TSLogger;
 
+/**
+ * A summary of a change to a text document.
+ *
+ * The `start_byte` and `start_point` values must be less than or equal to the
+ * `old_end_byte` and `old_end_point` values, respectively. Passing an edit
+ * that violates these invariants may produce nonsensical results.
+ */
 typedef struct TSInputEdit {
   uint32_t start_byte;
   uint32_t old_end_byte;
@@ -223,10 +230,12 @@ const TSLanguage *ts_parser_language(const TSParser *self);
  * Set the language that the parser should use for parsing.
  *
  * Returns a boolean indicating whether or not the language was successfully
- * assigned. True means assignment succeeded. False means there was a version
- * mismatch: the language was generated with an incompatible version of the
- * Tree-sitter CLI. Check the language's ABI version using [`ts_language_abi_version`]
- * and compare it to this library's [`TREE_SITTER_LANGUAGE_VERSION`] and
+ * assigned. True means assignment succeeded. False means the language cannot
+ * be used for parsing, or it was generated with an incompatible version of the
+ * Tree-sitter CLI. Check whether the language can be used for parsing with
+ * [`ts_language_is_parseable`]. Check the language's ABI version using
+ * [`ts_language_abi_version`] and compare it to this library's
+ * [`TREE_SITTER_LANGUAGE_VERSION`] and
  * [`TREE_SITTER_MIN_COMPATIBLE_LANGUAGE_VERSION`] constants.
  */
 bool ts_parser_set_language(TSParser *self, const TSLanguage *language);
@@ -293,12 +302,16 @@ const TSRange *ts_parser_included_ranges(
  * 2. [`payload`]: An arbitrary pointer that will be passed to each invocation
  *    of the [`read`] function.
  * 3. [`encoding`]: An indication of how the text is encoded. Either
- *    `TSInputEncodingUTF8` or `TSInputEncodingUTF16`.
+ *    `TSInputEncodingUTF8`, `TSInputEncodingUTF16LE`, `TSInputEncoding16BE`,
+ *    or `TSInputEncodingCustom`.
+ * 4. [`decode`]: A function to read one code point from the given input. This
+ *    function should return the number of bytes consumed and write the code point
+ *    to the [`code_point`] pointer, or write -1 if the input is invalid.
  *
  * This function returns a syntax tree on success, and `NULL` on failure. There
- * are four possible reasons for failure:
+ * are two possible reasons for failure:
  * 1. The parser does not have a language assigned. Check for this using the
-      [`ts_parser_language`] function.
+ *    [`ts_parser_language`] function.
  * 2. Parsing was cancelled due to the progress callback returning true. This callback
  *    is passed in [`ts_parser_parse_with_options`] inside the [`TSParseOptions`] struct.
  *
@@ -306,6 +319,8 @@ const TSRange *ts_parser_included_ranges(
  * [`payload`]: TSInput::payload
  * [`encoding`]: TSInput::encoding
  * [`bytes_read`]: TSInput::read
+ * [`decode`]: TSInput::decode
+ * [`code_point`]: TSDecodeFunction::code_point
  */
 TSTree *ts_parser_parse(
   TSParser *self,
@@ -421,6 +436,11 @@ TSNode ts_tree_root_node_with_offset(
 
 /**
  * Get the language that was used to parse the syntax tree.
+ *
+ * When Tree-sitter is compiled to WebAssembly, this returns the original
+ * language if the tree is being accessed from the same WebAssembly instance
+ * that created it. Otherwise, this returns a copy of the language that can be
+ * used to inspect the tree but cannot be assigned to a parser.
  */
 const TSLanguage *ts_tree_language(const TSTree *self);
 
@@ -437,6 +457,9 @@ TSRange *ts_tree_included_ranges(const TSTree *self, uint32_t *length);
  *
  * You must describe the edit both in terms of byte offsets and in terms of
  * (row, column) coordinates.
+ *
+ * The edit's `start_byte` must be less than or equal to its `old_end_byte`,
+ * and its `start_point` must be less than or equal to its `old_end_point`.
  */
 void ts_tree_edit(TSTree *self, const TSInputEdit *edit);
 
@@ -488,6 +511,11 @@ TSSymbol ts_node_symbol(TSNode self);
 
 /**
  * Get the node's language.
+ *
+ * When Tree-sitter is compiled to WebAssembly, this returns the original
+ * language if the node is being accessed from the same WebAssembly instance
+ * that created its tree. Otherwise, this returns a copy of the language that
+ * can be used to inspect the tree but cannot be assigned to a parser.
  */
 const TSLanguage *ts_node_language(TSNode self);
 
@@ -554,7 +582,7 @@ bool ts_node_is_missing(TSNode self);
 
 /**
  * Check if the node is *extra*. Extra nodes represent things like comments,
- * which are not required the grammar, but can appear anywhere.
+ * which are not required by the grammar, but can appear anywhere.
  */
 bool ts_node_is_extra(TSNode self);
 
@@ -575,6 +603,11 @@ bool ts_node_is_error(TSNode self);
 
 /**
  * Get this node's parse state.
+ *
+ * For a missing node, this is the state from the recovery path that was
+ * selected by the parser. It can be used with [`ts_lookahead_iterator_new`] to
+ * inspect the symbols that are valid in that state. This does not necessarily
+ * include every symbol that could be recovered by inserting a missing node.
 */
 TSStateId ts_node_parse_state(TSNode self);
 
@@ -700,6 +733,9 @@ TSNode ts_node_named_descendant_for_point_range(TSNode self, TSPoint start, TSPo
  * afterward will already reflect the edit. You only need to use [`ts_node_edit`]
  * when you have a [`TSNode`] instance that you want to keep and continue to use
  * after an edit.
+ *
+ * The edit's `start_byte` must be less than or equal to its `old_end_byte`,
+ * and its `start_point` must be less than or equal to its `old_end_point`.
  */
 void ts_node_edit(TSNode *self, const TSInputEdit *edit);
 
@@ -714,6 +750,9 @@ bool ts_node_eq(TSNode self, TSNode other);
  * This function updates a single point's byte offset and row/column position
  * based on an edit operation. This is useful for editing points without
  * requiring a tree or node instance.
+ *
+ * The edit's `start_byte` must be less than or equal to its `old_end_byte`,
+ * and its `start_point` must be less than or equal to its `old_end_point`.
  */
 void ts_point_edit(TSPoint *point, uint32_t *point_byte, const TSInputEdit *edit);
 
@@ -723,6 +762,9 @@ void ts_point_edit(TSPoint *point, uint32_t *point_byte, const TSInputEdit *edit
  * This function updates a range's start and end positions based on an edit
  * operation. This is useful for editing ranges without requiring a tree
  * or node instance.
+ *
+ * The edit's `start_byte` must be less than or equal to its `old_end_byte`,
+ * and its `start_point` must be less than or equal to its `old_end_point`.
  */
 void ts_range_edit(TSRange *range, const TSInputEdit *edit);
 
@@ -899,6 +941,11 @@ TSQuery *ts_query_new(
 void ts_query_delete(TSQuery *self);
 
 /**
+ * Create a copy of a query.
+ */
+TSQuery *ts_query_copy(const TSQuery *self);
+
+/**
  * Get the number of patterns, captures, or string literals in the query.
  */
 uint32_t ts_query_pattern_count(const TSQuery *self);
@@ -976,7 +1023,7 @@ const char *ts_query_capture_name_for_id(
 );
 
 /**
- * Get the quantifier of the query's captures. Each capture is * associated
+ * Get the quantifier of the query's captures. Each capture is associated
  * with a numeric id based on the order that it appeared in the query's source.
  */
 TSQuantifier ts_query_capture_quantifier_for_id(
@@ -1022,7 +1069,7 @@ void ts_query_disable_pattern(TSQuery *self, uint32_t pattern_index);
  *    captures that appear *before* some of the captures from a previous match.
  * 2. Repeatedly call [`ts_query_cursor_next_capture`] to iterate over all of the
  *    individual *captures* in the order that they appear. This is useful if
- *    don't care about which pattern matched, and just want a single ordered
+ *    you don't care about which pattern matched, and just want a single ordered
  *    sequence of captures.
  *
  * If you don't care about consuming all of the results, you can stop calling
@@ -1070,7 +1117,7 @@ void ts_query_cursor_set_match_limit(TSQueryCursor *self, uint32_t limit);
 /**
  * Set the range of bytes in which the query will be executed.
  *
- * The query cursor will return matches that intersect with the given point range.
+ * The query cursor will return matches that intersect with the given byte range.
  * This means that a match may be returned even if some of its captures fall
  * outside the specified range, as long as at least part of the match
  * overlaps with the range.
@@ -1078,6 +1125,9 @@ void ts_query_cursor_set_match_limit(TSQueryCursor *self, uint32_t limit);
  * For example, if a query pattern matches a node that spans a larger area
  * than the specified range, but part of that node intersects with the range,
  * the entire match will be returned.
+ *
+ * NOTE: An `end_byte` of zero is interpreted as `UINT32_MAX`, making the range
+ * unbounded.
  *
  * This will return `false` if the start byte is greater than the end byte, otherwise
  * it will return `true`.
@@ -1096,6 +1146,9 @@ bool ts_query_cursor_set_byte_range(TSQueryCursor *self, uint32_t start_byte, ui
  * than the specified range, but part of that node intersects with the range,
  * the entire match will be returned.
  *
+ * NOTE: An `end_point` of `(0, 0)` is interpreted as `POINT_MAX`, making the
+ * range unbounded.
+ *
  * This will return `false` if the start point is greater than the end point, otherwise
  * it will return `true`.
  */
@@ -1109,6 +1162,9 @@ bool ts_query_cursor_set_point_range(TSQueryCursor *self, TSPoint start_point, T
  * matches where _all_ nodes are _fully_ contained within the given range. Both functions
  * can be used together, e.g. to search for any matches that intersect line 5000, as
  * long as they are fully contained within lines 4500-5500
+ *
+ * NOTE: An `end_byte` of zero is interpreted as `UINT32_MAX`, making the range
+ * unbounded.
  */
 bool ts_query_cursor_set_containing_byte_range(TSQueryCursor *self, uint32_t start_byte, uint32_t end_byte);
 
@@ -1120,6 +1176,9 @@ bool ts_query_cursor_set_containing_byte_range(TSQueryCursor *self, uint32_t sta
  * matches where _all_ nodes are _fully_ contained within the given range. Both functions
  * can be used together, e.g. to search for any matches that intersect line 5000, as
  * long as they are fully contained within lines 4500-5500
+ *
+ * NOTE: An `end_point` of `(0, 0)` is interpreted as `POINT_MAX`, making the
+ * range unbounded.
  */
 bool ts_query_cursor_set_containing_point_range(TSQueryCursor *self, TSPoint start_point, TSPoint end_point);
 
@@ -1152,9 +1211,9 @@ bool ts_query_cursor_next_capture(
  *
  * The zero max start depth value can be used as a special behavior and
  * it helps to destructure a subtree by staying on a node and using captures
- * for interested parts. Note that the zero max start depth only limit a search
+ * for interested parts. Note that the zero max start depth only limits a search
  * depth for a pattern's root node but other nodes that are parts of the pattern
- * may be searched at any depth what defined by the pattern structure.
+ * may be searched at any depth as defined by the pattern structure.
  *
  * Set to `UINT32_MAX` to remove the maximum start depth.
  */
@@ -1174,6 +1233,17 @@ const TSLanguage *ts_language_copy(const TSLanguage *self);
  * this is the last reference.
  */
 void ts_language_delete(const TSLanguage *self);
+
+/**
+ * Check whether this language can be assigned to a parser.
+ *
+ * Languages obtained from a syntax tree may be used to inspect that tree, but
+ * are not necessarily usable for parsing. When Tree-sitter is compiled to
+ * WebAssembly, a language obtained from a tree can be used for parsing only
+ * within the same WebAssembly instance that created the tree, because lexer
+ * function pointers are local to a WebAssembly instance.
+ */
+bool ts_language_is_parseable(const TSLanguage *self);
 
 /**
  * Get the number of distinct node types in the language.
@@ -1233,7 +1303,7 @@ const char *ts_language_symbol_name(const TSLanguage *self, TSSymbol symbol);
 
 /**
  * Check whether the given node type id belongs to named nodes, anonymous nodes,
- * or a hidden nodes.
+ * or hidden nodes.
  *
  * See also [`ts_node_is_named`]. Hidden nodes are never returned from the API.
  */
@@ -1280,13 +1350,17 @@ const char *ts_language_name(const TSLanguage *self);
  *
  * Repeatedly using [`ts_lookahead_iterator_next`] and
  * [`ts_lookahead_iterator_current_symbol`] will generate valid symbols in the
- * given parse state. Newly created lookahead iterators will contain the `ERROR`
- * symbol.
+ * given parse state. A newly created iterator is not positioned on a symbol
+ * until [`ts_lookahead_iterator_next`] is called.
+ *
+ * The iterator retains the language, so the language may be deleted while the
+ * iterator is still in use.
  *
  * Lookahead iterators can be useful to generate suggestions and improve syntax
  * error diagnostics. To get symbols valid in an ERROR node, use the lookahead
  * iterator on its first leaf node state. For `MISSING` nodes, a lookahead
- * iterator created on the previous non-extra leaf node may be appropriate.
+ * iterator created on the previous non-extra leaf node, or using the node's
+ * parse state may be appropriate.
 */
 TSLookaheadIterator *ts_lookahead_iterator_new(const TSLanguage *self, TSStateId state);
 
@@ -1299,7 +1373,7 @@ void ts_lookahead_iterator_delete(TSLookaheadIterator *self);
  * Reset the lookahead iterator to another state.
  *
  * This returns `true` if the iterator was reset to the given state and `false`
- * otherwise.
+ * otherwise. A reset iterator is not positioned on a symbol.
 */
 bool ts_lookahead_iterator_reset_state(TSLookaheadIterator *self, TSStateId state);
 
@@ -1307,7 +1381,7 @@ bool ts_lookahead_iterator_reset_state(TSLookaheadIterator *self, TSStateId stat
  * Reset the lookahead iterator.
  *
  * This returns `true` if the language was set successfully and `false`
- * otherwise.
+ * otherwise. A reset iterator is not positioned on a symbol.
 */
 bool ts_lookahead_iterator_reset(TSLookaheadIterator *self, const TSLanguage *language, TSStateId state);
 
@@ -1324,13 +1398,19 @@ const TSLanguage *ts_lookahead_iterator_language(const TSLookaheadIterator *self
 bool ts_lookahead_iterator_next(TSLookaheadIterator *self);
 
 /**
- * Get the current symbol of the lookahead iterator;
+ * Get the current symbol of the lookahead iterator.
+ *
+ * This is only meaningful when the most recent call to
+ * [`ts_lookahead_iterator_next`] on `self` returned `true`.
 */
 TSSymbol ts_lookahead_iterator_current_symbol(const TSLookaheadIterator *self);
 
 /**
  * Get the current symbol type of the lookahead iterator as a null terminated
  * string.
+ *
+ * This returns `NULL` unless the most recent call to
+ * [`ts_lookahead_iterator_next`] on `self` returned `true`.
 */
 const char *ts_lookahead_iterator_current_symbol_name(const TSLookaheadIterator *self);
 

@@ -20,6 +20,23 @@ By default, all permissively-licensed grammars are included (~70 languages). To 
 cargo add arborium --no-default-features --features lang-rust,lang-javascript
 ```
 
+### Using a Git dependency
+
+The Rust manifests and generated build inputs are checked in. Cargo can build
+this repository directly, without running `cargo xtask` or installing Node.js
+or the tree-sitter CLI:
+
+```toml
+[dependencies]
+arborium = { git = "https://github.com/Chord-Ink/arborium", default-features = false, features = ["lang-rust", "lang-javascript"] }
+# Individual grammars are also available:
+arborium-json = { git = "https://github.com/Chord-Ink/arborium" }
+```
+
+Add `rev = "<commit>"` to pin a revision. Builds require Rust 1.90 or newer and a
+C compiler. For `wasm32-unknown-unknown`, use a clang with WebAssembly support
+(see `.envrc` for macOS setup).
+
 ### As a CLI tool
 
 ```bash
@@ -60,7 +77,7 @@ See the **[arborium crate on crates.io](https://crates.io/crates/arborium)** or 
 
 - **[`crates/arborium/`](crates/arborium/)** - Main umbrella crate (start here!)
 - **[`crates/arborium-cli/`](crates/arborium-cli/)** - Terminal syntax highlighter CLI
-- **[`crates/arborium-*/`](crates/)** - Individual language grammar crates (~100 crates)
+- **[`crates/arborium-languages/`](crates/arborium-languages/)** - Individual language grammar crates
 - **[`packages/arborium/`](packages/arborium/)** - NPM package for browser use
 - **[`xtask/`](xtask/)** - Build automation and code generation
 

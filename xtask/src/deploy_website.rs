@@ -205,9 +205,9 @@ fn generate_plugins_json(
             lang_name, version
         );
 
-        // Extract group name from crate_path (e.g., "langs/group-birch/rust/crate" -> "birch")
+        // Extract group name from def_path (e.g., "langs/group-birch/rust/def" -> "birch")
         let group_name = state
-            .crate_path
+            .def_path
             .as_str()
             .split('/')
             .find(|s| s.starts_with("group-"))
@@ -216,7 +216,7 @@ fn generate_plugins_json(
 
         // Build path to WASM file in npm output
         let wasm_path = state
-            .crate_path
+            .def_path
             .parent()
             .expect("lang directory")
             .join("npm")
@@ -273,10 +273,10 @@ fn copy_registry_json(demo_dir: &Utf8Path, site_dir: &Utf8Path) -> Result<()> {
     if src.exists() {
         fs_err::copy(&src, &dst)?;
     } else {
-        return Err(
-            std::io::Error::other("registry.json not found in demo/. Run `cargo xtask build` first.")
-                .into(),
-        );
+        return Err(std::io::Error::other(
+            "registry.json not found in demo/. Run `cargo xtask build` first.",
+        )
+        .into());
     }
 
     Ok(())
@@ -334,10 +334,7 @@ fn deploy_to_gh_pages(repo_root: &Utf8Path, site_dir: &Utf8Path) -> Result<()> {
 }
 
 fn run_git(cwd: &Utf8Path, args: &[&str]) -> Result<()> {
-    let output = Command::new("git")
-        .args(args)
-        .current_dir(cwd)
-        .output()?;
+    let output = Command::new("git").args(args).current_dir(cwd).output()?;
 
     if !output.status.success() {
         let stderr = String::from_utf8_lossy(&output.stderr);

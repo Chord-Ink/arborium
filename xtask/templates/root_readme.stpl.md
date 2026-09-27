@@ -13,6 +13,24 @@ Batteries-included [tree-sitter](https://tree-sitter.github.io/tree-sitter/) gra
 - **WASM support** with custom allocator fix
 - **Feature flags** for fine-grained control over included languages
 
+### Using a Git dependency
+
+The Rust manifests and generated build inputs are checked in. Cargo can build
+this repository directly, without running `cargo xtask` or installing Node.js
+or the tree-sitter CLI:
+
+```toml
+[dependencies]
+arborium = { git = "https://github.com/Chord-Ink/arborium", default-features = false, features = ["lang-rust", "lang-javascript"] }
+# Individual grammars are also available:
+arborium-json = { git = "https://github.com/Chord-Ink/arborium" }
+```
+
+Add `rev = "<commit>"` to pin a revision. Builds require Rust 1.90 or newer and a
+C compiler. For `wasm32-unknown-unknown`, use a clang with WebAssembly support
+(see `.envrc` for macOS setup).
+
+
 ## Usage
 
 ```toml

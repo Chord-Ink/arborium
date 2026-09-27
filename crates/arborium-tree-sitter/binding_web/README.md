@@ -174,7 +174,9 @@ For example, you can download the JavaScript `.wasm` file from the tree-sitter-j
 You can also generate the `.wasm` file for your desired grammar. Shown below is an example of how to generate the `.wasm`
 file for the JavaScript grammar.
 
-**IMPORTANT**: [Emscripten][emscripten], [Docker][docker], or [Podman][podman] need to be installed.
+> [!NOTE]
+> Since v0.26.1, `tree-sitter build --wasm` uses [wasi-sdk][] and will automatically download it on first use.
+> No additional tools need to be installed.
 
 First install `tree-sitter-cli`, and the tree-sitter language for which to generate `.wasm`
 (`tree-sitter-javascript` in this example):
@@ -190,6 +192,19 @@ npx tree-sitter build --wasm node_modules/tree-sitter-javascript
 ```
 
 If everything is fine, file `tree-sitter-javascript.wasm` should be generated in current directory.
+
+### Wasm compatibility
+
+`web-tree-sitter` supports the same parser ABI versions as the corresponding tree-sitter library:
+
+| web-tree-sitter version | Min parser ABI version | Max parser ABI version |
+|-------------------------|------------------------|------------------------|
+| 0.24.x                  | 13                     | 14                     |
+| >= 0.25.0               | 13                     | 15                     |
+
+> [!WARNING]
+> Some prebuilt `.wasm` files use an older dynamic-linking format that newer versions of `web-tree-sitter` cannot
+> load, even if their parser ABI is supported. Rebuild these files using a current tree-sitter CLI.
 
 ### Running .wasm in Node.js
 
@@ -207,6 +222,18 @@ const Parser = require('web-tree-sitter');
   const tree = parser.parse('let x = 1;');
   console.log(tree.rootNode.toString());
 })();
+```
+
+### Loading a pre-compiled WebAssembly module
+
+Some environments, such as Cloudflare Workers and Vercel Edge Functions, import
+`.wasm` files as `WebAssembly.Module` objects. You can pass those modules to `Language.loadSync`:
+
+```javascript
+import treeSitterJavaScript from 'tree-sitter-javascript.wasm';
+// treeSitterJavaScript is of type `WebAssembly.Module`
+const JavaScript = Language.loadSync(treeSitterJavaScript);
+parser.setLanguage(JavaScript);
 ```
 
 ### Running .wasm in browser
@@ -263,3 +290,4 @@ following to your webpack config:
 [node bindings]: https://github.com/tree-sitter/node-tree-sitter
 [npm module]: https://www.npmjs.com/package/web-tree-sitter
 [podman]: https://podman.io
+[wasi-sdk]: https://github.com/WebAssembly/wasi-sdk

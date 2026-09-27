@@ -360,7 +360,7 @@ impl PluginRuntime {
                 let mut content_node = None;
                 let mut include_children = false;
 
-                for capture in m.captures {
+                for capture in m.captures() {
                     if Some(capture.index) == self.config.injection_language_capture_index {
                         if let Ok(name) = capture.node.utf8_text(source) {
                             language_name = Some(name);
@@ -403,7 +403,7 @@ impl PluginRuntime {
             }
 
             // Process highlights
-            for capture in m.captures {
+            for capture in m.captures() {
                 let capture_name = self.config.query.capture_names()[capture.index as usize];
 
                 // Skip internal captures (starting with underscore)

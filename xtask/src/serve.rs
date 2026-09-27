@@ -560,7 +560,6 @@ fn generate_shared_crate_manifests(repo_root: &Path) -> Result<(), String> {
         "arborium-host",
         "arborium-plugin-runtime",
         "arborium-wire",
-        "arborium-query",
         "arborium-rustdoc",
         "arborium-mdbook",
     ];

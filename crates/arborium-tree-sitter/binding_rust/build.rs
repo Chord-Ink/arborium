@@ -8,7 +8,7 @@ fn main() {
     generate_bindings(&out_dir);
 
     fs::copy(
-        "src/wasm/stdlib-symbols.txt",
+        "src/wasm-stdlib/imports.txt",
         out_dir.join("stdlib-symbols.txt"),
     )
     .unwrap();
@@ -29,21 +29,6 @@ fn main() {
     let wasm_path = src_path.join("wasm");
 
     if target.starts_with("wasm32-unknown") {
-        // macOS's BSD `ar` can't archive wasm objects — it warns "not a mach-o
-        // file" and silently drops the member, leaving an empty libtree-sitter.a
-        // and undefined `ts_*` symbols at link time. (This only surfaced once
-        // newer rustc stopped dead-stripping those references before the link.)
-        // Linux's GNU `ar` handles wasm fine, so cc's default archiver is only
-        // wrong on hosts with a BSD `ar`. Point cc at an `llvm-ar`, unless the
-        // user already chose an archiver via `AR` / `AR_<target>`.
-        let ar_var = format!("AR_{}", target.replace('-', "_"));
-        let ar_overridden = env::var(&ar_var).is_ok() || env::var("AR").is_ok();
-        if !ar_overridden {
-            if let Some(llvm_ar) = find_llvm_ar() {
-                config.archiver(llvm_ar);
-            }
-        }
-
         let mut arborium_has_sysroot = false;
 
         // Arborium patch: prefer arborium-sysroot and disable upstream wasm stdlib
@@ -67,7 +52,7 @@ fn main() {
     }
 
     config
-        .flag_if_supported("-std=c11")
+        .std("c11")
         .flag_if_supported("-fvisibility=hidden")
         .flag_if_supported("-Wshadow")
         .flag_if_supported("-Wno-unused-parameter")
@@ -86,56 +71,15 @@ fn main() {
     println!("cargo:include={}", include_path.display());
 }
 
-/// Locate an `llvm-ar` that understands wasm object files. Prefer the one
-/// bundled with the active Rust toolchain (`<sysroot>/lib/rustlib/<host>/bin`),
-/// then fall back to `llvm-ar` on `PATH`. Returns `None` if neither is usable,
-/// leaving cc's default archiver in place.
-fn find_llvm_ar() -> Option<PathBuf> {
-    use std::process::Command;
-
-    let exe = if cfg!(windows) { "llvm-ar.exe" } else { "llvm-ar" };
-
-    // Toolchain-bundled llvm-ar, via `rustc --print sysroot` + the host triple.
-    let rustc = env::var("RUSTC").unwrap_or_else(|_| "rustc".into());
-    if let Ok(out) = Command::new(&rustc).args(["--print", "sysroot"]).output() {
-        if out.status.success() {
-            let sysroot = PathBuf::from(String::from_utf8_lossy(&out.stdout).trim().to_string());
-            if let Ok(host) = env::var("HOST") {
-                let candidate = sysroot
-                    .join("lib/rustlib")
-                    .join(&host)
-                    .join("bin")
-                    .join(exe);
-                if candidate.is_file() {
-                    return Some(candidate);
-                }
-            }
-        }
-    }
-
-    // Otherwise, a `PATH` llvm-ar, but only if it actually runs.
-    let on_path = Command::new(exe)
-        .arg("--version")
-        .output()
-        .map(|o| o.status.success())
-        .unwrap_or(false);
-    on_path.then(|| PathBuf::from(exe))
-}
-
 fn configure_wasm_build(config: &mut cc::Build) {
     let Ok(wasm_headers) = env::var("DEP_TREE_SITTER_LANGUAGE_WASM_HEADERS") else {
-        panic!("Environment variable DEP_TREE_SITTER_LANGUAGE_WASM_HEADERS must be set by the language crate");
+        panic!(
+            "Environment variable DEP_TREE_SITTER_LANGUAGE_WASM_HEADERS must be set by the language crate"
+        );
     };
-    let Ok(wasm_src) = env::var("DEP_TREE_SITTER_LANGUAGE_WASM_SRC").map(PathBuf::from) else {
-        panic!("Environment variable DEP_TREE_SITTER_LANGUAGE_WASM_SRC must be set by the language crate");
-    };
-
-    config.include(&wasm_headers);
-    config.files([
-        wasm_src.join("stdio.c"),
-        wasm_src.join("stdlib.c"),
-        wasm_src.join("string.c"),
-    ]);
+    config
+        .define("TREE_SITTER_WASM_STDLIB", "")
+        .include(&wasm_headers);
 }
 
 #[cfg(feature = "bindgen")]

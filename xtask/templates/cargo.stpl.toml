@@ -58,6 +58,7 @@ arborium-sysroot = { version = "<%= dep_version %>", path = "<%= shared_rel %>/a
 
 [build-dependencies]
 cc = "1"
+flate2 = "1"
 
 <% if enable_corpus_tests { %>
 

@@ -44,6 +44,49 @@ fn generated_disclaimer(template_name: &str) -> String {
     )
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::io::Read;
+
+    #[test]
+    fn bundled_parser_round_trips_and_regenerates_without_changes() {
+        let temp = tempfile::tempdir().unwrap();
+        let root = Utf8Path::from_path(temp.path()).unwrap();
+        let source = root.join("generated");
+        let destination = root.join("crate/grammar/src");
+        fs::create_dir_all(&source).unwrap();
+        fs::create_dir_all(&destination).unwrap();
+        let parser = "// generated C parser\nint tree_sitter_test(void) { return 42; }\n";
+        fs::write(source.join("parser.c"), parser).unwrap();
+        fs::write(destination.join("parser.c"), "stale parser").unwrap();
+
+        let mut plan = Plan::new();
+        plan_updates_from_generated(&mut plan, &source, &destination, PlanMode::DryRun, true)
+            .unwrap();
+        assert!(!destination.join("parser.c.gz").exists());
+        plan.execute().unwrap();
+        assert!(!destination.join("parser.c").exists());
+        let compressed = fs::read(destination.join("parser.c.gz")).unwrap();
+        let mut restored = String::new();
+        flate2::read::GzDecoder::new(compressed.as_slice())
+            .read_to_string(&mut restored)
+            .unwrap();
+        assert_eq!(restored, parser);
+
+        let mut repeated = Plan::new();
+        plan_updates_from_generated(
+            &mut repeated,
+            &source,
+            &destination,
+            PlanMode::Execute,
+            true,
+        )
+        .unwrap();
+        assert!(repeated.is_empty());
+    }
+}
+
 // Sailfish templates - compiled at build time
 #[derive(TemplateSimple)]
 #[template(path = "validate_grammar.stpl.js")]
@@ -350,6 +393,7 @@ fn plan_updates_from_generated(
     generated_src: &Utf8Path,
     dest_src_dir: &Utf8Path,
     mode: PlanMode,
+    compress_parser: bool,
 ) -> Result<(), Report> {
     // Ensure grammar/src/ directory exists in plan
     if !dest_src_dir.exists() {
@@ -369,6 +413,30 @@ fn plan_updates_from_generated(
 
         // Skip directories (tree_sitter/ is handled separately)
         if !generated_file.is_file() {
+            continue;
+        }
+
+        if compress_parser && file_name == "parser.c" {
+            use std::io::Write;
+            let mut encoder =
+                flate2::write::GzEncoder::new(Vec::new(), flate2::Compression::best());
+            encoder.write_all(&fs::read(&generated_file)?)?;
+            let content = encoder.finish()?;
+            let path = dest_src_dir.join("parser.c.gz");
+            if !path.exists() || fs::read(&path)? != content {
+                plan.add(Operation::WriteBinaryFile {
+                    path,
+                    content,
+                    description: "Update compressed parser source".to_string(),
+                });
+            }
+            let raw_parser = dest_src_dir.join("parser.c");
+            if raw_parser.exists() {
+                plan.add(Operation::DeleteFile {
+                    path: raw_parser,
+                    description: "Remove uncompressed parser source".to_string(),
+                });
+            }
             continue;
         }
 
@@ -843,17 +911,15 @@ fn generate_readme(crate_name: &str, config: &crate::types::CrateConfig) -> Stri
 fn generate_plugin_cargo_toml(grammar_id: &str, grammar_crate_name: &str, license: &str) -> String {
     // Paths relative to npm/:
     // npm/ is at langs/group-*/lang/npm/
-    // crate/ is at langs/group-*/lang/crate/ (sibling)
-    // shared crates are at crates/ (repo root)
-    // So: npm -> lang -> group-* -> langs -> repo-root -> crates
-    let crate_rel = "../crate";
+    // Rust language crates are checked in under crates/arborium-languages/.
+    let crate_rel = format!("../../../../crates/arborium-languages/{grammar_crate_name}");
     let shared_rel = "../../../../crates";
 
     let template = PluginCargoTomlTemplate {
         grammar_id,
         grammar_crate_name,
         license,
-        crate_rel,
+        crate_rel: &crate_rel,
         shared_rel,
     };
     template
@@ -1278,9 +1344,9 @@ fn plan_grammar_generation_with_prepared_temp(
         cached_files.extract_to(&temp_src)?;
 
         let mut plan = Plan::for_crate(crate_name);
-        plan_updates_from_generated(&mut plan, &temp_src, &dest_src_dir, mode)?;
+        plan_updates_from_generated(&mut plan, &temp_src, &dest_src_dir, mode, false)?;
         // Also copy to crate/grammar/src/
-        plan_updates_from_generated(&mut plan, &temp_src, &crate_grammar_src_dir, mode)?;
+        plan_updates_from_generated(&mut plan, &temp_src, &crate_grammar_src_dir, mode, true)?;
 
         return Ok((plan, true)); // true = cache hit
     }
@@ -1336,15 +1402,21 @@ fn plan_grammar_generation_with_prepared_temp(
 
     // Plan file updates to both def/grammar/src/ and crate/grammar/src/
     let mut plan = Plan::for_crate(crate_name);
-    plan_updates_from_generated(&mut plan, &generated_src, &dest_src_dir, mode)?;
+    plan_updates_from_generated(&mut plan, &generated_src, &dest_src_dir, mode, false)?;
     // Also copy to crate/grammar/src/
-    plan_updates_from_generated(&mut plan, &generated_src, &crate_grammar_src_dir, mode)?;
+    plan_updates_from_generated(
+        &mut plan,
+        &generated_src,
+        &crate_grammar_src_dir,
+        mode,
+        true,
+    )?;
 
     Ok((plan, false)) // false = cache miss
 }
 
 /// Resolve a crate name to its path relative to another crate's directory.
-/// E.g., from cpp/crate/ to c/crate/ returns "../../c/crate"
+/// E.g., from arborium-cpp/ to arborium-c/ returns "../arborium-c"
 fn resolve_crate_relative_path(
     from_crate_path: &Utf8Path,
     target_crate_name: &str,
@@ -1381,7 +1453,7 @@ fn resolve_crate_relative_path(
 struct HighlightDep {
     /// Crate name (e.g., "arborium-c")
     crate_name: String,
-    /// Relative path from the dependent crate (e.g., "../../c/crate")
+    /// Relative path from the dependent crate (e.g., "../arborium-c")
     rel_path: String,
 }
 
@@ -1560,10 +1632,8 @@ fn plan_crate_files_only(
     let has_corpus = def_path.join("corpus").exists();
     let enable_corpus_tests = has_corpus && !tests_cursed;
 
-    // crate/ is at langs/group-*/lang/crate/
-    // shared crates are at crates/ (repo root)
-    // So: crate -> lang -> group-* -> langs -> repo-root -> crates
-    let shared_rel = "../../../../crates";
+    // Language crates are at crates/arborium-languages/arborium-<lang>/.
+    let shared_rel = "../..";
 
     // Extract highlights prepend configuration
     let highlight_prepends = extract_highlights_prepend(config, crate_path, registry);
@@ -1865,12 +1935,12 @@ fn plan_plugin_crate_files(
         if l.is_empty() { "MIT" } else { l }
     };
 
-    // Plugin crate lives in npm/ sibling to crate/
+    // Plugin crate lives in npm/ sibling to def/.
     // Structure: langs/group-*/lang/npm/
     let lang_dir = crate_state
-        .crate_path
+        .def_path
         .parent()
-        .expect("crate_path should have parent");
+        .expect("def_path should have parent");
     let npm_path = lang_dir.join("npm");
 
     // Ensure npm directory exists
@@ -2043,6 +2113,7 @@ fn plan_umbrella_crate(prepared: &PreparedStructures) -> Result<Plan, Report> {
 name = "arborium"
 version = "{version}"
 edition = "2024"
+rust-version = "1.90"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/bearcove/arborium"
 description = "Tree-sitter syntax highlighting with HTML rendering and WASM support"
@@ -2112,10 +2183,6 @@ arborium-highlight = {{ version = "{version}", path = "../arborium-highlight", f
         r#"
 [dev-dependencies]
 indoc = "2"
-
-# WASM allocator (automatically enabled on wasm targets)
-[target.'cfg(target_family = "wasm")'.dependencies]
-dlmalloc = "0.2"
 "#,
     );
 
@@ -2359,7 +2426,6 @@ fn plan_shared_crates(prepared: &PreparedStructures, mode: PlanMode) -> Result<P
         "arborium-host",
         "arborium-plugin-runtime",
         "arborium-wire",
-        "arborium-query",
         "arborium-rustdoc",
         "arborium-mdbook",
     ];
@@ -2618,30 +2684,6 @@ a clear error message.
 - `Edit`: An incremental edit for re-parsing
 
 This is an internal crate used by the plugin system.
-"#
-        }
-        "arborium-query" => {
-            r#"# arborium-query
-
-Tree-sitter query language grammar for arborium.
-
-## Purpose
-
-Provides syntax highlighting for tree-sitter query files (`.scm`).
-This grammar highlights the query DSL itself, including:
-
-- Node types and field names
-- Capture names (`@keyword`, `@function`, etc.)
-- Predicates (`#match?`, `#eq?`, etc.)
-- Quantifiers and anchors
-
-## Usage
-
-```rust
-use arborium_query::{language, HIGHLIGHTS_QUERY};
-
-// Use with arborium's highlighting engine
-```
 "#
         }
         "arborium-rustdoc" => {

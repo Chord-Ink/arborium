@@ -1,13 +1,95 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import helper from './helper';
-import type { LookaheadIterator, Language } from '../src';
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
+import helper, { type LanguageName } from './helper';
+import { LookaheadIterator, Language } from '../src';
 import { Parser } from '../src';
+import { C } from '../src/constants';
+import { readFile } from 'fs/promises';
+import { pathToFileURL } from 'url';
 
 let JavaScript: Language;
 let Rust: Language;
+let languageURL: (name: LanguageName) => string;
 
 describe('Language', () => {
-  beforeAll(async () => ({ JavaScript, Rust } = await helper));
+  beforeAll(async () => ({ JavaScript, Rust, languageURL } = await helper));
+
+  describe('.loadSync', () => {
+    it('loads a language synchronously from a pre-compiled WebAssembly.Module', async () => {
+      const wasmPath = languageURL('javascript');
+      const wasmBytes = await readFile(wasmPath);
+      const wasmModule = await WebAssembly.compile(wasmBytes);
+
+      const lang = Language.loadSync(wasmModule);
+      expect(lang.name).toBe('javascript');
+      expect(lang.abiVersion).toBe(15);
+
+      // Verify the language actually works by parsing a snippet
+      const parser = new Parser();
+      parser.setLanguage(lang);
+      const tree = parser.parse('const x = 1;');
+      expect(tree).not.toBeNull();
+      expect(tree!.rootNode.type).toBe('program');
+      expect(tree!.rootNode.childCount).toBe(1);
+      expect(tree!.rootNode.firstChild!.type).toBe('lexical_declaration');
+      parser.delete();
+    });
+
+    it('reports when a module has no language function', () => {
+      const loadWebAssemblyModule = C.loadWebAssemblyModule;
+      const log = vi.spyOn(console, 'log').mockImplementation(() => undefined);
+      C.loadWebAssemblyModule = (() => ({
+        not_a_language: () => 0,
+      })) as unknown as typeof C.loadWebAssemblyModule;
+
+      try {
+        expect(() => Language.loadSync({})).toThrow(
+          'Language.loadSync failed: no language function found in Wasm file',
+        );
+        expect(log).toHaveBeenCalledWith(expect.stringContaining('not_a_language'));
+      } finally {
+        C.loadWebAssemblyModule = loadWebAssemblyModule;
+        log.mockRestore();
+      }
+    });
+  });
+
+  describe('.load', () => {
+    it('loads a language from a file URL', async () => {
+      const wasmURL = pathToFileURL(languageURL('javascript'));
+      expect(wasmURL).toBeInstanceOf(URL);
+
+      const lang = await Language.load(wasmURL);
+      expect(lang.name).toBe('javascript');
+
+      // Verify the language actually works by parsing a snippet
+      const parser = new Parser();
+      parser.setLanguage(lang);
+      const tree = parser.parse('const x = 1;');
+      expect(tree).not.toBeNull();
+      expect(tree!.rootNode.type).toBe('program');
+      expect(tree!.rootNode.childCount).toBe(1);
+      expect(tree!.rootNode.firstChild!.type).toBe('lexical_declaration');
+      parser.delete();
+    });
+
+    it('reports when an async-loaded module has no language function', async () => {
+      const loadWebAssemblyModule = C.loadWebAssemblyModule;
+      const log = vi.spyOn(console, 'log').mockImplementation(() => undefined);
+      C.loadWebAssemblyModule = (() => Promise.resolve({
+        not_a_language: () => 0,
+      })) as unknown as typeof C.loadWebAssemblyModule;
+
+      try {
+        await expect(Language.load(new Uint8Array([0, 0, 0, 0]))).rejects.toThrow(
+          'Language.load failed: no language function found in Wasm file',
+        );
+        expect(log).toHaveBeenCalledWith(expect.stringContaining('not_a_language'));
+      } finally {
+        C.loadWebAssemblyModule = loadWebAssemblyModule;
+        log.mockRestore();
+      }
+    });
+  });
 
   describe('.name, .version', () => {
     it('returns the name and version of the language', () => {
@@ -167,10 +249,51 @@ describe('Lookahead iterator', () => {
     expect(symbols).toHaveLength(expected.length);
   });
 
+  it('should stay exhausted until reset', () => {
+    expect(lookahead.resetState(state)).toBe(true);
+    expect(Array.from(lookahead)).toHaveLength(expected.length);
+    expect(Array.from(lookahead)).toHaveLength(0);
+    expect(lookahead.currentType).toBeNull();
+    expect(lookahead.currentTypeId).toBeNull();
+  });
+
+  it('should not be positioned before the first step', () => {
+    const fresh = JavaScript.lookaheadIterator(state);
+    expect(fresh).not.toBeNull();
+    expect(fresh?.currentType).toBeNull();
+    expect(fresh?.currentTypeId).toBeNull();
+    fresh?.delete();
+  });
+
   it('should reset', () => {
     expect(lookahead.reset(JavaScript, state)).toBe(true);
     const symbols = Array.from(lookahead);
     expect(symbols).toEqual(expect.arrayContaining(expected));
     expect(symbols).toHaveLength(expected.length);
+  });
+});
+
+describe('Lookahead iterator symbol names', () => {
+  let Json: Language;
+  let state: number;
+
+  beforeAll(async () => {
+    ({ JSON: Json } = await helper);
+    const parser = new Parser();
+    parser.setLanguage(Json);
+    const tree = parser.parse('{"a": 1}')!;
+    parser.delete();
+    const cursor = tree.walk();
+    expect(cursor.gotoFirstChild()).toBe(true); // object
+    state = cursor.currentNode.nextParseState;
+  });
+
+  it('hould name symbols missing from Language.types', () => {
+    const lookahead = Json.lookaheadIterator(state)!;
+    const names = Array.from(lookahead);
+    expect(names).toContain('end');
+    expect(names).not.toContain('ERROR');
+    expect(names).toHaveLength(12);
+    lookahead.delete();
   });
 });

@@ -1,0 +1,679 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/grammar.schema.json",
+  "name": "x86asm",
+  "rules": {
+    "source_file": {
+      "type": "REPEAT",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "label_definition"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "directive"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "instruction"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "line_comment"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_newline"
+          }
+        ]
+      }
+    },
+    "label_definition": {
+      "type": "PREC_RIGHT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "name",
+            "content": {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "label_colon"
+              },
+              "named": true,
+              "value": "label"
+            }
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "directive"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "instruction"
+                  }
+                ]
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "label_colon": {
+      "type": "PATTERN",
+      "value": "[a-zA-Z_.][a-zA-Z0-9_$.]*:"
+    },
+    "directive": {
+      "type": "PREC_RIGHT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "directive_name"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "arguments"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "directive_name": {
+      "type": "PATTERN",
+      "value": "\\.[a-zA-Z_][a-zA-Z0-9_]*"
+    },
+    "instruction": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "prefix"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "mnemonic"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "operands"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "prefix": {
+      "type": "TOKEN",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "PATTERN",
+            "value": "lock",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "rep",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "repe",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "repz",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "repne",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "repnz",
+            "flags": "i"
+          },
+          {
+            "type": "PATTERN",
+            "value": "rex[.a-z]*",
+            "flags": "i"
+          }
+        ]
+      }
+    },
+    "mnemonic": {
+      "type": "PATTERN",
+      "value": "[a-zA-Z][a-zA-Z0-9]*"
+    },
+    "arguments": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_argument"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ","
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_argument"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "_argument": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "string"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "number"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "identifier"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "directive_name"
+        }
+      ]
+    },
+    "operands": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_operand_item"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ","
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_operand_item"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "_operand_item": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "register"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "memory_operand"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "immediate"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "identifier"
+        }
+      ]
+    },
+    "register": {
+      "type": "TOKEN",
+      "content": {
+        "type": "PREC",
+        "value": 2,
+        "content": {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "PATTERN",
+              "value": "[re]?ax",
+              "flags": "i"
+            },
+            {
+              "type": "PATTERN",
+              "value": "[re]?bx",
+              "flags": "i"
+            },
+            {
+              "type": "PATTERN",
+              "value": "[re]?cx",
+              "flags": "i"
+            },
+            {
+              "type": "PATTERN",
+              "value": "[re]?dx",
+              "flags": "i"
+            },
+            {
+              "type": "PATTERN",
+              "value": "[re]?si",
+              "flags": "i"
+            },
+            {
+              "type": "PATTERN",
+              "value": "[re]?di",
+              "flags": "i"
+            },
+            {
+              "type": "PATTERN",
+              "value": "[re]?sp",
+              "flags": "i"
+            },
+            {
+              "type": "PATTERN",
+              "value": "[re]?bp",
+              "flags": "i"
+            },
+            {
+              "type": "PATTERN",
+              "value": "r[89][dwb]?",
+              "flags": "i"
+            },
+            {
+              "type": "PATTERN",
+              "value": "r1[0-5][dwb]?",
+              "flags": "i"
+            },
+            {
+              "type": "PATTERN",
+              "value": "[abcd]l",
+              "flags": "i"
+            },
+            {
+              "type": "PATTERN",
+              "value": "[abcd]h",
+              "flags": "i"
+            },
+            {
+              "type": "PATTERN",
+              "value": "sil",
+              "flags": "i"
+            },
+            {
+              "type": "PATTERN",
+              "value": "dil",
+              "flags": "i"
+            },
+            {
+              "type": "PATTERN",
+              "value": "spl",
+              "flags": "i"
+            },
+            {
+              "type": "PATTERN",
+              "value": "bpl",
+              "flags": "i"
+            },
+            {
+              "type": "PATTERN",
+              "value": "[cdefgs]s",
+              "flags": "i"
+            },
+            {
+              "type": "PATTERN",
+              "value": "[re]?ip",
+              "flags": "i"
+            },
+            {
+              "type": "PATTERN",
+              "value": "[re]?flags",
+              "flags": "i"
+            },
+            {
+              "type": "PATTERN",
+              "value": "st\\([0-7]\\)",
+              "flags": "i"
+            },
+            {
+              "type": "PATTERN",
+              "value": "st",
+              "flags": "i"
+            },
+            {
+              "type": "PATTERN",
+              "value": "[xyz]mm[0-9]",
+              "flags": "i"
+            },
+            {
+              "type": "PATTERN",
+              "value": "[xyz]mm1[0-5]",
+              "flags": "i"
+            },
+            {
+              "type": "PATTERN",
+              "value": "[xyz]mm2[0-9]",
+              "flags": "i"
+            },
+            {
+              "type": "PATTERN",
+              "value": "[xyz]mm3[01]",
+              "flags": "i"
+            },
+            {
+              "type": "PATTERN",
+              "value": "mm[0-7]",
+              "flags": "i"
+            },
+            {
+              "type": "PATTERN",
+              "value": "k[0-7]",
+              "flags": "i"
+            },
+            {
+              "type": "PATTERN",
+              "value": "cr[0-9]",
+              "flags": "i"
+            },
+            {
+              "type": "PATTERN",
+              "value": "dr[0-7]",
+              "flags": "i"
+            }
+          ]
+        }
+      }
+    },
+    "memory_operand": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "ptr_size"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": "["
+        },
+        {
+          "type": "SYMBOL",
+          "name": "memory_expression"
+        },
+        {
+          "type": "STRING",
+          "value": "]"
+        }
+      ]
+    },
+    "ptr_size": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "byte"
+            },
+            {
+              "type": "STRING",
+              "value": "word"
+            },
+            {
+              "type": "STRING",
+              "value": "dword"
+            },
+            {
+              "type": "STRING",
+              "value": "qword"
+            },
+            {
+              "type": "STRING",
+              "value": "xmmword"
+            },
+            {
+              "type": "STRING",
+              "value": "ymmword"
+            },
+            {
+              "type": "STRING",
+              "value": "zmmword"
+            },
+            {
+              "type": "STRING",
+              "value": "oword"
+            },
+            {
+              "type": "STRING",
+              "value": "tword"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "ptr"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "memory_expression": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_mem_atom"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "binary_expression"
+        }
+      ]
+    },
+    "binary_expression": {
+      "type": "PREC_LEFT",
+      "value": 1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "_mem_atom"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "+"
+              },
+              {
+                "type": "STRING",
+                "value": "-"
+              },
+              {
+                "type": "STRING",
+                "value": "*"
+              }
+            ]
+          },
+          {
+            "type": "SYMBOL",
+            "name": "memory_expression"
+          }
+        ]
+      }
+    },
+    "_mem_atom": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "register"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "number"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "identifier"
+        }
+      ]
+    },
+    "immediate": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "$"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "number"
+        }
+      ]
+    },
+    "number": {
+      "type": "TOKEN",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "PATTERN",
+            "value": "0[xX][0-9a-fA-F]+"
+          },
+          {
+            "type": "PATTERN",
+            "value": "[0-9][0-9a-fA-F]*[hH]"
+          },
+          {
+            "type": "PATTERN",
+            "value": "-?[0-9]+"
+          },
+          {
+            "type": "PATTERN",
+            "value": "0[bB][01]+"
+          },
+          {
+            "type": "PATTERN",
+            "value": "[01]+[bB]"
+          }
+        ]
+      }
+    },
+    "identifier": {
+      "type": "PATTERN",
+      "value": "[a-zA-Z_][a-zA-Z0-9_$.]*"
+    },
+    "string": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "\"[^\"]*\""
+        },
+        {
+          "type": "PATTERN",
+          "value": "'[^']*'"
+        }
+      ]
+    }
+  },
+  "extras": [
+    {
+      "type": "PATTERN",
+      "value": "[ \\t]"
+    }
+  ],
+  "conflicts": [],
+  "precedences": [],
+  "externals": [
+    {
+      "type": "SYMBOL",
+      "name": "_newline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "line_comment"
+    }
+  ],
+  "inline": [
+    "_operand_item"
+  ],
+  "supertypes": [],
+  "reserved": {}
+}

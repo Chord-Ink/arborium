@@ -6,13 +6,13 @@ and re-apply Arborium-specific patches.
 Usage examples:
 
   # Dry-run (default), shows planned actions
-  python3 scripts/sync_tree_sitter_fork.py --upstream ~/bearcove/tree-sitter --tag v0.26.6
+  python3 scripts/sync_tree_sitter_fork.py --upstream ~/bearcove/tree-sitter --tag v0.27.0
 
   # Apply changes in-place
-  python3 scripts/sync_tree_sitter_fork.py --upstream ~/bearcove/tree-sitter --tag v0.26.6 --apply
+  python3 scripts/sync_tree_sitter_fork.py --upstream ~/bearcove/tree-sitter --tag v0.27.0 --apply
 
   # Also commit result
-  python3 scripts/sync_tree_sitter_fork.py --upstream ~/bearcove/tree-sitter --tag v0.26.6 --apply --commit
+  python3 scripts/sync_tree_sitter_fork.py --upstream ~/bearcove/tree-sitter --tag v0.27.0 --apply --commit
 
 Assumptions:
 - Run from repo root (expects this script at scripts/sync_tree_sitter_fork.py).
@@ -25,9 +25,11 @@ from __future__ import annotations
 import argparse
 import dataclasses
 import datetime as dt
+import re
 import shutil
 import subprocess
 import sys
+import tomllib
 from pathlib import Path
 from typing import List, Tuple
 
@@ -42,8 +44,6 @@ TARGET_REL = Path("crates/arborium-tree-sitter")
 PRESERVE_PATHS = [
     Path("Cargo.stpl.toml"),
     Path("Cargo.lock"),
-    Path("CMakeLists.txt"),
-    Path("tree-sitter.pc.in"),
     Path("README.md"),
     Path("LICENSE"),
 ]
@@ -287,6 +287,42 @@ def patch_binding_rust_lib_rs_languagefn_reexport(target: Path) -> None:
     )
 
 
+def patch_cargo_template(target: Path, upstream_root: Path) -> None:
+    """Keep the standalone manifest template aligned with upstream requirements."""
+    upstream = tomllib.loads((upstream_root / "lib/Cargo.toml").read_text())
+    workspace = tomllib.loads((upstream_root / "Cargo.toml").read_text())["workspace"]
+    path = target / "Cargo.stpl.toml"
+    src = path.read_text()
+    for key, value in {
+        "edition": workspace["package"]["edition"],
+        "rust-version": upstream["package"]["rust-version"],
+    }.items():
+        src = re.sub(rf'^{key} = .*$', f'{key} = "{value}"', src, flags=re.M)
+    regex_version = upstream["dependencies"]["regex"]["version"]
+    src = re.sub(r'^regex = .*$',
+                 f'regex = {{ version = "{regex_version}", default-features = false, features = ["unicode"] }}',
+                 src, flags=re.M)
+    src = re.sub(r'^regex-syntax = .*\n', '', src, flags=re.M)
+    src = src.replace(', "regex-syntax/unicode"', '')
+    language_version = workspace["dependencies"]["tree-sitter-language"]["version"]
+    src = re.sub(r'^tree-sitter-language = .*$',
+                 f'tree-sitter-language = "{language_version}"', src, flags=re.M)
+    path.write_text(src)
+
+
+def patch_wasm_allocator(target: Path) -> None:
+    """Use arborium-sysroot's allocator instead of exporting duplicate symbols."""
+    path = target / "binding_rust/lib.rs"
+    src = path.read_text()
+    old = '#[cfg(all(target_arch = "wasm32", target_os = "unknown"))]\nmod wasm_allocator;'
+    if old not in src:
+        raise RuntimeError("Upstream wasm_allocator module gate changed")
+    path.write_text(src.replace(old,
+        '// Arborium patch: allocator symbols are supplied by arborium-sysroot.\n'
+        '#[cfg(all(target_arch = "wasm32", target_os = "unknown"))]\n'
+        'extern crate arborium_sysroot;'))
+
+
 def patch_clock_h_if_needed(target: Path) -> None:
     """
     Ensure src/clock.h contains Arborium wasm stub branch if the file exists.
@@ -396,7 +432,7 @@ def main() -> None:
         "--upstream", required=True, help="Path to upstream tree-sitter repo"
     )
     parser.add_argument(
-        "--tag", required=True, help="Upstream tag to sync from (e.g. v0.26.6)"
+        "--tag", required=True, help="Upstream tag to sync from (e.g. v0.27.0)"
     )
     parser.add_argument(
         "--apply", action="store_true", help="Apply changes (default is dry-run)"
@@ -426,7 +462,7 @@ def main() -> None:
     current_ref = checkout_upstream_tag(upstream_root, args.tag, dry_run=dry_run)
     try:
         upstream_rev_short = run(
-            ["git", "rev-parse", "--short", f"refs/tags/{args.tag}"], cwd=upstream_root
+            ["git", "rev-parse", "--short", f"refs/tags/{args.tag}^{{commit}}"], cwd=upstream_root
         ).out.strip()
 
         backup_dir = repo_root / ".cache" / "sync-tree-sitter-backup"
@@ -448,8 +484,10 @@ def main() -> None:
             info("Would restore preserved files and apply Arborium patches.")
         else:
             restore_preserved(target, backup_dir)
+            patch_cargo_template(target, upstream_root)
             patch_binding_rust_build_rs(target)
             patch_binding_rust_lib_rs_languagefn_reexport(target)
+            patch_wasm_allocator(target)
             patch_clock_h_if_needed(target)
             write_sync_metadata(target, args.tag, upstream_rev_short)
 

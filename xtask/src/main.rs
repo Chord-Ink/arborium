@@ -499,7 +499,7 @@ fn resolve_workspace_version(provided: Option<String>, repo_root: &camino::Utf8P
     if let Some(version) = provided {
         version
     } else {
-        // Returns DEV_VERSION (0.0.0) if version.json doesn't exist
+        // Falls back to the committed package version on fresh checkouts
         version_store::read_version(repo_root).unwrap_or_else(|err| {
             eprintln!("Failed to parse version.json: {err}");
             std::process::exit(1);

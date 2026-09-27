@@ -24,7 +24,6 @@
 //! │   │   │   ├── grammar/
 //! │   │   │   ├── queries/
 //! │   │   │   └── samples/
-//! │   │   ├── crate/            # Generated Rust crate
 //! │   │   └── npm/              # Generated WASM package
 //! │   ├── c/
 //! │   └── cpp/
@@ -33,6 +32,8 @@
 //! │   ├── html/
 //! │   └── css/
 //! └── ...
+//!
+//! crates/arborium-languages/arborium-<lang>/  # Generated Rust crates (committed)
 //! ```
 //!
 //! # Example `arborium.yaml` (single grammar, most common)
@@ -345,7 +346,7 @@ pub struct CrateState {
     /// Path to the def/ directory containing source files (arborium.yaml, grammar/, etc.).
     pub def_path: Utf8PathBuf,
 
-    /// Path to the crate/ directory for generated files (Cargo.toml, build.rs, src/).
+    /// Path to crates/arborium-languages/arborium-<lang>/ (generated and committed).
     pub crate_path: Utf8PathBuf,
 
     /// Parsed configuration from arborium.yaml (if present).
@@ -533,9 +534,7 @@ impl CrateRegistry {
                     let def_path = Utf8PathBuf::from_path_buf(def_path).expect("non-UTF8 path");
                     let crate_name = format!("arborium-{}", lang_name);
 
-                    // Calculate crate path: langs/group-*/lang/crate/
-                    let crate_path = lang_path.join("crate");
-                    let crate_path = Utf8PathBuf::from_path_buf(crate_path).expect("non-UTF8 path");
+                    let crate_path = crates_dir.join("arborium-languages").join(&crate_name);
 
                     let state =
                         Self::scan_crate_new_structure(&crate_name, &def_path, &crate_path)?;
@@ -560,7 +559,7 @@ impl CrateRegistry {
 
             // Skip utility crates
             let crate_suffix = dir_name.strip_prefix("arborium-").unwrap();
-            if SKIP_CRATES.contains(&crate_suffix) {
+            if SKIP_CRATES.contains(&crate_suffix) || crate_suffix == "languages" {
                 continue;
             }
 
@@ -895,18 +894,12 @@ impl CompressionConfig {
 
     /// Get gzip level for flate2 (default: 9)
     pub fn gzip_level(&self) -> u32 {
-        self.gzip
-            .as_ref()
-            .and_then(|g| g.level)
-            .unwrap_or(9)
+        self.gzip.as_ref().and_then(|g| g.level).unwrap_or(9)
     }
 
     /// Get zopfli iterations (default: 15)
     pub fn gzip_iterations(&self) -> u8 {
-        self.gzip
-            .as_ref()
-            .and_then(|g| g.iterations)
-            .unwrap_or(15)
+        self.gzip.as_ref().and_then(|g| g.iterations).unwrap_or(15)
     }
 
     /// Get zstd level (default: 19)

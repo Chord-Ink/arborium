@@ -16,11 +16,16 @@ Validate all grammar configurations in `crates/*/arborium.kdl`.
 Regenerate crate files from `arborium.kdl` configurations.
 Also rebuilds the static demo site in `demo/` (release mode) when not in dry-run.
 
+Rust crates are written to `crates/arborium-languages/arborium-<lang>/`.
+Commit the generated Rust crate files, including shared manifests and sources,
+so Cargo Git dependencies can build without xtask. Language definitions remain
+in `langs/group-*/<lang>/def/`; WASM packages remain in the sibling `npm/`.
+
 **Generated files:**
 - `Cargo.toml` - package metadata, dependencies
 - `build.rs` - C compilation setup
 - `src/lib.rs` - language function exports
-- `grammar/src/` - parser sources (via tree-sitter generate)
+- `grammar/src/` - parser sources (via tree-sitter generate; stored as `parser.c.gz` in Rust crates)
 
 ```bash
 cargo xtask gen --version 0.4.0          # Regenerate all grammars + demo

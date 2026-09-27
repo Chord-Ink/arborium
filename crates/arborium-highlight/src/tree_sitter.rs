@@ -75,7 +75,8 @@ impl std::error::Error for GrammarError {}
 ///
 /// # Thread Safety
 ///
-/// `CompiledGrammar` is `Send + Sync` and can be freely shared across threads.
+/// On native targets, `CompiledGrammar` is `Send + Sync` and can be freely shared across threads.
+/// Tree-sitter languages are not thread-safe on WebAssembly targets.
 /// Each thread needs its own [`ParseContext`] to actually parse text.
 pub struct CompiledGrammar {
     language: Language,
@@ -86,17 +87,11 @@ pub struct CompiledGrammar {
     injection_language_idx: Option<u32>,
 }
 
-// Safety: CompiledGrammar only contains Language and Query types from tree-sitter.
-// Both types are documented as thread-safe (immutable after creation).
-// We verify this at compile time with the assertions below.
-unsafe impl Send for CompiledGrammar {}
-unsafe impl Sync for CompiledGrammar {}
-
-// Compile-time verification that the underlying types are Send + Sync
+// Inherit thread safety from tree-sitter's types rather than overriding it.
+#[cfg(not(target_family = "wasm"))]
 const _: () = {
     const fn assert_send_sync<T: Send + Sync>() {}
-    assert_send_sync::<Language>();
-    assert_send_sync::<Query>();
+    assert_send_sync::<CompiledGrammar>();
 };
 
 impl CompiledGrammar {
@@ -170,7 +165,7 @@ impl CompiledGrammar {
             .matches(&self.highlights_query, root_node, source);
 
         while let Some(m) = matches.next() {
-            for capture in m.captures {
+            for capture in m.captures() {
                 let capture_name = self.highlights_query.capture_names()[capture.index as usize];
 
                 // Skip internal captures (start with _)
@@ -220,7 +215,7 @@ impl CompiledGrammar {
                 }
 
                 // Get captures
-                for capture in m.captures {
+                for capture in m.captures() {
                     if Some(capture.index) == self.injection_content_idx {
                         content_node = Some(capture.node);
                     } else if Some(capture.index) == self.injection_language_idx {

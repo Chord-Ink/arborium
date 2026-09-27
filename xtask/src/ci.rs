@@ -392,6 +392,21 @@ pub fn build_workflow(config: &CiConfig) -> Workflow {
 
     let mut jobs = IndexMap::new();
 
+    // This job intentionally consumes the checkout without generation artifacts.
+    jobs.insert(
+        "test-git-dependency".into(),
+        Job::new(runners::UBUNTU_GITHUB)
+            .name("Test Cargo Git dependency")
+            .steps([
+                checkout(),
+                install_rust(),
+                Step::run(
+                    "Test Git consumer",
+                    "python3 scripts/check_git_dependency.py",
+                ),
+            ]),
+    );
+
     // =========================================================================
     // STAGE 1: Generate grammar sources
     // =========================================================================
@@ -800,6 +815,12 @@ pub fn generate(repo_root: &Utf8Path, check: bool) -> Result<()> {
         facet_yaml::to_string(&workflow)
             .map_err(|e| std::io::Error::other(format!("failed to serialize workflow: {}", e)))?
     );
+    let yaml_content = yaml_content
+        .lines()
+        .map(str::trim_end)
+        .collect::<Vec<_>>()
+        .join("\n")
+        + "\n";
 
     let ci_path = repo_root.join(".github/workflows/ci.yml");
 

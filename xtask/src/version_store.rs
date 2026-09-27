@@ -72,9 +72,47 @@ pub fn read_version(repo_root: &Utf8Path) -> Result<String> {
             let entry: VersionEntry = facet_json::from_str(&content)?;
             Ok(entry.version)
         }
-        Err(_) => {
-            // No version.json - use dev version (CI should pass --version from tag)
-            Ok(DEV_VERSION.to_string())
+        Err(err) if err.kind() == std::io::ErrorKind::NotFound => {
+            // Fresh Git checkouts use the committed package version. CI can still
+            // override it through version.json or `gen --version`.
+            let manifest = repo_root.join("crates/arborium/Cargo.toml");
+            match fs_err::read_to_string(manifest) {
+                Ok(content) => {
+                    let manifest: toml::Value = toml::from_str(&content)?;
+                    let version = manifest
+                        .get("package")
+                        .and_then(|package| package.get("version"))
+                        .and_then(toml::Value::as_str)
+                        .ok_or_else(|| rootcause::report!("arborium package version is missing"))?;
+                    Ok(version.to_string())
+                }
+                Err(err) if err.kind() == std::io::ErrorKind::NotFound => {
+                    Ok(DEV_VERSION.to_string())
+                }
+                Err(err) => Err(err.into()),
+            }
         }
+        Err(err) => Err(err.into()),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn fresh_checkout_uses_committed_version_with_release_override() {
+        let temp = tempfile::tempdir().unwrap();
+        let root = Utf8Path::from_path(temp.path()).unwrap();
+        fs_err::create_dir_all(root.join("crates/arborium")).unwrap();
+        fs_err::write(
+            root.join("crates/arborium/Cargo.toml"),
+            "[package]\nversion = \"2.18.2\"\n",
+        )
+        .unwrap();
+        assert_eq!(read_version(root).unwrap(), "2.18.2");
+
+        write_version(root, "3.0.0").unwrap();
+        assert_eq!(read_version(root).unwrap(), "3.0.0");
     }
 }

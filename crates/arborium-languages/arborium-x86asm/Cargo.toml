@@ -1,0 +1,53 @@
+# THIS FILE IS GENERATED FROM xtask/templates/cargo.stpl.toml; DO NOT EDIT MANUALLY
+
+[package]
+name = "arborium-x86asm"
+version = "2.18.2"
+edition = "2024"
+rust-version = "1.85"
+description = "x86 Assembly grammar for arborium (tree-sitter bindings)"
+authors = ["Amos Wenger <amos@bearcove.eu>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/bearcove/arborium"
+homepage = "https://github.com/bearcove/arborium"
+documentation = "https://docs.rs/arborium-x86asm"
+keywords = ["tree-sitter", "x86asm", "syntax-highlighting", "code"]
+categories = ["parsing", "text-processing"]
+include = [
+    "src/**/*",
+    "grammar/**/*",
+    "queries/**/*",
+    "corpus/**/*",
+    "sample.*",
+    "samples/**/*",
+    "build.rs",
+    "Cargo.toml",
+    "README.md",
+    ".arborium-hash",
+]
+
+[package.metadata.cargo-shear]
+ignored = ["arborium-sysroot"]
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+tree-sitter-language = { version = "0.1" }
+
+
+
+
+[dev-dependencies]
+arborium-test-harness = { version = "2.18.2", path = "../../arborium-test-harness" }
+libtest-mimic = "0.8"
+
+# WASM allocator (only needed on WASM targets)
+[target.'cfg(target_family = "wasm")'.dependencies]
+arborium-sysroot = { version = "2.18.2", path = "../../arborium-sysroot" }
+
+[build-dependencies]
+cc = "1"
+flate2 = "1"
+

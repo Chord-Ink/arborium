@@ -3,8 +3,8 @@ name = "arborium-tree-sitter"
 version = "<%= version %>"
 description = "Rust bindings to the Tree-sitter parsing library (vendored for arborium WASM support)"
 authors = ["Max Brunsfeld <maxbrunsfeld@gmail.com>", "Amaan Qureshi <amaanq12@gmail.com>"]
-edition = "2021"
-rust-version = "1.76"
+edition = "2024"
+rust-version = "1.90"
 readme = "README.md"
 license = "MIT"
 repository = "https://github.com/tree-sitter/tree-sitter"
@@ -23,12 +23,11 @@ ignored = ["arborium-sysroot"]
 
 [features]
 default = ["std"]
-std = ["regex/std", "regex/perf", "regex-syntax/unicode"]
+std = ["regex/std", "regex/perf"]
 
 [dependencies]
-regex = { version = "1.11.1", default-features = false, features = ["unicode"] }
-regex-syntax = { version = "0.8.5", default-features = false }
-tree-sitter-language = "0.1"
+regex = { version = "1.12.3", default-features = false, features = ["unicode"] }
+tree-sitter-language = "0.1.8"
 streaming-iterator = "0.1.9"
 
 # WASM allocator (only needed on WASM targets)

@@ -226,9 +226,9 @@ pub fn compute_grammar_hash(crate_dir: &Utf8Path) -> Result<String> {
         .sort_by_file_name()
         .into_iter()
         .filter_entry(|e| {
-            // Skip target/ directory and .arborium-hash itself
+            // Skip build artifacts, consumer-specific locks, and the hash itself
             let name = e.file_name().to_string_lossy();
-            name != "target" && name != ".arborium-hash"
+            name != "target" && name != "Cargo.lock" && name != ".arborium-hash"
         })
         .filter_map(|e| e.ok())
     {
@@ -551,9 +551,7 @@ fn publish_crate_paths(crates: &[Utf8PathBuf], dry_run: bool, verbose: bool) -> 
     }
 
     if failed > 0 {
-        return Err(
-            std::io::Error::other(format!("{} crates failed to publish", failed)).into(),
-        );
+        return Err(std::io::Error::other(format!("{} crates failed to publish", failed)).into());
     }
 
     println!(
@@ -572,9 +570,8 @@ fn read_crate_info(crate_dir: &Utf8Path) -> Result<(String, String)> {
     let content = fs_err::read_to_string(&cargo_toml_path)?;
 
     // Simple TOML parsing - extract name and version
-    let name = extract_toml_string(&content, "name").ok_or_else(|| {
-        std::io::Error::other(format!("No 'name' field in {}", cargo_toml_path))
-    })?;
+    let name = extract_toml_string(&content, "name")
+        .ok_or_else(|| std::io::Error::other(format!("No 'name' field in {}", cargo_toml_path)))?;
 
     // Version might be "X.Y.Z" or { workspace = true }
     let version = if content.contains("version.workspace = true")
@@ -684,8 +681,7 @@ fn publish_single_crate_with_retry(
     }
 
     // Should not reach here, but return last error if we do
-    Err(last_error
-        .unwrap_or_else(|| std::io::Error::other("Unknown error after retries").into()))
+    Err(last_error.unwrap_or_else(|| std::io::Error::other("Unknown error after retries").into()))
 }
 
 /// Publish a single crate.
@@ -894,8 +890,14 @@ fn find_group_crates(langs_dir: &Utf8Path, group_name: &str) -> Result<Vec<Utf8P
             continue;
         }
 
-        // Check for crate/Cargo.toml
-        let crate_dir = lang_path.join("crate");
+        let Some(lang_name) = lang_path.file_name() else {
+            continue;
+        };
+        let crate_dir = langs_dir
+            .parent()
+            .ok_or_else(|| rootcause::report!("langs directory has no parent"))?
+            .join("crates/arborium-languages")
+            .join(format!("arborium-{lang_name}"));
         if crate_dir.is_dir() && crate_dir.join("Cargo.toml").exists() {
             crates.push(crate_dir);
         }
@@ -1242,6 +1244,7 @@ fn regenerate_umbrella_crate(
 name = "arborium"
 version = "{workspace_version}"
 edition = "2024"
+rust-version = "1.90"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/bearcove/arborium"
 description = "Tree-sitter syntax highlighting with HTML rendering and WASM support"
@@ -1308,10 +1311,6 @@ arborium-highlight = {{ version = "{workspace_version}", path = "../arborium-hig
 
 [dev-dependencies]
 indoc = "2"
-
-# WASM allocator (automatically enabled on wasm targets)
-[target.'cfg(target_family = "wasm")'.dependencies]
-dlmalloc = "0.2"
 "#,
     );
 
@@ -1522,11 +1521,7 @@ fn publish_single_npm_package(
 
     // Real error - fail immediately
     println!(" {}", "FAILED".red());
-    Err(std::io::Error::other(format!(
-        "npm publish failed for {}:\n{}",
-        name, stderr
-    ))
-    .into())
+    Err(std::io::Error::other(format!("npm publish failed for {}:\n{}", name, stderr)).into())
 }
 
 fn should_use_npm_provenance() -> bool {

@@ -30,6 +30,12 @@ impl PlanMode {
 /// A single operation that can be planned and executed.
 #[derive(Debug, Clone)]
 pub enum Operation {
+    /// Write generated binary content, such as compressed parser sources.
+    WriteBinaryFile {
+        path: Utf8PathBuf,
+        content: Vec<u8>,
+        description: String,
+    },
     /// Create a new file with the given content.
     CreateFile {
         path: Utf8PathBuf,
@@ -92,6 +98,7 @@ impl Operation {
     /// Returns a human-readable description of this operation.
     pub fn description(&self) -> &str {
         match self {
+            Operation::WriteBinaryFile { description, .. } => description,
             Operation::CreateFile { description, .. } => description,
             Operation::UpdateFile { description, .. } => description,
             Operation::DeleteFile { description, .. } => description,
@@ -106,6 +113,7 @@ impl Operation {
     /// Returns the primary path affected by this operation, if any.
     pub fn path(&self) -> Option<&Utf8Path> {
         match self {
+            Operation::WriteBinaryFile { path, .. } => Some(path),
             Operation::CreateFile { path, .. } => Some(path),
             Operation::UpdateFile { path, .. } => Some(path),
             Operation::DeleteFile { path, .. } => Some(path),
@@ -120,6 +128,7 @@ impl Operation {
     /// Returns a short verb describing the operation type.
     pub fn verb(&self) -> &'static str {
         match self {
+            Operation::WriteBinaryFile { .. } => "write",
             Operation::CreateFile { .. } => "create",
             Operation::UpdateFile { .. } => "update",
             Operation::DeleteFile { .. } => "delete",
@@ -134,6 +143,13 @@ impl Operation {
     /// Execute this operation.
     pub fn execute(&self) -> Result<(), ExecuteError> {
         match self {
+            Operation::WriteBinaryFile { path, content, .. } => {
+                if let Some(parent) = path.parent() {
+                    fs::create_dir_all(parent)?;
+                }
+                fs::write(path, content)?;
+                Ok(())
+            }
             Operation::CreateFile { path, content, .. } => {
                 if let Some(parent) = path.parent() {
                     fs::create_dir_all(parent)?;
@@ -234,6 +250,7 @@ impl Operation {
 impl fmt::Display for Operation {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
+            Operation::WriteBinaryFile { path, .. } => write!(f, "write  {}", path),
             Operation::CreateFile { path, .. } => {
                 write!(f, "create {}", path)
             }
