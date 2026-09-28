@@ -11,6 +11,9 @@ Usage examples:
   # Apply changes in-place
   python3 scripts/sync_tree_sitter_fork.py --upstream ~/bearcove/tree-sitter --tag v0.27.0 --apply
 
+  # Sync a branch or an exact commit (the resolved full SHA is recorded)
+  python3 scripts/sync_tree_sitter_fork.py --upstream ~/bearcove/tree-sitter --rev master --apply
+
   # Also commit result
   python3 scripts/sync_tree_sitter_fork.py --upstream ~/bearcove/tree-sitter --tag v0.27.0 --apply --commit
 
@@ -107,7 +110,7 @@ def ensure_clean_tree(repo_root: Path, allow_dirty: bool) -> None:
         )
 
 
-def ensure_paths(repo_root: Path, upstream_root: Path, tag: str) -> Tuple[Path, Path]:
+def ensure_paths(repo_root: Path, upstream_root: Path) -> Tuple[Path, Path]:
     target = repo_root / TARGET_REL
     if not target.exists():
         die(f"Target directory not found: {target}")
@@ -120,20 +123,26 @@ def ensure_paths(repo_root: Path, upstream_root: Path, tag: str) -> Tuple[Path, 
     if not upstream_lib.exists():
         die(f"Upstream lib directory not found: {upstream_lib}")
 
-    # Verify tag exists.
-    try:
-        run(
-            ["git", "rev-parse", "-q", "--verify", f"refs/tags/{tag}"],
-            cwd=upstream_root,
-            check=True,
-        )
-    except RuntimeError:
-        die(f"Tag not found in upstream: {tag}")
-
     return target, upstream_lib
 
 
-def checkout_upstream_tag(upstream_root: Path, tag: str, dry_run: bool) -> str:
+def resolve_upstream_revision(upstream_root: Path, ref: str, offline: bool) -> str:
+    if not offline:
+        # Fetch the requested ref explicitly: a checkout cloned from a release
+        # tag may not have a fetch refspec for master. FETCH_HEAD identifies
+        # what was fetched, rather than a potentially stale local branch.
+        run(["git", "fetch", "--tags", "--prune", "origin", ref], cwd=upstream_root)
+        ref = "FETCH_HEAD"
+    try:
+        return run(
+            ["git", "rev-parse", "--verify", "--end-of-options", f"{ref}^{{commit}}"],
+            cwd=upstream_root,
+        ).out.strip()
+    except RuntimeError:
+        die(f"Commit not found in upstream: {ref}")
+
+
+def checkout_upstream_revision(upstream_root: Path, revision: str, dry_run: bool) -> str:
     # Save current ref so we can put it back.
     res = run(
         ["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=upstream_root, check=False
@@ -144,15 +153,10 @@ def checkout_upstream_tag(upstream_root: Path, tag: str, dry_run: bool) -> str:
         current_ref = detached
 
     info(f"Upstream current ref: {current_ref}")
-    info(f"Checking out upstream tag: {tag}")
+    info(f"Checking out upstream commit: {revision}")
     if not dry_run:
-        run(["git", "fetch", "--tags", "--prune"], cwd=upstream_root)
-        run(["git", "checkout", tag], cwd=upstream_root)
+        run(["git", "checkout", "--detach", revision], cwd=upstream_root)
 
-    new_rev = run(
-        ["git", "rev-parse", "--short", "HEAD"], cwd=upstream_root
-    ).out.strip()
-    info(f"Upstream now at: {new_rev}")
     return current_ref
 
 
@@ -390,15 +394,27 @@ static inline bool clock_is_gt(TSClock self, TSClock other) {
     path.write_text(src)
 
 
+def patch_runtime_fixes(target: Path) -> None:
+    """Apply the reviewed runtime fixes, failing on upstream patch drift."""
+    patch_dir = Path(__file__).resolve().parent / "tree_sitter_patches"
+    for patch in sorted(patch_dir.glob("*.patch")):
+        # Use absolute paths so this also works on a temporary upstream copy.
+        command = ["git", "apply", "--unsafe-paths", f"--directory={target.resolve()}"]
+        run([*command, "--check", str(patch)])
+        run([*command, str(patch)])
+        info(f"Applied runtime fix: {patch.name}")
+
+
 def write_sync_metadata(
-    target: Path, upstream_tag: str, upstream_rev_short: str
+    target: Path, upstream_ref: str, upstream_rev: str, upstream_tag: str | None = None
 ) -> None:
     meta = target / ".sync-meta.txt"
     now = dt.datetime.now(dt.UTC).isoformat(timespec="seconds")
     meta.write_text(
         f"{PATCH_HEADER}"
-        f"upstream_tag={upstream_tag}\n"
-        f"upstream_rev={upstream_rev_short}\n"
+        + (f"upstream_tag={upstream_tag}\n" if upstream_tag else "")
+        + f"upstream_ref={upstream_ref}\n"
+        f"upstream_rev={upstream_rev}\n"
         f"synced_at_utc={now}\n"
     )
 
@@ -431,11 +447,18 @@ def main() -> None:
     parser.add_argument(
         "--upstream", required=True, help="Path to upstream tree-sitter repo"
     )
-    parser.add_argument(
-        "--tag", required=True, help="Upstream tag to sync from (e.g. v0.27.0)"
+    revision = parser.add_mutually_exclusive_group(required=True)
+    revision.add_argument(
+        "--tag", help="Upstream tag to sync from (e.g. v0.27.0)"
+    )
+    revision.add_argument(
+        "--rev", help="Upstream commit SHA or branch to sync from (e.g. master)"
     )
     parser.add_argument(
         "--apply", action="store_true", help="Apply changes (default is dry-run)"
+    )
+    parser.add_argument(
+        "--offline", action="store_true", help="Resolve the upstream revision locally without fetching"
     )
     parser.add_argument(
         "--commit", action="store_true", help="Create a commit after applying"
@@ -452,20 +475,20 @@ def main() -> None:
     upstream_root = Path(args.upstream).expanduser().resolve()
 
     ensure_clean_tree(repo_root, args.allow_dirty)
-    target, upstream_lib = ensure_paths(repo_root, upstream_root, args.tag)
+    target, upstream_lib = ensure_paths(repo_root, upstream_root)
+    upstream_ref = f"refs/tags/{args.tag}" if args.tag else args.rev
+    # A dry run is read-only and resolves only objects already present locally.
+    upstream_rev = resolve_upstream_revision(upstream_root, upstream_ref, args.offline or dry_run)
 
     info(f"Repo root: {repo_root}")
     info(f"Target: {target}")
     info(f"Upstream: {upstream_root}")
     info(f"Mode: {'DRY-RUN' if dry_run else 'APPLY'}")
 
-    current_ref = checkout_upstream_tag(upstream_root, args.tag, dry_run=dry_run)
+    current_ref = checkout_upstream_revision(upstream_root, upstream_rev, dry_run=dry_run)
     try:
-        upstream_rev_short = run(
-            ["git", "rev-parse", "--short", f"refs/tags/{args.tag}^{{commit}}"], cwd=upstream_root
-        ).out.strip()
-
         backup_dir = repo_root / ".cache" / "sync-tree-sitter-backup"
+        staging = repo_root / ".cache" / "sync-tree-sitter-staging"
         if dry_run:
             info("Would backup preserved files:")
             for p in PRESERVE_PATHS:
@@ -475,26 +498,29 @@ def main() -> None:
             backup_preserved(target, backup_dir)
 
         if dry_run:
-            info(f"Would replace {TARGET_REL} with upstream lib/ at {args.tag}")
+            info(f"Would replace {TARGET_REL} with upstream lib/ at {upstream_rev}")
         else:
-            rm_tree(target)
-            copy_tree(upstream_lib, target)
+            copy_tree(upstream_lib, staging)
 
         if dry_run:
             info("Would restore preserved files and apply Arborium patches.")
         else:
-            restore_preserved(target, backup_dir)
-            patch_cargo_template(target, upstream_root)
-            patch_binding_rust_build_rs(target)
-            patch_binding_rust_lib_rs_languagefn_reexport(target)
-            patch_wasm_allocator(target)
-            patch_clock_h_if_needed(target)
-            write_sync_metadata(target, args.tag, upstream_rev_short)
+            restore_preserved(staging, backup_dir)
+            patch_cargo_template(staging, upstream_root)
+            patch_binding_rust_build_rs(staging)
+            patch_binding_rust_lib_rs_languagefn_reexport(staging)
+            patch_wasm_allocator(staging)
+            patch_clock_h_if_needed(staging)
+            patch_runtime_fixes(staging)
+            write_sync_metadata(staging, upstream_ref, upstream_rev, args.tag)
+            # Patch drift must fail before replacing the existing working fork.
+            copy_tree(staging, target)
+            rm_tree(staging)
 
         summarize_diff(repo_root)
 
         if not dry_run:
-            maybe_commit(repo_root, args.tag, upstream_rev_short, args.commit)
+            maybe_commit(repo_root, args.tag or args.rev, upstream_rev, args.commit)
 
         info("Done.")
     finally:

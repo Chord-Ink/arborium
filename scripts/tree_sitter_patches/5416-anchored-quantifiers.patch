@@ -1,0 +1,147 @@
+Issue: https://github.com/tree-sitter/tree-sitter/issues/5416
+Anchor the exits of quantified patterns, allowing all repetitions to match.
+
+--- a/src/query.c
++++ b/src/query.c
+@@ -84,6 +84,9 @@
+  *    forward skip introduced by a `?` or `*` quantifier (the branch taken when the
+  *    quantifier matches zero occurrences). For a state that follows it, an
+  *    immediately-following anchor is vacuous.
++ * - `alternative_is_last_child` - A zero-occurrence skip must leave the last
++ *    matched node at the end of its parent. Repetition loop-backs do not carry
++ *    this constraint; their exit uses `is_last_child` instead.
+  * - `is_inside_alternation` - Indicates that state is inside an alternation.
+  *    Currently only written to quantifier steps, read by logic that maintains
+  *    correctness for quantifiers inside alternations.
+@@ -120,6 +123,7 @@
+   bool parent_pattern_guaranteed: 1;
+   bool is_missing: 1;
+   bool alternative_is_skip: 1;
++  bool alternative_is_last_child: 1;
+ } QueryStep;
+ 
+ /*
+@@ -2385,6 +2389,35 @@
+   return 0;
+ }
+ 
++// Follow the unconditional exits of alternation branches. Repetition and
++// optional steps are not unconditional: their exits get separate constraints.
++static bool ts_query__is_pattern_end(const TSQuery *self, uint32_t index, uint32_t end) {
++  while (index < end) {
++    const QueryStep *step = array_get(&self->steps, index);
++    if (!step->is_dead_end) return false;
++    index = step->alternative_index;
++  }
++  return index == end;
++}
++
++static void ts_query__add_last_child_anchor(TSQuery *self, uint32_t start, uint16_t depth) {
++  uint32_t end = self->steps.size;
++  for (uint32_t i = start; i < end; i++) {
++    QueryStep *step = array_get(&self->steps, i);
++    if (step->depth != depth || step->is_dead_end) continue;
++
++    if (step->alternative_is_skip && ts_query__is_pattern_end(self, step->alternative_index, end)) {
++      step->alternative_is_last_child = true;
++    }
++
++    // Anchor a node after its child patterns have completed. For a quantified
++    // pattern, only the repetition's exit is anchored, not each occurrence.
++    uint32_t next = i + 1;
++    while (next < end && array_get(&self->steps, next)->depth > depth) next++;
++    if (ts_query__is_pattern_end(self, next, end)) step->is_last_child = true;
++  }
++}
++
+ // Read one S-expression pattern from the stream, and incorporate it into
+ // the query's internal state machine representation. For nested patterns,
+ // this function calls itself recursively.
+@@ -2758,23 +2791,7 @@
+                 capture_quantifiers_delete(&child_capture_quantifiers);
+                 return TSQueryErrorSyntax;
+               }
+-              // Mark this step *and* its alternatives as the last child of the parent.
+-              QueryStep *last_child_step = array_get(&self->steps, last_child_step_index);
+-              last_child_step->is_last_child = true;
+-              if (
+-                last_child_step->alternative_index != NONE &&
+-                last_child_step->alternative_index < self->steps.size
+-              ) {
+-                QueryStep *alternative_step = array_get(&self->steps, last_child_step->alternative_index);
+-                alternative_step->is_last_child = true;
+-                while (
+-                  alternative_step->alternative_index != NONE &&
+-                  alternative_step->alternative_index < self->steps.size
+-                ) {
+-                  alternative_step = array_get(&self->steps, alternative_step->alternative_index);
+-                  alternative_step->is_last_child = true;
+-                }
+-              }
++              ts_query__add_last_child_anchor(self, last_child_step_index, depth + 1);
+             }
+ 
+             if (negated_field_count) {
+@@ -4024,6 +4041,29 @@
+   );
+ }
+ 
++// A quantifier can finish while visiting a nested child pattern. Its trailing
++// anchor concerns the repeated node's siblings, not that nested child's siblings.
++static bool ts_query_cursor__has_later_named_siblings(TSQueryCursor *self, uint32_t depth) {
++  TreeCursor cursor = *(TreeCursor *)&self->cursor;
++  if (depth > self->depth) {
++    // An empty run at the start of a parent's child patterns.
++    return ts_node_named_child_count(ts_tree_cursor_current_node(&self->cursor)) > 0;
++  }
++  for (uint32_t current = self->depth; current > depth; current--) {
++    if (!ts_tree_cursor_goto_parent((TSTreeCursor *)&cursor)) return false;
++  }
++  TSFieldId field_id = 0;
++  bool later_siblings, later_named_siblings, later_field_siblings;
++  unsigned supertype_count = 0;
++  // goto_parent only shrinks the copied stack's size. Its storage is borrowed;
++  // never move down, modify entries, or delete this cursor.
++  ts_tree_cursor_current_status(
++    (TSTreeCursor *)&cursor, &field_id, &later_siblings, &later_named_siblings,
++    &later_field_siblings, NULL, &supertype_count
++  );
++  return later_named_siblings;
++}
++
+ // Walk the tree, processing patterns until at least one pattern finishes,
+ // If one or more patterns finish, return `true` and store their states in the
+ // `finished_states` array. Multiple patterns can finish on the same node. If
+@@ -4447,6 +4487,19 @@
+               // via its alternative_index. When a state reaches a pass-through step, it splits
+               // in order to process the alternative step, and then it advances to the next step.
+               if (child_step->is_pass_through) {
++                if (
++                  child_step->is_last_child &&
++                  ts_query_cursor__has_later_named_siblings(
++                    self, child_state->start_depth + child_step->depth
++                  )
++                ) {
++                  // More siblings remain: continue the repetition, but do not
++                  // take its anchored exit yet.
++                  child_state->step_index = child_step->alternative_index;
++                  child_state->seeking_immediate_match = true;
++                  k--;
++                  continue;
++                }
+                 child_state->step_index++;
+                 k--;
+               }
+@@ -4456,8 +4509,10 @@
+               // skip is only valid if that node really is the last named child.
+               if (
+                 child_step->alternative_is_skip &&
+-                child_step->is_last_child &&
+-                has_later_named_siblings
++                child_step->alternative_is_last_child &&
++                ts_query_cursor__has_later_named_siblings(
++                  self, child_state->start_depth + child_step->depth
++                )
+               ) {
+                 continue;
+               }

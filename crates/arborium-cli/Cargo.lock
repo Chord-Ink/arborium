@@ -28,7 +28,7 @@ dependencies = [
 
 [[package]]
 name = "arborium"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-actionscript",
  "arborium-ada",
@@ -156,7 +156,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-actionscript"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -166,7 +166,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-ada"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -176,7 +176,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-agda"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -186,7 +186,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-asciidoc"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -196,7 +196,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-asm"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -206,7 +206,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-awk"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -216,7 +216,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-bash"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -226,7 +226,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-batch"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -236,7 +236,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-c"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -246,7 +246,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-c-sharp"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -256,7 +256,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-caddy"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -266,7 +266,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-capnp"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -276,7 +276,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-cedar"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -286,7 +286,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-cedarschema"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -296,7 +296,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-cli"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium",
  "facet",
@@ -305,7 +305,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-clojure"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -315,7 +315,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-cmake"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -325,7 +325,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-cobol"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -335,7 +335,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-commonlisp"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -345,7 +345,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-cpp"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-c",
  "arborium-sysroot",
@@ -356,7 +356,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-crystal"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -366,7 +366,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-css"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -376,7 +376,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-d"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -386,7 +386,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-dart"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -396,7 +396,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-devicetree"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -406,7 +406,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-diff"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -416,7 +416,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-dockerfile"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -426,7 +426,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-dot"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -436,7 +436,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-elisp"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -446,7 +446,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-elixir"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -456,7 +456,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-elm"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -466,7 +466,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-erlang"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -476,7 +476,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-fish"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -486,7 +486,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-fsharp"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -496,7 +496,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-gitattributes"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -506,7 +506,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-gleam"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -516,7 +516,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-glsl"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-c",
  "arborium-sysroot",
@@ -527,7 +527,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-go"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -537,7 +537,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-graphql"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -547,7 +547,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-groovy"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -557,7 +557,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-haskell"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -567,7 +567,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-hcl"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -577,7 +577,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-highlight"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-theme",
  "arborium-tree-sitter",
@@ -586,7 +586,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-hlsl"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-cpp",
  "arborium-sysroot",
@@ -597,7 +597,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-html"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-css",
  "arborium-javascript",
@@ -609,7 +609,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-idris"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -619,7 +619,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-ini"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -629,7 +629,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-java"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -639,7 +639,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-javascript"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-jsdoc",
  "arborium-sysroot",
@@ -650,7 +650,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-jinja2"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -660,7 +660,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-jq"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -670,7 +670,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-jsdoc"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -680,7 +680,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-json"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -690,7 +690,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-julia"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -700,7 +700,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-just"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -710,7 +710,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-kconfig"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -720,7 +720,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-kdl"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -730,7 +730,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-kotlin"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -740,7 +740,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-koto"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -750,7 +750,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-lean"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -760,7 +760,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-lua"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -770,7 +770,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-make"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -780,7 +780,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-markdown"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-html",
  "arborium-markdown_inline",
@@ -794,7 +794,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-markdown_inline"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-html",
  "arborium-sysroot",
@@ -805,7 +805,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-matlab"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -815,7 +815,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-meson"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -825,7 +825,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-nginx"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -835,7 +835,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-ninja"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -845,7 +845,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-nix"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -855,7 +855,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-objc"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-c",
  "arborium-sysroot",
@@ -866,7 +866,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-ocaml"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -876,7 +876,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-odin"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -886,7 +886,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-perl"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -896,7 +896,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-php"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -906,7 +906,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-postscript"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -916,7 +916,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-powershell"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -926,7 +926,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-prolog"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -936,7 +936,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-proto"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -946,7 +946,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-pug"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -956,7 +956,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-python"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -966,7 +966,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-query"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -976,7 +976,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-r"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -986,7 +986,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-regex"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -996,7 +996,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-rego"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1006,7 +1006,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-rescript"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1016,7 +1016,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-ron"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1026,7 +1026,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-ruby"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1036,7 +1036,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-rust"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1046,7 +1046,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-scala"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1056,7 +1056,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-scheme"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1066,7 +1066,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-scss"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-css",
  "arborium-sysroot",
@@ -1077,7 +1077,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-slang"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1087,7 +1087,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-solidity"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1097,7 +1097,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-sparql"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1107,7 +1107,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-sql"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1117,7 +1117,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-ssh-config"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1127,7 +1127,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-starlark"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1137,7 +1137,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-styx"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1147,7 +1147,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-svelte"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-css",
  "arborium-html",
@@ -1162,7 +1162,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-swift"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1172,7 +1172,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-sysroot"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "cc",
  "dlmalloc",
@@ -1180,7 +1180,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-textproto"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1190,11 +1190,11 @@ dependencies = [
 
 [[package]]
 name = "arborium-theme"
-version = "2.19.0"
+version = "2.20.0"
 
 [[package]]
 name = "arborium-thrift"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1204,7 +1204,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-tlaplus"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1214,7 +1214,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-toml"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1224,7 +1224,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-tree-sitter"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1235,7 +1235,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-tsx"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-javascript",
  "arborium-sysroot",
@@ -1246,7 +1246,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-typescript"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-javascript",
  "arborium-sysroot",
@@ -1257,7 +1257,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-typst"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1267,7 +1267,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-uiua"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1277,7 +1277,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-vb"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1287,7 +1287,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-verilog"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1297,7 +1297,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-vhdl"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1307,7 +1307,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-vim"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1317,7 +1317,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-vue"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-css",
  "arborium-html",
@@ -1332,7 +1332,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-wat"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1342,7 +1342,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-wit"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1352,7 +1352,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-x86asm"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1362,7 +1362,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-xml"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1372,7 +1372,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-yaml"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1382,7 +1382,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-yuri"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1392,7 +1392,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-zig"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",
@@ -1402,7 +1402,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-zsh"
-version = "2.19.0"
+version = "2.20.0"
 dependencies = [
  "arborium-sysroot",
  "cc",

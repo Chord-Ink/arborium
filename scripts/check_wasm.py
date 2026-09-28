@@ -31,12 +31,17 @@ arborium-tree-sitter = {{ path = {json.dumps(str(root / 'crates/arborium-tree-si
 arborium = {{ path = {json.dumps(str(root / 'crates/arborium'))}, features = ["all-languages"], optional = true }}
 ''')
         language_literals = ', '.join(json.dumps(language) for language in languages)
-        (consumer / 'src/lib.rs').write_text('''#[unsafe(no_mangle)]
+        regression_source = json.dumps(str(root / 'scripts/tests/tree_sitter_wasm.rs'))
+        (consumer / 'src/lib.rs').write_text(f'''#[cfg(feature = "all")]
+#[path = {regression_source}]
+mod tree_sitter_regressions;
+''' + '''#[unsafe(no_mangle)]
 pub extern "C" fn smoke_test() {
     // #212: direct consumers must link the sysroot, even in debug builds.
     assert!(arborium_tree_sitter::Parser::new().language().is_none());
     #[cfg(feature = "all")]
     {
+        tree_sitter_regressions::run();
         let mut highlighter = arborium::Highlighter::new();
         for language in [''' + language_literals + '''] {
             highlighter.highlight(language, "").unwrap();

@@ -1,0 +1,18 @@
+Issue: https://github.com/tree-sitter/tree-sitter/issues/5948
+Do not inherit fields through visible aliases. This also fixes negated queries.
+Applies after the stack-safe field traversal from #5807.
+
+--- a/src/node.c
++++ b/src/node.c
+@@ -663,6 +663,11 @@
+ 
+     // Hidden nodes' fields are inherited by their visible parent.
+     if (field_map->inherited) {
++      // A visible alias is a child boundary, even if its rule is hidden.
++      if (ts_node__is_relevant(child, true)) {
++        if (++field_map == field_map_end) goto resume;
++        continue;
++      }
+       // Save only branches that may need to be resumed. A single inherited
+       // child remains an allocation-free descent, even in a very deep tree.
+       if (field_map + 1 < field_map_end) {

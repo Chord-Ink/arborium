@@ -84,6 +84,9 @@ typedef struct {
  *    forward skip introduced by a `?` or `*` quantifier (the branch taken when the
  *    quantifier matches zero occurrences). For a state that follows it, an
  *    immediately-following anchor is vacuous.
+ * - `alternative_is_last_child` - A zero-occurrence skip must leave the last
+ *    matched node at the end of its parent. Repetition loop-backs do not carry
+ *    this constraint; their exit uses `is_last_child` instead.
  * - `is_inside_alternation` - Indicates that state is inside an alternation.
  *    Currently only written to quantifier steps, read by logic that maintains
  *    correctness for quantifiers inside alternations.
@@ -120,6 +123,7 @@ typedef struct {
   bool parent_pattern_guaranteed: 1;
   bool is_missing: 1;
   bool alternative_is_skip: 1;
+  bool alternative_is_last_child: 1;
 } QueryStep;
 
 /*
@@ -234,11 +238,9 @@ typedef struct {
   // never allow `list` to allocate more entries than this, dropping pending
   // matches if needed to stay under the limit.
   uint32_t max_capture_list_count;
-  // The number of capture lists allocated in `list` that are not currently in
-  // use. We reuse those existing-but-unused capture lists before trying to
-  // allocate any new ones. We use an invalid value (UINT32_MAX) for a capture
-  // list's length to indicate that it's not in use.
-  uint32_t free_capture_list_count;
+  // Reuse free lists in O(1), even when many query states hold captures.
+  // UINT32_MAX also marks a free list's length to detect duplicate releases.
+  Array(uint32_t) free_ids;
 } CaptureListPool;
 
 /*
@@ -445,16 +447,17 @@ static CaptureListPool capture_list_pool_new(void) {
     .list = array_new(),
     .empty_list = array_new(),
     .max_capture_list_count = UINT32_MAX,
-    .free_capture_list_count = 0,
+    .free_ids = array_new(),
   };
 }
 
 static void capture_list_pool_reset(CaptureListPool *self) {
+  array_clear(&self->free_ids);
   for (uint32_t i = 0; i < self->list.size; i++) {
     // This invalid size means that the list is not in use.
     array_get(&self->list, i)->size = UINT32_MAX;
+    array_push(&self->free_ids, i);
   }
-  self->free_capture_list_count = self->list.size;
 }
 
 static void capture_list_pool_delete(CaptureListPool *self) {
@@ -462,6 +465,7 @@ static void capture_list_pool_delete(CaptureListPool *self) {
     array_delete(array_get(&self->list, i));
   }
   array_delete(&self->list);
+  array_delete(&self->free_ids);
 }
 
 static const CaptureList *capture_list_pool_get(const CaptureListPool *self, uint32_t id) {
@@ -477,19 +481,15 @@ static CaptureList *capture_list_pool_get_mut(CaptureListPool *self, uint32_t id
 static bool capture_list_pool_is_empty(const CaptureListPool *self) {
   // The capture list pool is empty if all allocated lists are in use, and we
   // have reached the maximum allowed number of allocated lists.
-  return self->free_capture_list_count == 0 && self->list.size >= self->max_capture_list_count;
+  return self->free_ids.size == 0 && self->list.size >= self->max_capture_list_count;
 }
 
 static uint32_t capture_list_pool_acquire(CaptureListPool *self) {
   // First see if any already allocated capture list is currently unused.
-  if (self->free_capture_list_count > 0) {
-    for (uint32_t i = 0; i < self->list.size; i++) {
-      if (array_get(&self->list, i)->size == UINT32_MAX) {
-        array_clear(array_get(&self->list, i));
-        self->free_capture_list_count--;
-        return i;
-      }
-    }
+  if (self->free_ids.size > 0) {
+    uint32_t i = array_pop(&self->free_ids);
+    array_clear(array_get(&self->list, i));
+    return i;
   }
 
   // Otherwise allocate and initialize a new capture list, as long as that
@@ -506,8 +506,10 @@ static uint32_t capture_list_pool_acquire(CaptureListPool *self) {
 
 static void capture_list_pool_release(CaptureListPool *self, uint32_t id) {
   if (id >= self->list.size) return;
-  array_get(&self->list, id)->size = UINT32_MAX;
-  self->free_capture_list_count++;
+  CaptureList *list = array_get(&self->list, id);
+  if (list->size == UINT32_MAX) return;
+  list->size = UINT32_MAX;
+  array_push(&self->free_ids, id);
 }
 
 /********************
@@ -2387,6 +2389,35 @@ static TSQueryError ts_query__parse_predicate(
   return 0;
 }
 
+// Follow the unconditional exits of alternation branches. Repetition and
+// optional steps are not unconditional: their exits get separate constraints.
+static bool ts_query__is_pattern_end(const TSQuery *self, uint32_t index, uint32_t end) {
+  while (index < end) {
+    const QueryStep *step = array_get(&self->steps, index);
+    if (!step->is_dead_end) return false;
+    index = step->alternative_index;
+  }
+  return index == end;
+}
+
+static void ts_query__add_last_child_anchor(TSQuery *self, uint32_t start, uint16_t depth) {
+  uint32_t end = self->steps.size;
+  for (uint32_t i = start; i < end; i++) {
+    QueryStep *step = array_get(&self->steps, i);
+    if (step->depth != depth || step->is_dead_end) continue;
+
+    if (step->alternative_is_skip && ts_query__is_pattern_end(self, step->alternative_index, end)) {
+      step->alternative_is_last_child = true;
+    }
+
+    // Anchor a node after its child patterns have completed. For a quantified
+    // pattern, only the repetition's exit is anchored, not each occurrence.
+    uint32_t next = i + 1;
+    while (next < end && array_get(&self->steps, next)->depth > depth) next++;
+    if (ts_query__is_pattern_end(self, next, end)) step->is_last_child = true;
+  }
+}
+
 // Read one S-expression pattern from the stream, and incorporate it into
 // the query's internal state machine representation. For nested patterns,
 // this function calls itself recursively.
@@ -2760,23 +2791,7 @@ static TSQueryError ts_query__parse_pattern(
                 capture_quantifiers_delete(&child_capture_quantifiers);
                 return TSQueryErrorSyntax;
               }
-              // Mark this step *and* its alternatives as the last child of the parent.
-              QueryStep *last_child_step = array_get(&self->steps, last_child_step_index);
-              last_child_step->is_last_child = true;
-              if (
-                last_child_step->alternative_index != NONE &&
-                last_child_step->alternative_index < self->steps.size
-              ) {
-                QueryStep *alternative_step = array_get(&self->steps, last_child_step->alternative_index);
-                alternative_step->is_last_child = true;
-                while (
-                  alternative_step->alternative_index != NONE &&
-                  alternative_step->alternative_index < self->steps.size
-                ) {
-                  alternative_step = array_get(&self->steps, alternative_step->alternative_index);
-                  alternative_step->is_last_child = true;
-                }
-              }
+              ts_query__add_last_child_anchor(self, last_child_step_index, depth + 1);
             }
 
             if (negated_field_count) {
@@ -3410,6 +3425,9 @@ void ts_query_disable_pattern(
   for (unsigned i = 0; i < self->pattern_map.size; i++) {
     PatternEntry *pattern = array_get(&self->pattern_map, i);
     if (pattern->pattern_index == pattern_index) {
+      if (i < self->wildcard_root_pattern_count) {
+        self->wildcard_root_pattern_count--;
+      }
       array_erase(&self->pattern_map, i);
       i--;
     }
@@ -4023,6 +4041,29 @@ bool range_within(const TSRange *a, const TSRange *b) {
   );
 }
 
+// A quantifier can finish while visiting a nested child pattern. Its trailing
+// anchor concerns the repeated node's siblings, not that nested child's siblings.
+static bool ts_query_cursor__has_later_named_siblings(TSQueryCursor *self, uint32_t depth) {
+  TreeCursor cursor = *(TreeCursor *)&self->cursor;
+  if (depth > self->depth) {
+    // An empty run at the start of a parent's child patterns.
+    return ts_node_named_child_count(ts_tree_cursor_current_node(&self->cursor)) > 0;
+  }
+  for (uint32_t current = self->depth; current > depth; current--) {
+    if (!ts_tree_cursor_goto_parent((TSTreeCursor *)&cursor)) return false;
+  }
+  TSFieldId field_id = 0;
+  bool later_siblings, later_named_siblings, later_field_siblings;
+  unsigned supertype_count = 0;
+  // goto_parent only shrinks the copied stack's size. Its storage is borrowed;
+  // never move down, modify entries, or delete this cursor.
+  ts_tree_cursor_current_status(
+    (TSTreeCursor *)&cursor, &field_id, &later_siblings, &later_named_siblings,
+    &later_field_siblings, NULL, &supertype_count
+  );
+  return later_named_siblings;
+}
+
 // Walk the tree, processing patterns until at least one pattern finishes,
 // If one or more patterns finish, return `true` and store their states in the
 // `finished_states` array. Multiple patterns can finish on the same node. If
@@ -4446,6 +4487,19 @@ static inline bool ts_query_cursor__advance(
               // via its alternative_index. When a state reaches a pass-through step, it splits
               // in order to process the alternative step, and then it advances to the next step.
               if (child_step->is_pass_through) {
+                if (
+                  child_step->is_last_child &&
+                  ts_query_cursor__has_later_named_siblings(
+                    self, child_state->start_depth + child_step->depth
+                  )
+                ) {
+                  // More siblings remain: continue the repetition, but do not
+                  // take its anchored exit yet.
+                  child_state->step_index = child_step->alternative_index;
+                  child_state->seeking_immediate_match = true;
+                  k--;
+                  continue;
+                }
                 child_state->step_index++;
                 k--;
               }
@@ -4455,8 +4509,10 @@ static inline bool ts_query_cursor__advance(
               // skip is only valid if that node really is the last named child.
               if (
                 child_step->alternative_is_skip &&
-                child_step->is_last_child &&
-                has_later_named_siblings
+                child_step->alternative_is_last_child &&
+                ts_query_cursor__has_later_named_siblings(
+                  self, child_state->start_depth + child_step->depth
+                )
               ) {
                 continue;
               }

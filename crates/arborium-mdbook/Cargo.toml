@@ -1,11 +1,11 @@
 [package]
 name = "arborium-mdbook"
-version = "2.19.0"
+version = "2.20.0"
 edition = "2021"
 
 [dependencies]
 anyhow = "1"
-arborium = { version = "2.19.0", path = "../arborium" }
+arborium = { version = "2.20.0", path = "../arborium" }
 mdbook = "0.4"
 pulldown-cmark = { version = "0.13", default-features = false, features = ["simd"] }
 pulldown-cmark-to-cmark = "21.1"

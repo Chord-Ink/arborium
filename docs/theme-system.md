@@ -10,9 +10,9 @@ For example, an Eleventy, mdBook, or other static-site build can emit highlighte
 HTML and include these three stylesheets in its page layout:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@arborium/arborium@2.19.0/dist/themes/base.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@arborium/arborium@2.19.0/dist/themes/github-light.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@arborium/arborium@2.19.0/dist/themes/one-dark.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@arborium/arborium@2.20.0/dist/themes/base.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@arborium/arborium@2.20.0/dist/themes/github-light.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@arborium/arborium@2.20.0/dist/themes/one-dark.css">
 <pre class="code"><code><a-k>fn</a-k> <a-f>main</a-f>() {}</code></pre>
 ```
 

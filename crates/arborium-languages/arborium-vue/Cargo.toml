@@ -2,7 +2,7 @@
 
 [package]
 name = "arborium-vue"
-version = "2.19.0"
+version = "2.20.0"
 edition = "2024"
 rust-version = "1.85"
 description = "Vue grammar for arborium (tree-sitter bindings)"
@@ -36,16 +36,16 @@ path = "src/lib.rs"
 [dependencies]
 tree-sitter-language = { version = "0.1" }
 
-arborium-html = { version = "2.19.0", path = "../arborium-html" }
+arborium-html = { version = "2.20.0", path = "../arborium-html" }
 
 
-arborium-javascript = { version = "2.19.0", path = "../arborium-javascript", optional = true }
+arborium-javascript = { version = "2.20.0", path = "../arborium-javascript", optional = true }
 
-arborium-typescript = { version = "2.19.0", path = "../arborium-typescript", optional = true }
+arborium-typescript = { version = "2.20.0", path = "../arborium-typescript", optional = true }
 
-arborium-css = { version = "2.19.0", path = "../arborium-css", optional = true }
+arborium-css = { version = "2.20.0", path = "../arborium-css", optional = true }
 
-arborium-scss = { version = "2.19.0", path = "../arborium-scss", optional = true }
+arborium-scss = { version = "2.20.0", path = "../arborium-scss", optional = true }
 
 
 
@@ -55,12 +55,12 @@ injections = ["arborium-javascript", "arborium-typescript", "arborium-css", "arb
 
 
 [dev-dependencies]
-arborium-test-harness = { version = "2.19.0", path = "../../arborium-test-harness" }
+arborium-test-harness = { version = "2.20.0", path = "../../arborium-test-harness" }
 libtest-mimic = "0.8"
 
 # WASM allocator (only needed on WASM targets)
 [target.'cfg(target_family = "wasm")'.dependencies]
-arborium-sysroot = { version = "2.19.0", path = "../../arborium-sysroot" }
+arborium-sysroot = { version = "2.20.0", path = "../../arborium-sysroot" }
 
 [build-dependencies]
 cc = "1"

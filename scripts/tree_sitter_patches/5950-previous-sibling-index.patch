@@ -1,0 +1,14 @@
+Issue: https://github.com/tree-sitter/tree-sitter/issues/5950
+Fix reported by Michael Sloan (mgsloan). Compare the full-width index sentinel.
+
+--- a/src/tree_cursor.c
++++ b/src/tree_cursor.c
+@@ -124,7 +124,7 @@
+ ) {
+   // this is mostly a reverse `ts_tree_cursor_child_iterator_next` taking into
+   // account unsigned underflow
+-  if (!self->parent.ptr || (int8_t)self->child_index == -1) return false;
++  if (!self->parent.ptr || self->child_index == UINT32_MAX) return false;
+   const Subtree *child = &ts_subtree_children(self->parent)[self->child_index];
+   *result = (TreeCursorEntry) {
+     .subtree = child,

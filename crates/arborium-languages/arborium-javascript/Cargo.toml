@@ -2,7 +2,7 @@
 
 [package]
 name = "arborium-javascript"
-version = "2.19.0"
+version = "2.20.0"
 edition = "2024"
 rust-version = "1.85"
 description = "JavaScript grammar for arborium (tree-sitter bindings)"
@@ -37,7 +37,7 @@ path = "src/lib.rs"
 tree-sitter-language = { version = "0.1" }
 
 
-arborium-jsdoc = { version = "2.19.0", path = "../arborium-jsdoc", optional = true }
+arborium-jsdoc = { version = "2.20.0", path = "../arborium-jsdoc", optional = true }
 
 
 
@@ -47,12 +47,12 @@ injections = ["arborium-jsdoc"]
 
 
 [dev-dependencies]
-arborium-test-harness = { version = "2.19.0", path = "../../arborium-test-harness" }
+arborium-test-harness = { version = "2.20.0", path = "../../arborium-test-harness" }
 libtest-mimic = "0.8"
 
 # WASM allocator (only needed on WASM targets)
 [target.'cfg(target_family = "wasm")'.dependencies]
-arborium-sysroot = { version = "2.19.0", path = "../../arborium-sysroot" }
+arborium-sysroot = { version = "2.20.0", path = "../../arborium-sysroot" }
 
 [build-dependencies]
 cc = "1"

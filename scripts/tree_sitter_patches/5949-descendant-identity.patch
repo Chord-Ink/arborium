@@ -1,0 +1,99 @@
+Issues: https://github.com/tree-sitter/tree-sitter/issues/5949
+        https://github.com/tree-sitter/tree-sitter/issues/5807
+Validate equal-range ancestry and search empty descendants without recursion.
+
+--- a/src/node.c
++++ b/src/node.c
+@@ -584,36 +584,65 @@
+ }
+ 
+ TSNode ts_node_child_with_descendant(TSNode self, TSNode descendant) {
++  if (self.tree != descendant.tree || self.id == descendant.id) {
++    return ts_node__null();
++  }
+   uint32_t start_byte = ts_node_start_byte(descendant);
+   uint32_t end_byte = ts_node_end_byte(descendant);
+   bool is_empty = start_byte == end_byte;
+-
+-  do {
+-    NodeChildIterator iter = ts_node_iterate_children(&self);
+-    do {
+-      if (
+-        !ts_node_child_iterator_next(&iter, &self)
+-        || ts_node_start_byte(self) > start_byte
+-      ) {
+-        return ts_node__null();
+-      }
+-      if (self.id == descendant.id) {
+-        return self;
+-      }
+-
+-      // If the descendant is empty, and the end byte is within `self`,
+-      // we check whether `self` contains it or not.
+-      if (is_empty && iter.position.bytes >= end_byte && ts_node_child_count(self) > 0) {
+-        TSNode child = ts_node_child_with_descendant(self, descendant);
+-        // If the child is not null, return self if it's relevant, else return the child
+-        if (!ts_node_is_null(child)) {
+-          return ts_node__is_relevant(self, true) ? self : child;
+-        }
+-      }
+-    } while ((is_empty ? iter.position.bytes <= end_byte : iter.position.bytes < end_byte) || ts_node_child_count(self) == 0);
+-  } while (!ts_node__is_relevant(self, true));
+-
+-  return self;
++  if (ts_node_start_byte(self) > start_byte || ts_node_end_byte(self) < end_byte) {
++    return ts_node__null();
++  }
++
++  typedef struct {
++    NodeChildIterator iterator;
++    TSNode visible_child;
++  } Frame;
++  Array(Frame) stack = array_new();
++  NodeChildIterator iterator = ts_node_iterate_children(&self);
++  TSNode visible_child = ts_node__null();
++  TSNode result = ts_node__null();
++
++  for (;;) {
++    TSNode child;
++    while (ts_node_child_iterator_next(&iterator, &child)) {
++      uint32_t child_start = ts_node_start_byte(child);
++      uint32_t child_end = ts_node_end_byte(child);
++      if (child_start > start_byte) break;
++      if (child_end < end_byte) continue;
++      if (child.id == descendant.id) {
++        result = visible_child.id ? visible_child : child;
++        goto done;
++      }
++
++      TSNode candidate = visible_child;
++      if (!candidate.id && ts_node__is_relevant(child, true)) candidate = child;
++      // In the same tree, strict containment of a non-empty range establishes
++      // ancestry. Equal ranges and empty nodes require checking node identity.
++      if (!is_empty && (child_start < start_byte || child_end > end_byte) && candidate.id) {
++        result = candidate;
++        goto done;
++      }
++      if (ts_subtree_child_count(ts_node__subtree(child)) == 0) continue;
++
++      // Several siblings can touch the same empty range. Resume them if this
++      // candidate does not actually contain the node. Non-empty ranges have
++      // at most one containing sibling and need no backtracking allocation.
++      if (is_empty && !ts_node_child_iterator_done(&iterator)) {
++        array_push(&stack, ((Frame) {iterator, visible_child}));
++      }
++      iterator = ts_node_iterate_children(&child);
++      visible_child = candidate;
++    }
++    if (stack.size == 0) break;
++    Frame frame = array_pop(&stack);
++    iterator = frame.iterator;
++    visible_child = frame.visible_child;
++  }
++
++done:
++  array_delete(&stack);
++  return result;
+ }
+ 
+ TSNode ts_node_child(TSNode self, uint32_t child_index) {

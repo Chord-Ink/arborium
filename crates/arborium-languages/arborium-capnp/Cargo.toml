@@ -2,7 +2,7 @@
 
 [package]
 name = "arborium-capnp"
-version = "2.19.0"
+version = "2.20.0"
 edition = "2024"
 rust-version = "1.85"
 description = "Cap&#039;n Proto grammar for arborium (tree-sitter bindings)"
@@ -40,12 +40,12 @@ tree-sitter-language = { version = "0.1" }
 
 
 [dev-dependencies]
-arborium-test-harness = { version = "2.19.0", path = "../../arborium-test-harness" }
+arborium-test-harness = { version = "2.20.0", path = "../../arborium-test-harness" }
 libtest-mimic = "0.8"
 
 # WASM allocator (only needed on WASM targets)
 [target.'cfg(target_family = "wasm")'.dependencies]
-arborium-sysroot = { version = "2.19.0", path = "../../arborium-sysroot" }
+arborium-sysroot = { version = "2.20.0", path = "../../arborium-sysroot" }
 
 [build-dependencies]
 cc = "1"
