@@ -1,6 +1,6 @@
 [package]
 name = "arborium-cli"
-version = "2.20.0"
+version = "2.21.0"
 edition = "2024"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/bearcove/arborium"
@@ -383,6 +383,6 @@ lang-zig = ["arborium/lang-zig"]
 lang-zsh = ["arborium/lang-zsh"]
 
 [dependencies]
-arborium = { version = "2.20.0", path = "../arborium" }
+arborium = { version = "2.21.0", path = "../arborium" }
 facet = "0.33.0"
 facet-args = "0.33.0"

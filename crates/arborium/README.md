@@ -35,14 +35,14 @@ C compiler. For `wasm32-unknown-unknown`, use a clang with WebAssembly support
 
 ```toml
 [dependencies]
-arborium = "2.20.0"
+arborium = "2.21.0"
 ```
 
 No languages are enabled by default. Select the languages you need, or use `all-permissive-languages` for the permissive bundle:
 
 ```toml
 [dependencies]
-arborium = { version = "2.20.0", default-features = false, features = ["lang-rust", "lang-javascript"] }
+arborium = { version = "2.21.0", default-features = false, features = ["lang-rust", "lang-javascript"] }
 ```
 
 ## External Grammar Crates
@@ -133,7 +133,7 @@ For complete control and offline-first apps, compile the Rust crate directly to 
 
 ```toml
 [dependencies]
-arborium = { version = "2.20.0", default-features = false, features = ["lang-rust", "lang-javascript"] }
+arborium = { version = "2.21.0", default-features = false, features = ["lang-rust", "lang-javascript"] }
 ```
 
 ```bash

@@ -32,6 +32,10 @@ typedef struct {
   uint32_t chunk_size;
   uint32_t lookahead_size;
   bool did_get_column;
+  bool cancelled;
+  uint32_t advances_until_progress;
+  bool (*progress_callback)(void *, uint32_t);
+  void *progress_payload;
   ColumnData column_data;
 
   char debug_buffer[TREE_SITTER_SERIALIZATION_BUFFER_SIZE];
@@ -39,6 +43,7 @@ typedef struct {
 
 void ts_lexer_init(Lexer *self);
 void ts_lexer_delete(Lexer *self);
+void ts_lexer_set_progress_callback(Lexer *self, bool (*callback)(void *, uint32_t), void *payload);
 void ts_lexer_set_input(Lexer *self, TSInput input);
 void ts_lexer_reset(Lexer *self, Length position);
 void ts_lexer_start(Lexer *self);

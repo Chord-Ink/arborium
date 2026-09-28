@@ -1,3 +1,10 @@
+## 2.21.0 (2026-09-27)
+
+- Optimize Tree-sitter query metadata lookup, chunked text predicates, subtree edit allocations, lexer cancellation, capture scratch retention, and reference-count ordering.
+- Restore optional native Wasmtime grammar hosting and add runtime benchmarks and regression coverage.
+- Maintain the vendored Tree-sitter source directly; remove the standalone patch and sync workflow while preserving all runtime fixes.
+- Keep the parser ABI and all 119 generated grammars unchanged. Regeneration is not required for this release.
+
 ## 2.20.0 (2026-09-27)
 
 - Upgrade the vendored tree-sitter runtime to upstream commit `dcdc8cc55e5dfedfc858080835f153999a29ec40`, including the UTF-16 surrogate-pair endianness fix.

@@ -22,6 +22,7 @@ links = "tree-sitter"
 ignored = ["arborium-sysroot"]
 
 [features]
+wasm = ["std", "dep:wasmtime-c-api"]
 default = ["std"]
 std = ["regex/std", "regex/perf"]
 
@@ -33,6 +34,13 @@ streaming-iterator = "0.1.9"
 # WASM allocator (only needed on WASM targets)
 [target.'cfg(target_family = "wasm")'.dependencies]
 arborium-sysroot = { version = "<%= version %>", path = "../arborium-sysroot" }
+
+[dependencies.wasmtime-c-api]
+package = "wasmtime-c-api-impl"
+version = "48.0.2"
+optional = true
+default-features = false
+features = ["cranelift", "gc", "gc-null"]
 
 [build-dependencies]
 cc = "1"

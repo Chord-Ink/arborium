@@ -35,8 +35,10 @@ are not the runtime that Arborium ships.
 | [#3623: error leaves report no error](https://github.com/tree-sitter/tree-sitter/issues/3623) | Consumers inspecting malformed input must be able to trust `has_error()`. | Check the ERROR symbol as well as recovery cost. Reproduced on bundled R with `1 + }`; the unexpected terminal had zero cost. |
 
 These are local fixes; upstream issues have not been closed or commented on.
-The pool, wildcard, and reverse-cursor patches credit the proposed fixes linked
-from the respective reports. The other patches are based on local reproductions.
+The capture-list free stack adapts
+[Eric Meadows-Jonsson's proposed fix](https://github.com/ericmj/tree-sitter/tree/capture-list-pool-free-stack).
+The wildcard and reverse-cursor fixes were reported by Michael Sloan (mgsloan).
+The other fixes are based on local reproductions.
 
 ## Relevant but unresolved
 
@@ -85,36 +87,22 @@ the passing match-iterator test does not establish that #5079 is fixed.
   files work are broader contracts or application policies. Changing them
   globally would risk existing queries and integrations.
 
-## Patch maintenance
+## Source maintenance
 
-Canonical patches live in `scripts/tree_sitter_patches/`. The sync script applies
-them after resetting from upstream and applying the existing Arborium changes.
-It checks each patch and fails on drift instead of silently omitting a fix. When
-upgrading upstream, review and remove patches that upstream has incorporated.
-Do not edit generated files under `crates/arborium-tree-sitter` directly.
+All ten runtime fixes are integrated directly into `crates/arborium-tree-sitter`,
+along with the six [editor performance optimizations](tree-sitter-performance.md).
+The checked-in source is authoritative. Edit it directly; standalone patches
+and the reset/replay sync script have been removed. Future upstream upgrades
+will be handled as separate, explicitly requested work. The current base and
+attributions are recorded in
+[`UPSTREAM.md`](../crates/arborium-tree-sitter/UPSTREAM.md).
 
-All ten runtime patches apply unchanged to the new upstream commit. None of
-these fixes has been removed as an upstream duplicate. The runtime delta from
-v0.27.0 is upstream #5912's UTF-16 surrogate-pair endianness fix; the vendored
-web-binding dependency and Nix metadata updates are included by the full sync.
+None of the ten fixes was removed as an upstream duplicate during the latest
+upgrade. The runtime delta from v0.27.0 includes upstream #5912's UTF-16
+surrogate-pair endianness fix; the vendored web-binding dependency and Nix
+metadata updates are also included.
 
-The sync script accepts either `--tag` or `--rev` (commit SHA or branch), records
-the full resolved commit, and stages all patches before replacing the existing
-fork. Tests verify fresh remote-branch resolution, annotated tags, missing
-revisions, and preservation of the working fork if a patch fails.
-
-The complete reset/replay was exercised with:
-
-```sh
-python3 scripts/sync_tree_sitter_fork.py --upstream /path/to/tree-sitter \
-  --rev dcdc8cc55e5dfedfc858080835f153999a29ec40 --apply --allow-dirty --offline
-```
-
-`--offline` uses the verified local commit. Omit it to fetch the requested
-revision first; use `--rev master` for a later upgrade. A dry run resolves local
-objects without fetching or checking out a different commit.
-
-As before, regenerate Cargo manifests from their templates after syncing
+Regenerate Cargo manifests from their templates after changing package metadata
 (`cargo xtask gen json` is sufficient for the shared manifests). For the 2.20.0
 version bump, `cargo xtask gen --version 2.20.0` updated all package metadata.
 It reused all 119 cached parsers; none needed regeneration. The parser ABI and
@@ -146,8 +134,6 @@ files retained identical hashes.
   it is **not an end-to-end highlighting speedup claim**. The extra free-ID
   storage costs approximately four bytes per allocated capture list, plus
   array capacity overhead.
-- `python3 -m unittest discover -s scripts/tests -p 'test_sync_tree_sitter_fork.py'`:
-  **four passed**, using only temporary local Git repositories.
 - Python syntax, Rust formatting, and `git diff --check` pass.
 
 Run the pool test/benchmark locally (keep assertions enabled):

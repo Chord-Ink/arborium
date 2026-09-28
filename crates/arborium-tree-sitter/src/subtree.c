@@ -261,8 +261,15 @@ MutableSubtree ts_subtree_clone(Subtree self) {
   size_t alloc_size = ts_subtree_alloc_size(self.ptr->child_count);
   Subtree *new_children = ts_malloc(alloc_size);
   Subtree *old_children = ts_subtree_children(self);
-  memcpy(new_children, old_children, alloc_size);
   SubtreeHeapData *result = (SubtreeHeapData *)&new_children[self.ptr->child_count];
+  // Only the reference count can change while an owned shared subtree is read.
+  // Do not read it non-atomically as part of copying the allocation.
+  memcpy(new_children, old_children, self.ptr->child_count * sizeof(Subtree));
+  const size_t metadata_offset = offsetof(SubtreeHeapData, padding);
+  memcpy(
+    (char *)result + metadata_offset, (const char *)self.ptr + metadata_offset,
+    sizeof(SubtreeHeapData) - metadata_offset
+  );
   if (self.ptr->child_count > 0) {
     for (uint32_t i = 0; i < self.ptr->child_count; i++) {
       ts_subtree_retain(new_children[i]);
@@ -283,7 +290,7 @@ MutableSubtree ts_subtree_clone(Subtree self) {
 // perform a copy.
 MutableSubtree ts_subtree_make_mut(SubtreePool *pool, Subtree self) {
   if (self.data.is_inline) return (MutableSubtree) {self.data};
-  if (self.ptr->ref_count == 1) return ts_subtree_to_mut_unsafe(self);
+  if (atomic_ref_count_load(&self.ptr->ref_count) == 1) return ts_subtree_to_mut_unsafe(self);
   MutableSubtree result = ts_subtree_clone(self);
   ts_subtree_release(pool, self);
   return result;
@@ -300,13 +307,13 @@ void ts_subtree_compress(
   MutableSubtree tree = self;
   TSSymbol symbol = tree.ptr->symbol;
   for (unsigned i = 0; i < count; i++) {
-    if (tree.ptr->ref_count > 1 || tree.ptr->child_count < 2) break;
+    if (atomic_ref_count_load(&tree.ptr->ref_count) > 1 || tree.ptr->child_count < 2) break;
 
     MutableSubtree child = ts_subtree_to_mut_unsafe(ts_subtree_children(tree)[0]);
     if (
       child.data.is_inline ||
       child.ptr->child_count < 2 ||
-      child.ptr->ref_count > 1 ||
+      atomic_ref_count_load(&child.ptr->ref_count) > 1 ||
       child.ptr->symbol != symbol
     ) break;
 
@@ -314,7 +321,7 @@ void ts_subtree_compress(
     if (
       grandchild.data.is_inline ||
       grandchild.ptr->child_count < 2 ||
-      grandchild.ptr->ref_count > 1 ||
+      atomic_ref_count_load(&grandchild.ptr->ref_count) > 1 ||
       grandchild.ptr->symbol != symbol
     ) break;
 
@@ -572,17 +579,16 @@ Subtree ts_subtree_new_missing_leaf(
 
 void ts_subtree_retain(Subtree self) {
   if (self.data.is_inline) return;
-  ts_assert(self.ptr->ref_count > 0);
-  atomic_inc((volatile uint32_t *)&self.ptr->ref_count);
-  ts_assert(self.ptr->ref_count != 0);
+  ts_assert(atomic_ref_count_load(&self.ptr->ref_count) > 0);
+  atomic_retain((volatile uint32_t *)&self.ptr->ref_count);
 }
 
 void ts_subtree_release(SubtreePool *pool, Subtree self) {
   if (self.data.is_inline) return;
   array_clear(&pool->tree_stack);
 
-  ts_assert(self.ptr->ref_count > 0);
-  if (atomic_dec((volatile uint32_t *)&self.ptr->ref_count) == 0) {
+  ts_assert(atomic_ref_count_load(&self.ptr->ref_count) > 0);
+  if (atomic_release((volatile uint32_t *)&self.ptr->ref_count) == 0) {
     array_push(&pool->tree_stack, ts_subtree_to_mut_unsafe(self));
   }
 
@@ -593,8 +599,8 @@ void ts_subtree_release(SubtreePool *pool, Subtree self) {
       for (uint32_t i = 0; i < tree.ptr->child_count; i++) {
         Subtree child = children[i];
         if (child.data.is_inline) continue;
-        ts_assert(child.ptr->ref_count > 0);
-        if (atomic_dec((volatile uint32_t *)&child.ptr->ref_count) == 0) {
+        ts_assert(atomic_ref_count_load(&child.ptr->ref_count) > 0);
+        if (atomic_release((volatile uint32_t *)&child.ptr->ref_count) == 0) {
           array_push(&pool->tree_stack, ts_subtree_to_mut_unsafe(child));
         }
       }
@@ -651,8 +657,17 @@ Subtree ts_subtree_edit(Subtree self, const TSInputEdit *input_edit, SubtreePool
     Edit edit;
   } EditEntry;
 
-  Array(EditEntry) stack = array_new();
-  array_push(&stack, ((EditEntry) {
+  EditEntry inline_entries[16];
+  Array(EditEntry) stack = {inline_entries, 0, 16};
+#define PUSH_EDIT(entry) do { \
+    if (stack.contents == inline_entries && stack.size == stack.capacity) { \
+      stack.capacity *= 2; \
+      stack.contents = ts_malloc(stack.capacity * sizeof(EditEntry)); \
+      memcpy(stack.contents, inline_entries, sizeof(inline_entries)); \
+    } \
+    array_push(&stack, entry); \
+  } while (0)
+  PUSH_EDIT(((EditEntry) {
     .tree = &self,
     .edit = (Edit) {
       .start = {input_edit->start_byte, input_edit->start_point},
@@ -789,14 +804,15 @@ Subtree ts_subtree_edit(Subtree self, const TSInputEdit *input_edit, SubtreePool
       }
 
       // Queue processing of this child's subtree.
-      array_push(&stack, ((EditEntry) {
+      PUSH_EDIT(((EditEntry) {
         .tree = child,
         .edit = child_edit,
       }));
     }
   }
 
-  array_delete(&stack);
+  if (stack.contents != inline_entries) array_delete(&stack);
+#undef PUSH_EDIT
   return self;
 }
 

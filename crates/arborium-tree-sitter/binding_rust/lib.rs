@@ -2853,6 +2853,8 @@ impl Query {
                             }
                             values.push(string_values[arg.value_id as usize]);
                         }
+                        values.sort_unstable();
+                        values.dedup();
                         text_predicates.push(TextPredicateCapture::AnyString(
                             p[1].value_id,
                             values
@@ -3485,6 +3487,53 @@ impl<'tree> QueryMatch<'_, 'tree> {
         }
     }
 
+    // Compare provider output, not node byte lengths: providers may use a
+    // different encoding. Empty and differently-sized chunks are valid.
+    fn text_chunks_equal<L, R, A, B>(mut left: L, mut right: R) -> bool
+    where
+        L: Iterator<Item = A>,
+        R: Iterator<Item = B>,
+        A: AsRef<[u8]>,
+        B: AsRef<[u8]>,
+    {
+        let mut left_chunk: Option<A> = None;
+        let mut right_chunk: Option<B> = None;
+        let (mut left_offset, mut right_offset) = (0, 0);
+        loop {
+            while left_chunk
+                .as_ref()
+                .is_none_or(|c| left_offset == c.as_ref().len())
+            {
+                left_chunk = left.next();
+                left_offset = 0;
+                if left_chunk.is_none() {
+                    break;
+                }
+            }
+            while right_chunk
+                .as_ref()
+                .is_none_or(|c| right_offset == c.as_ref().len())
+            {
+                right_chunk = right.next();
+                right_offset = 0;
+                if right_chunk.is_none() {
+                    break;
+                }
+            }
+            let (Some(left), Some(right)) = (&left_chunk, &right_chunk) else {
+                return left_chunk.is_none() && right_chunk.is_none();
+            };
+            let left = &left.as_ref()[left_offset..];
+            let right = &right.as_ref()[right_offset..];
+            let len = left.len().min(right.len());
+            if left[..len] != right[..len] {
+                return false;
+            }
+            left_offset += len;
+            right_offset += len;
+        }
+    }
+
     pub fn satisfies_text_predicates<I: AsRef<[u8]>>(
         &self,
         query: &Query,
@@ -3524,7 +3573,7 @@ impl<'tree> QueryMatch<'_, 'tree> {
         }
 
         let mut node_text1 = NodeText::new(buffer1);
-        let mut node_text2 = NodeText::new(buffer2);
+        let _ = buffer2; // Kept in the public signature for compatibility.
 
         query.text_predicates[self.pattern_index]
             .iter()
@@ -3535,11 +3584,10 @@ impl<'tree> QueryMatch<'_, 'tree> {
                     while nodes_1.peek().is_some() && nodes_2.peek().is_some() {
                         let node1 = nodes_1.next().unwrap();
                         let node2 = nodes_2.next().unwrap();
-                        let mut text1 = text_provider.text(node1);
-                        let mut text2 = text_provider.text(node2);
-                        let text1 = node_text1.get_text(&mut text1);
-                        let text2 = node_text2.get_text(&mut text2);
-                        let is_positive_match = text1 == text2;
+                        let is_positive_match = Self::text_chunks_equal(
+                            text_provider.text(node1),
+                            text_provider.text(node2),
+                        );
                         if is_positive_match != *is_positive && *match_all_nodes {
                             return false;
                         }
@@ -3552,9 +3600,10 @@ impl<'tree> QueryMatch<'_, 'tree> {
                 TextPredicateCapture::EqString(i, s, is_positive, match_all_nodes) => {
                     let nodes = self.nodes_for_capture_index(*i);
                     for node in nodes {
-                        let mut text = text_provider.text(node);
-                        let text = node_text1.get_text(&mut text);
-                        let is_positive_match = text == s.as_bytes();
+                        let is_positive_match = Self::text_chunks_equal(
+                            text_provider.text(node),
+                            core::iter::once(s.as_bytes()),
+                        );
                         if is_positive_match != *is_positive && *match_all_nodes {
                             return false;
                         }
@@ -3584,7 +3633,12 @@ impl<'tree> QueryMatch<'_, 'tree> {
                     for node in nodes {
                         let mut text = text_provider.text(node);
                         let text = node_text1.get_text(&mut text);
-                        if (v.iter().any(|s| text == s.as_bytes())) != *is_positive {
+                        let found = if v.len() <= 8 {
+                            v.iter().any(|s| text == s.as_bytes())
+                        } else {
+                            v.binary_search_by(|s| s.as_bytes().cmp(text)).is_ok()
+                        };
+                        if found != *is_positive {
                             return false;
                         }
                     }

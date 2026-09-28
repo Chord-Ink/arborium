@@ -543,6 +543,7 @@ static Subtree ts_parser__lex(
       ts_lexer_start(&self->lexer);
       ts_parser__external_scanner_deserialize(self, external_token);
       found_token = ts_parser__external_scanner_scan(self, lex_mode.external_lex_state);
+      if (self->lexer.cancelled) return NULL_SUBTREE;
       if (self->has_scanner_error) return NULL_SUBTREE;
       ts_lexer_finish(&self->lexer, &lookahead_end_byte);
 
@@ -598,6 +599,7 @@ static Subtree ts_parser__lex(
     );
     ts_lexer_start(&self->lexer);
     found_token = ts_parser__call_main_lex_fn(self, lex_mode);
+    if (self->lexer.cancelled) return NULL_SUBTREE;
     ts_lexer_finish(&self->lexer, &lookahead_end_byte);
     if (found_token) break;
 
@@ -656,6 +658,7 @@ static Subtree ts_parser__lex(
       ts_lexer_start(&self->lexer);
 
       is_keyword = ts_parser__call_keyword_lex_fn(self);
+      if (self->lexer.cancelled) return NULL_SUBTREE;
 
       if (
         is_keyword &&
@@ -1627,7 +1630,7 @@ static bool ts_parser__advance(
     if (needs_lex) {
       needs_lex = false;
       lookahead = ts_parser__lex(self, version, state);
-      if (self->has_scanner_error) return false;
+      if (self->has_scanner_error || self->lexer.cancelled) return false;
 
       if (lookahead.ptr) {
         ts_parser__set_cached_token(self, position, last_external_token, lookahead);
@@ -2116,6 +2119,14 @@ void ts_parser_reset(TSParser *self) {
   self->canceled_balancing = false;
   self->parse_options = (TSParseOptions) {0};
   self->parse_state = (TSParseState) {0};
+  ts_lexer_set_progress_callback(&self->lexer, NULL, NULL);
+}
+
+static bool ts_parser__lex_progress(void *payload, uint32_t position) {
+  TSParser *self = payload;
+  self->parse_state.current_byte_offset = position;
+  self->parse_state.has_error = self->has_error;
+  return self->parse_options.progress_callback(&self->parse_state);
 }
 
 TSTree *ts_parser_parse(
@@ -2134,6 +2145,9 @@ TSTree *ts_parser_parse(
     ts_wasm_store_start(self->wasm_store, &self->lexer.data, self->language);
   }
 
+  ts_lexer_set_progress_callback(
+    &self->lexer, self->parse_options.progress_callback ? ts_parser__lex_progress : NULL, self
+  );
   ts_lexer_set_input(&self->lexer, input);
   array_clear(&self->included_range_differences);
   self->included_range_difference_index = 0;
@@ -2259,6 +2273,7 @@ TSTree *ts_parser_parse_with_options(
   TSTree *result = ts_parser_parse(self, old_tree, input);
   // Reset parser options before further parse calls.
   self->parse_options = (TSParseOptions) {0};
+  ts_lexer_set_progress_callback(&self->lexer, NULL, NULL);
   return result;
 }
 

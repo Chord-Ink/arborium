@@ -73,7 +73,7 @@ static void ts_lexer__invalidate_column_data(Lexer *self) {
 // it has consumed all of its available ranges.
 static bool ts_lexer__eof(const TSLexer *_self) {
   Lexer *self = (Lexer *)_self;
-  return self->current_included_range_index == self->included_range_count;
+  return self->cancelled || self->current_included_range_index == self->included_range_count;
 }
 
 // Clear the currently stored chunk of source code, because the lexer's
@@ -292,6 +292,32 @@ static void ts_lexer__advance(TSLexer *_self, bool skip) {
   ts_lexer__do_advance(self, skip);
 }
 
+// Generated lexers and cooperative external scanners unwind normally on EOF.
+// The parser discards their result when cancelled, before caching any token.
+static void ts_lexer__advance_with_progress(TSLexer *lexer, bool skip) {
+  Lexer *self = (Lexer *)lexer;
+  if (self->cancelled) return;
+  if (--self->advances_until_progress == 0) {
+    self->advances_until_progress = 4096;
+    if (self->progress_callback(self->progress_payload, self->current_position.bytes)) {
+      self->cancelled = true;
+      ts_lexer__clear_chunk(self);
+      self->lookahead_size = 0;
+      self->data.lookahead = 0;
+      return;
+    }
+  }
+  ts_lexer__advance(lexer, skip);
+}
+
+void ts_lexer_set_progress_callback(Lexer *self, bool (*callback)(void *, uint32_t), void *payload) {
+  self->cancelled = false;
+  self->advances_until_progress = 4096;
+  self->progress_callback = callback;
+  self->progress_payload = payload;
+  self->data.advance = callback ? ts_lexer__advance_with_progress : ts_lexer__advance;
+}
+
 // Mark that a token match has completed. This can be called multiple
 // times if a longer match is found later.
 static void ts_lexer__mark_end(TSLexer *_self) {
@@ -341,7 +367,7 @@ static uint32_t ts_lexer__get_column(TSLexer *_self) {
 
       // Advance to the recorded position
       while (self->current_position.bytes < goal_byte && !ts_lexer__eof(_self) && self->chunk) {
-        ts_lexer__do_advance(self, false);
+        self->data.advance(&self->data, false);
         if (ts_lexer__eof(_self)) break;
       }
     }

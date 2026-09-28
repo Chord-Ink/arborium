@@ -2,9 +2,10 @@
 
 ## tree-sitter fork workflow (`crates/arborium-tree-sitter`)
 
-- Do **not** patch `crates/arborium-tree-sitter` by hand.
-- Use `scripts/sync_tree_sitter_fork.py` to sync/reset from upstream and re-apply Arborium patches.
-- If you need to change Arborium-specific patch behavior for the tree-sitter fork, update the sync script accordingly (instead of editing forked files directly).
+- Maintain `crates/arborium-tree-sitter` directly; its checked-in source is authoritative.
+- Apply fixes and optimizations in the vendored source. Do not maintain standalone patch files or a reset/replay sync workflow.
+- Upstream Tree-sitter upgrades are separate, explicitly requested work. See `crates/arborium-tree-sitter/UPSTREAM.md` for the current base revision.
+- Cargo manifests still follow the template workflow below.
 
 ## Generated Cargo manifests
 

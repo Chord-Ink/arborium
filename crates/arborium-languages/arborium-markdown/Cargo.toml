@@ -2,7 +2,7 @@
 
 [package]
 name = "arborium-markdown"
-version = "2.20.0"
+version = "2.21.0"
 edition = "2024"
 rust-version = "1.85"
 description = "Markdown grammar for arborium (tree-sitter bindings)"
@@ -37,13 +37,13 @@ path = "src/lib.rs"
 tree-sitter-language = { version = "0.1" }
 
 
-arborium-markdown_inline = { version = "2.20.0", path = "../arborium-markdown_inline", optional = true }
+arborium-markdown_inline = { version = "2.21.0", path = "../arborium-markdown_inline", optional = true }
 
-arborium-html = { version = "2.20.0", path = "../arborium-html", optional = true }
+arborium-html = { version = "2.21.0", path = "../arborium-html", optional = true }
 
-arborium-yaml = { version = "2.20.0", path = "../arborium-yaml", optional = true }
+arborium-yaml = { version = "2.21.0", path = "../arborium-yaml", optional = true }
 
-arborium-toml = { version = "2.20.0", path = "../arborium-toml", optional = true }
+arborium-toml = { version = "2.21.0", path = "../arborium-toml", optional = true }
 
 
 
@@ -53,12 +53,12 @@ injections = ["arborium-markdown_inline", "arborium-html", "arborium-yaml", "arb
 
 
 [dev-dependencies]
-arborium-test-harness = { version = "2.20.0", path = "../../arborium-test-harness" }
+arborium-test-harness = { version = "2.21.0", path = "../../arborium-test-harness" }
 libtest-mimic = "0.8"
 
 # WASM allocator (only needed on WASM targets)
 [target.'cfg(target_family = "wasm")'.dependencies]
-arborium-sysroot = { version = "2.20.0", path = "../../arborium-sysroot" }
+arborium-sysroot = { version = "2.21.0", path = "../../arborium-sysroot" }
 
 [build-dependencies]
 cc = "1"

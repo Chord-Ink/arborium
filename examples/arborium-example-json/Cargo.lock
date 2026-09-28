@@ -13,7 +13,7 @@ dependencies = [
 
 [[package]]
 name = "arborium"
-version = "2.20.0"
+version = "2.21.0"
 dependencies = [
  "arborium-highlight",
  "arborium-theme",
@@ -31,7 +31,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-highlight"
-version = "2.20.0"
+version = "2.21.0"
 dependencies = [
  "arborium-theme",
  "arborium-tree-sitter",
@@ -40,7 +40,7 @@ dependencies = [
 
 [[package]]
 name = "arborium-sysroot"
-version = "2.20.0"
+version = "2.21.0"
 dependencies = [
  "cc",
  "dlmalloc",
@@ -48,11 +48,11 @@ dependencies = [
 
 [[package]]
 name = "arborium-theme"
-version = "2.20.0"
+version = "2.21.0"
 
 [[package]]
 name = "arborium-tree-sitter"
-version = "2.20.0"
+version = "2.21.0"
 dependencies = [
  "arborium-sysroot",
  "cc",

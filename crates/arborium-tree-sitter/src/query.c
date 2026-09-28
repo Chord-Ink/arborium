@@ -241,6 +241,9 @@ typedef struct {
   // Reuse free lists in O(1), even when many query states hold captures.
   // UINT32_MAX also marks a free list's length to detect duplicate releases.
   Array(uint32_t) free_ids;
+  uint32_t peak_list_count;
+  uint32_t peak_list_length;
+  uint8_t low_use_resets;
 } CaptureListPool;
 
 /*
@@ -452,9 +455,38 @@ static CaptureListPool capture_list_pool_new(void) {
 }
 
 static void capture_list_pool_reset(CaptureListPool *self) {
+  // Query cursors are often pooled indefinitely. Trim exceptional allocations
+  // only after eight low-use executions, keeping ordinary viewport capacity.
+  uint32_t keep_count = self->peak_list_count > 64 ? self->peak_list_count : 64;
+  for (uint32_t i = 0; i < self->list.size; i++) {
+    CaptureList *list = array_get(&self->list, i);
+    if (list->size != UINT32_MAX && list->size > self->peak_list_length) {
+      self->peak_list_length = list->size;
+    }
+  }
+  uint32_t keep_length = self->peak_list_length > 256 ? self->peak_list_length : 256;
+  bool oversized = self->list.size / 4 > keep_count;
+  for (uint32_t i = 0; i < self->list.size && !oversized; i++) {
+    oversized = array_get(&self->list, i)->capacity / 4 > keep_length;
+  }
+  self->low_use_resets = oversized ? self->low_use_resets + 1 : 0;
+  if (self->low_use_resets == 8) {
+    for (uint32_t i = 0; i < self->list.size; i++) {
+      CaptureList *list = array_get(&self->list, i);
+      if (i >= keep_count || list->capacity / 4 > keep_length) array_delete(list);
+    }
+    if (self->list.size > keep_count) {
+      self->list.size = keep_count;
+      self->list.capacity = keep_count;
+      self->list.contents = ts_realloc(self->list.contents, keep_count * sizeof(CaptureList));
+      array_delete(&self->free_ids);
+    }
+    self->low_use_resets = 0;
+  }
+  self->peak_list_count = 0;
+  self->peak_list_length = 0;
   array_clear(&self->free_ids);
   for (uint32_t i = 0; i < self->list.size; i++) {
-    // This invalid size means that the list is not in use.
     array_get(&self->list, i)->size = UINT32_MAX;
     array_push(&self->free_ids, i);
   }
@@ -488,6 +520,8 @@ static uint32_t capture_list_pool_acquire(CaptureListPool *self) {
   // First see if any already allocated capture list is currently unused.
   if (self->free_ids.size > 0) {
     uint32_t i = array_pop(&self->free_ids);
+    uint32_t used = self->list.size - self->free_ids.size;
+    if (used > self->peak_list_count) self->peak_list_count = used;
     array_clear(array_get(&self->list, i));
     return i;
   }
@@ -501,6 +535,7 @@ static uint32_t capture_list_pool_acquire(CaptureListPool *self) {
   CaptureList list;
   array_init(&list);
   array_push(&self->list, list);
+  self->peak_list_count = self->list.size;
   return i;
 }
 
@@ -508,6 +543,7 @@ static void capture_list_pool_release(CaptureListPool *self, uint32_t id) {
   if (id >= self->list.size) return;
   CaptureList *list = array_get(&self->list, id);
   if (list->size == UINT32_MAX) return;
+  if (list->size > self->peak_list_length) self->peak_list_length = list->size;
   list->size = UINT32_MAX;
   array_push(&self->free_ids, id);
 }
@@ -4212,21 +4248,28 @@ static inline bool ts_query_cursor__advance(
         TSSymbol symbol = ts_node_symbol(node);
         bool is_named = ts_node_is_named(node);
         bool is_missing = ts_node_is_missing(node);
-        bool has_later_siblings;
-        bool has_later_named_siblings;
-        bool can_have_later_siblings_with_this_field;
+        bool has_later_siblings = false;
+        bool has_later_named_siblings = false;
+        bool can_have_later_siblings_with_this_field = false;
         TSFieldId field_id = 0;
         TSSymbol supertypes[8] = {0};
         unsigned supertype_count = 8;
-        ts_tree_cursor_current_status(
-          &self->cursor,
-          &field_id,
-          &has_later_siblings,
-          &has_later_named_siblings,
-          &can_have_later_siblings_with_this_field,
-          supertypes,
-          &supertype_count
-        );
+        bool did_read_status = false;
+        // Root matches start at this node and usually need no sibling/field walk.
+        // Read the status only when a candidate or an existing state needs it.
+#define READ_NODE_STATUS() do { \
+          if (!did_read_status) { \
+            ts_tree_cursor_current_status( \
+              &self->cursor, &field_id, &has_later_siblings, \
+              &has_later_named_siblings, &can_have_later_siblings_with_this_field, \
+              supertypes, &supertype_count \
+            ); \
+            did_read_status = true; \
+          } \
+        } while (0)
+#ifdef DEBUG_EXECUTE_QUERY
+        READ_NODE_STATUS();
+#endif
         LOG(
           "enter node. depth:%u, type:%s, field:%s, row:%u state_count:%u, finished_state_count:%u\n",
           self->depth,
@@ -4250,6 +4293,7 @@ static inline bool ts_query_cursor__advance(
             // If this node matches the first step of the pattern, then add a new
             // state at the start of this pattern.
             QueryStep *step = array_get(&self->query->steps, pattern->step_index);
+            if (step->field || step->supertype_symbol) READ_NODE_STATUS();
             uint32_t start_depth = self->depth - step->depth;
             if (
               (pattern->is_rooted ?
@@ -4272,6 +4316,7 @@ static inline bool ts_query_cursor__advance(
           QueryStep *step = array_get(&self->query->steps, pattern->step_index);
           uint32_t start_depth = self->depth - step->depth;
           do {
+            if (step->field) READ_NODE_STATUS();
             // If this node matches the first step of the pattern, then add a new
             // state at the start of this pattern.
             if (
@@ -4316,6 +4361,11 @@ static inline bool ts_query_cursor__advance(
           } else {
             node_does_match = symbol == step->symbol && (!step->is_missing || is_missing);
           }
+          if (
+            step->field || step->supertype_symbol || step->is_last_child ||
+            (!state->seeking_immediate_match &&
+             !(step->is_immediate && is_named && !state->skipped_quantifier))
+          ) READ_NODE_STATUS();
           bool later_sibling_can_match = has_later_siblings;
           if ((step->is_immediate && is_named && !state->skipped_quantifier) || state->seeking_immediate_match) {
             later_sibling_can_match = false;
@@ -4703,6 +4753,8 @@ static inline bool ts_query_cursor__advance(
     }
   }
 }
+
+#undef READ_NODE_STATUS
 
 bool ts_query_cursor_next_match(
   TSQueryCursor *self,
