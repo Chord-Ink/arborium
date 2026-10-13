@@ -1,6 +1,8 @@
 //! THIS FILE IS GENERATED FROM xtask/templates/build.stpl.rs; DO NOT EDIT MANUALLY
 
 fn main() {
+    match_rustc_deployment_target();
+
     // All build-time grammar sources live inside the crate so that
     // crates.io package verification can rebuild the crate in isolation.
     //
@@ -105,4 +107,29 @@ fn find_llvm_ar() -> Option<std::path::PathBuf> {
         .map(|o| o.status.success())
         .unwrap_or(false);
     on_path.then(|| std::path::PathBuf::from(exe))
+}
+
+/// Build for the same oldest Apple OS as rustc. Without this, `cc` takes the
+/// SDK version, and the objects need a newer OS than the Rust code.
+fn match_rustc_deployment_target() {
+    if std::env::var("CARGO_CFG_TARGET_VENDOR").as_deref() != Ok("apple") {
+        return;
+    }
+    let rustc = std::env::var_os("RUSTC").unwrap_or_else(|| "rustc".into());
+    let target = std::env::var("TARGET").unwrap_or_default();
+    let Ok(output) = std::process::Command::new(rustc)
+        .args(["--print", "deployment-target", "--target", &target])
+        .output()
+    else {
+        return;
+    };
+    let text = String::from_utf8_lossy(&output.stdout);
+    let Some((name, version)) = text.trim().split_once('=') else {
+        return;
+    };
+    println!("cargo:rerun-if-env-changed={name}");
+    if output.status.success() && std::env::var_os(name).is_none() {
+        // SAFETY: no other thread runs yet; `cc` reads the variable later.
+        unsafe { std::env::set_var(name, version) };
+    }
 }

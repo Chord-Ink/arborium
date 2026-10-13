@@ -1,6 +1,8 @@
 use std::{env, fs, path::PathBuf};
 
 fn main() {
+    match_rustc_deployment_target();
+
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
     let target = env::var("TARGET").unwrap();
 
@@ -129,4 +131,29 @@ fn generate_bindings(out_dir: &std::path::Path) {
             bindings_rs.display()
         )
     });
+}
+
+/// Build for the same oldest Apple OS as rustc. Without this, `cc` takes the
+/// SDK version, and the objects need a newer OS than the Rust code.
+fn match_rustc_deployment_target() {
+    if std::env::var("CARGO_CFG_TARGET_VENDOR").as_deref() != Ok("apple") {
+        return;
+    }
+    let rustc = std::env::var_os("RUSTC").unwrap_or_else(|| "rustc".into());
+    let target = std::env::var("TARGET").unwrap_or_default();
+    let Ok(output) = std::process::Command::new(rustc)
+        .args(["--print", "deployment-target", "--target", &target])
+        .output()
+    else {
+        return;
+    };
+    let text = String::from_utf8_lossy(&output.stdout);
+    let Some((name, version)) = text.trim().split_once('=') else {
+        return;
+    };
+    println!("cargo:rerun-if-env-changed={name}");
+    if output.status.success() && std::env::var_os(name).is_none() {
+        // SAFETY: no other thread runs yet; `cc` reads the variable later.
+        unsafe { std::env::set_var(name, version) };
+    }
 }
