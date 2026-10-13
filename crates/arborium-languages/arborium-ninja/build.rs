@@ -26,6 +26,7 @@ fn main() {
     );
     let mut output = std::fs::File::create(&parser).expect("create unpacked parser source");
     std::io::copy(&mut input, &mut output).expect("unpack bundled parser source");
+    drop(output);
 
 
     let mut build = cc::Build::new();
